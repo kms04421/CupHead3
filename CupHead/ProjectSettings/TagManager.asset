@@ -1,0 +1,66 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!78 &1
+TagManager:
+  serializedVersion: 2
+  tags:
+  - Boss
+  - PinkBossAtk
+  - Test
+  - BossAtk
+  - Wall
+  layers:
+  - Default
+  - TransparentFX
+  - Ignore Raycast
+  - 
+  - Water
+  - UI
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  m_SortingLayers:
+  - name: BackGround
+    uniqueID: 2337226507
+    locked: 0
+  - name: World
+    uniqueID: 3675744821
+    locked: 0
+  - name: Default
+    uniqueID: 0
+    locked: 0
+  - name: Island
+    uniqueID: 1714102309
+    locked: 0
+  - name: Structure
+    uniqueID: 2694489227
+    locked: 0
+  - name: New Layer 5
+    uniqueID: 3756096437
+    locked: 0
+  - name: BcakGround_Front
+    uniqueID: 282975719
+    locked: 0
