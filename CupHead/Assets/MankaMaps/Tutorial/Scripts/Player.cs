@@ -5,6 +5,7 @@ using System.ComponentModel;
 //using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Threading;
+using Unity.Mathematics;
 using Unity.VisualScripting;
 using UnityEditor;
 using UnityEditor.Experimental.GraphView;
@@ -17,11 +18,17 @@ public class Player : MonoBehaviour
     public AudioClip JumpClip;
     public AudioClip DeathClip;
 
+    //공격 프리팹
+    public GameObject shot1Prefab;
+    private Vector2[] bulletPos;
+    private Vector2[] bulletPos2;
+    private GameObject bullet;
+    //이동 키 받는변수
     public float dirX;
     //목숨
     private int life = 3;
-    //이동
-    private float speed = 5f;
+    //이동속도
+    private float speed = 2.5f;
     //생존상태
     private bool isDead = false;
     //막힘여부
@@ -56,12 +63,6 @@ public class Player : MonoBehaviour
 
     //점프
     private float jumpForce = 2f;
-    public int jumpCount;
-    public Vector3[] waypoints;
-    public Color gizmoColor;
-
-    //
-    private SpriteRenderer playerRenderer;
     private Rigidbody2D PR;
     private Animator animator;
     private AudioSource playerAudio;
@@ -71,7 +72,6 @@ public class Player : MonoBehaviour
         PR = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
         playerAudio = GetComponent<AudioSource>();
-        playerRenderer = GetComponent<SpriteRenderer>();
         instance = this;
     }
 
@@ -85,13 +85,7 @@ public class Player : MonoBehaviour
         #region 점프동작
         if (Input.GetKeyDown(KeyCode.Z))
         {
-            /*waypoints = new Vector3[3];
-            waypoints[0] = transform.position;
-            waypoints[1] = new Vector3(transform.position.x+2 ,transform.position.y +3,0);
-            waypoints[2] = new Vector3(transform.position.x+4, transform.position.y,0);
-            pathType = PathType.CatmullRom;
-            pathMode = PathMode.TopDown2D;
-            PR.transform.DOLocalPath(waypoints, 1,pathType,pathMode);*/
+            
         }
         #endregion
         #region 위를올려다보는동작
@@ -202,8 +196,16 @@ public class Player : MonoBehaviour
 
         }
         #endregion
+        #region 공격구현
+        if(Input.GetKey(KeyCode.X))
+        {
+            SetBullet();
+            JustAttack();
+        }
+        
+        #endregion
 
-        #region 레이캐스트
+        #region 대쉬에 사용되는 레이캐스트
         int layerMask = 1 << LayerMask.NameToLayer("Floor");
         Debug.DrawRay(transform.position, transform.right * MaxDistance, Color.blue, 4);
         hit = Physics2D.Raycast(transform.position, transform.right, MaxDistance,layerMask);
@@ -211,15 +213,6 @@ public class Player : MonoBehaviour
 
         Debug.DrawRay(foot.transform.position, foot.transform.right * MaxDistance, Color.blue, 4);
         hitFoot = Physics2D.Raycast(foot.transform.position, foot.transform.right, MaxDistance,layerMask);
-
-        /*if(hit.collider != null)
-        {
-            Debug.LogFormat("머리쏘기{0}", hit.collider.name);
-        }
-        if(hitFoot.collider != null)
-        {
-            Debug.LogFormat("다리쏘기{0}", hitFoot.collider.name);
-        }*/
         #endregion
 
         #region 좌우반전구현 
@@ -326,4 +319,36 @@ public class Player : MonoBehaviour
         animator.SetBool("dash", false);
     }
     #endregion
+
+
+    public void SetBullet()
+    {
+        bulletPos = new Vector2[4];
+        bulletPos[0] = new Vector2((float)(transform.position.x + 0.25), transform.position.y);
+        bulletPos[1] = new Vector2((float)(transform.position.x + 0.25), (float)(transform.position.y+0.25));
+        bulletPos[2] = new Vector2((float)(transform.position.x + 0.25), (float)(transform.position.y+0.5));
+        bulletPos[3] = new Vector2((float)(transform.position.x + 0.25), (float)(transform.position.y+0.25));
+        bulletPos2 = new Vector2[4];
+        bulletPos2[0] = new Vector2((float)(transform.position.x - 0.25), transform.position.y);
+        bulletPos2[1] = new Vector2((float)(transform.position.x - 0.25), (float)(transform.position.y + 0.25));
+        bulletPos2[2] = new Vector2((float)(transform.position.x - 0.25), (float)(transform.position.y + 0.5));
+        bulletPos2[3] = new Vector2((float)(transform.position.x - 0.25), (float)(transform.position.y + 0.25));
+    }
+    public void JustAttack()
+    {
+        if (dirX >= 0)
+        {
+            for (int i = 0; i < 4; i++)
+            {
+                bullet = Instantiate(shot1Prefab, bulletPos[i], quaternion.identity);
+            }
+        }
+        if(dirX <0)
+        {
+            for (int i = 0; i < 4; i++)
+            {
+                bullet = Instantiate(shot1Prefab, bulletPos2[i], quaternion.identity);
+            }
+        }
+    }
 }

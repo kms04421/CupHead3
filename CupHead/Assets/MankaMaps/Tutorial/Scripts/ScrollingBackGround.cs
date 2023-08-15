@@ -7,7 +7,7 @@ using UnityEngine.XR;
 
 public class ScrollingBackGround : MonoBehaviour
 {
-    public float speed = 2f;
+    public float speed = 2.5f;
     private float xInput;
     // Start is called before the first frame update
     void Start()
@@ -18,8 +18,7 @@ public class ScrollingBackGround : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
-       /* if (!((Player.instance.isBlocked == true) || (Player.instance.isAim == true)))
+        if (!((Player.instance.isBlocked == true) || (Player.instance.isAim == true)))
         {
             if (Player.instance.dirX > 0)
             {
@@ -29,7 +28,6 @@ public class ScrollingBackGround : MonoBehaviour
             {
                 transform.Translate(Vector2.right * speed * Time.deltaTime);
             }
-        }*/
-     
+        }
     }
 }
