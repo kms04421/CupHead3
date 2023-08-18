@@ -3,7 +3,13 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - Wall
+  - Boss
+  - Test
+  - BossAtk
+  - PinkBossAtk
+  - Farring
   layers:
   - Default
   - TransparentFX
@@ -43,4 +49,19 @@ TagManager:
     locked: 0
   - name: UI
     uniqueID: 1474511511
+    locked: 0
+  - name: AtkObj
+    uniqueID: 2406068001
+    locked: 0
+  - name: Tallfrog
+    uniqueID: 1005637661
+    locked: 0
+  - name: ShortFrog
+    uniqueID: 2760814271
+    locked: 0
+  - name: BackObj
+    uniqueID: 510439895
+    locked: 0
+  - name: TopObj
+    uniqueID: 954084181
     locked: 0
