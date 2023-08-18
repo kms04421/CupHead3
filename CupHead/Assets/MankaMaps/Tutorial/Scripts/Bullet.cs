@@ -1,0 +1,110 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class Bullet : MonoBehaviour
+{
+    private float speed = 15f;
+    Rigidbody2D bulletRB;
+    private float dirBullet;
+
+    // Start is called before the first frame update
+    private void Awake()
+    {
+        bulletRB = GetComponent<Rigidbody2D>();
+        dirBullet = Player.instance.bulletDirection;
+        if (Player.instance.bulletMode == 0)
+        {//일반달리기 와 일반쏘기
+            if (dirBullet > 0)
+            {
+                bulletRB.velocity = transform.right * speed;
+            }
+            else if (dirBullet < 0)
+            {
+                bulletRB.velocity = transform.right * -1 * speed;
+                transform.eulerAngles = new Vector3(0, 180, 0);
+            }
+        }
+        else if (Player.instance.bulletMode == 2)
+        {//Up쏘기
+            bulletRB.velocity = transform.up * speed;
+            transform.eulerAngles = new Vector3(0, 0, 90);
+        }
+        else if (Player.instance.bulletMode == 3)
+        {//대각선위로쏘기
+            if (dirBullet > 0)
+            {
+                transform.eulerAngles = new Vector3(0, 0, 45);
+                Vector2 diagonalDirection = new Vector2(1, 1);
+                bulletRB.velocity = diagonalDirection * speed;
+
+            }
+            else if (dirBullet < 0)
+            {
+                transform.eulerAngles = new Vector3(0, 180, 45);
+                Vector2 diagonalDirection = new Vector2(-1, 1);
+                bulletRB.velocity = diagonalDirection * speed;
+            }
+        }
+        else if (Player.instance.bulletMode == 4)
+        {//대각선아래쏘기
+            if (dirBullet > 0)
+            {
+                transform.eulerAngles = new Vector3(0, 0, -45);
+                Vector2 diagonalDirection = new Vector2(1, -1);
+                bulletRB.velocity = diagonalDirection * speed;
+            }
+            else if (dirBullet < 0)
+            {
+                transform.eulerAngles = new Vector3(0, 180, -45);
+                Vector2 diagonalDirection = new Vector2(-1, -1);
+                bulletRB.velocity = diagonalDirection * speed;
+            }
+        }
+        else if (Player.instance.bulletMode == 1)
+        {//아래쏘기
+            if (dirBullet > 0)
+            {
+                bulletRB.velocity = transform.right * speed;
+            }
+            else if (dirBullet < 0)
+            {
+                bulletRB.velocity = transform.right * -1 * speed;
+                transform.eulerAngles = new Vector3(0, 180, 0);
+            }
+        }
+        else if (Player.instance.bulletMode == 5)
+        {//c누르고 아래쏘기
+
+            bulletRB.velocity = transform.up * -1 * speed;
+            transform.eulerAngles = new Vector3(0, 0, -90);
+        }
+    }
+    void Start()
+    {
+       
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        /*  if (!Camera.main.orthographicSize.Equals(null))
+          {
+              if (Mathf.Abs(transform.position.x) > Camera.main.orthographicSize * Camera.main.aspect + 1 || Mathf.Abs(transform.position.y) > Camera.main.orthographicSize + 1)
+              {
+                  Destroy(gameObject);
+              }
+          }*/
+
+        Vector3 viewPos = Camera.main.WorldToViewportPoint(transform.position);
+        if (viewPos.x < 0 || viewPos.x > 1 || viewPos.y < 0 || viewPos.y > 1)
+        {
+            Destroy(gameObject);
+        }
+    }
+
+    public void OnTriggerEnter(Collider other)
+    {
+
+    }
+}
