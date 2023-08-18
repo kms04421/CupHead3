@@ -2,7 +2,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
-//using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using Unity.Mathematics;
@@ -11,6 +10,7 @@ using UnityEditor;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.UIElements;
+using Cinemachine;
 
 public class Player : MonoBehaviour
 {
@@ -22,13 +22,17 @@ public class Player : MonoBehaviour
     public GameObject shot1Prefab;
     private Vector2[] bulletPos;
     private Vector2[] bulletPos2;
-    private GameObject bullet;
+    public float bulletDirection;
+    public AnimatorStateInfo stateInfo;
+    public int bulletMode;
+    //총알이 발사중인지 확인하는변수
+    private bool isFiring = false;
     //이동 키 받는변수
     public float dirX;
     //목숨
     private int life = 3;
     //이동속도
-    private float speed = 2.5f;
+    public float speed = 4f;
     //생존상태
     private bool isDead = false;
     //막힘여부
@@ -52,42 +56,65 @@ public class Player : MonoBehaviour
     //레이캐스트 바닥
     public GameObject foot;
     public RaycastHit2D hitFoot; //바닥
-
-
-    // Vector3 변수로 시작 위치와 종료 위치를 선언합니다.
-    private Vector3 startPos, endPos;
-
+    //다운점프장애물 감지
+    private bool isDownJump;
+    //다른 오브젝트의 콜린더
+    private Collider2D collider;
     // 땅에 닿기까지의 시간을 계산하는 변수
     protected float timer;
     protected float timeToFloor;
-
     //점프
-    private float jumpForce = 2f;
+    private bool jumpChk = true;
+    private int jumpCount = 0;
+    public float jumpForce = 10f;
     private Rigidbody2D PR;
     private Animator animator;
-    private AudioSource playerAudio;
+
+    //시네머신카메라 오브젝트
+    public CinemachineVirtualCamera virtualCamera;
+    //줄어들고 늘어나는 속도
+    private float CineSpeed = 0.1f;
+    //시네머신 프레이밍 트랜스포저
+    private CinemachineFramingTransposer framingTransposer;
+
+    private float minimumDeadZoneWidth = 0.1f;
+    private float maximumDeadZoneWidth = 0.32f;
     // Start is called before the first frame update
     void Start()
     {
         PR = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
-        playerAudio = GetComponent<AudioSource>();
         instance = this;
+        if (virtualCamera != null)
+        {
+            framingTransposer = virtualCamera.GetCinemachineComponent<CinemachineFramingTransposer>();
+        }
     }
 
     // Update is called once per frame
     void Update()
     {
+        #region 점프동작
+        if (Input.GetKeyDown(KeyCode.Z) && jumpChk && jumpCount == 0 && !(stateInfo.IsName("CupHeadDown") || stateInfo.IsName("CupHeadDownIdle")))
+        {
+            jumpCount++;
+            jumpChk = false;
+            PR.velocity = new Vector2(PR.velocity.x, jumpForce);
+            animator.SetTrigger("jump");
+            animator.SetBool("isGround", false);
+        }
+        #endregion
         if (isDead)
         {
             return;
         }
-        #region 점프동작
-        if (Input.GetKeyDown(KeyCode.Z))
+/*
+        if(transform.position.x >= 0 && transform.position.x <= 68)
         {
-            
+            virtualCamera.gameObject.SetActive(true);
         }
-        #endregion
+        else { virtualCamera.gameObject.SetActive(false); }*/
+
         #region 위를올려다보는동작
         if (Input.GetKeyDown(KeyCode.UpArrow))
         {
@@ -101,7 +128,7 @@ public class Player : MonoBehaviour
         }
         #endregion
         #region 아래를바라보는동작
-        if (Input.GetKey(KeyCode.DownArrow))
+        if (Input.GetKeyDown(KeyCode.DownArrow))
         {
             animator.SetBool("lookdown", true);
             isDown = true;
@@ -116,16 +143,19 @@ public class Player : MonoBehaviour
         #region 공격하는 동작
         if (Input.GetKey(KeyCode.X))
         {
-            isAttack = true;
-            animator.SetBool("attack",true);
+            if (isDash == false)
+            {
+                isAttack = true;
+                animator.SetBool("attack", true);
+            }
         }
-        if(Input.GetKeyUp(KeyCode.X))
+        if (Input.GetKeyUp(KeyCode.X))
         {
             animator.SetBool("attack", false);
         }
         #endregion
         #region 대각선 위 동작
-        if (isUp == true && Mathf.Abs(dirX) >0)
+        if (isUp == true && Mathf.Abs(dirX) > 0)
         {
             animator.SetBool("diagonal", true);
         }
@@ -161,26 +191,48 @@ public class Player : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.LeftShift))
         {
-            animator.SetBool("dash",true);
+            animator.SetBool("dash", true);
             isDash = true;
+            Debug.LogFormat("isDash?{0}", isDash);
+        }
+        #endregion
+        #region 아래점프
+        if ((stateInfo.IsName("CupHeadDown") || stateInfo.IsName("CupHeadDownIdle")) && (Input.GetKeyDown(KeyCode.Z)) && (isDownJump == true))
+        {
+            jumpChk = false;
+            collider.enabled = false;
+            Invoke("EnableCollider", 1.0f);
+            PR.velocity = new Vector2(PR.velocity.x, -jumpForce);
+            animator.SetTrigger("jump");
+            animator.SetBool("isGround", false);
         }
         #endregion
     }
 
     private void FixedUpdate()
     {
-        if (isDash == true&&isDashing == false)
+        if (isDead)
+        {
+            virtualCamera.enabled = false;
+            PR.velocity = Vector2.zero;
+            PR.gravityScale = 0f;
+            transform.Translate(Vector3.up * speed * Time.deltaTime);
+            return;
+        }
+        stateInfo = animator.GetCurrentAnimatorStateInfo(0);
+        if (isDash == true && isDashing == false)
         {
             StartCoroutine(Dash(transform.position));
         }
+
         #region 이동구현
         dirX = Input.GetAxis("Horizontal");
-        
-        
-        if ((!(isDown == true || isUp == true || isAim == true || isDash == true || isGround == false)&& !isAttack)
-            || (isDown == false && isAim == false &&isDash ==false && isAttack) || (isDown ==true &&isAim ==false && isDash ==false && isAttack))
+
+        if ((!(isDown == true || isUp == true || isAim == true || isDash == true || isGround == false) && !isAttack)
+            || (isDown == false && isAim == false && isDash == false && isAttack) || (isDown == true && isAim == false && isDash == false && isAttack))
         {
             PR.velocity = new Vector2(dirX * speed, PR.velocity.y);
+
             if (dirX > 0)
             {
                 animator.SetBool("run", true);
@@ -197,24 +249,57 @@ public class Player : MonoBehaviour
         }
         #endregion
         #region 공격구현
-        if(Input.GetKey(KeyCode.X))
+        if (Input.GetKey(KeyCode.X))
         {
-            SetBullet();
-            JustAttack();
+            if (isDash == false)
+            {
+                if (stateInfo.IsName("CupHead_Shot_Down"))
+                {
+                    DownBullet();
+                    DownAttack();
+                    bulletMode = 1;
+                }
+                if (stateInfo.IsName("CupHead_Shot_Run") || stateInfo.IsName("CupHead_Aim_Shot"))
+                {
+                    NormalBullet();
+                    NormalAttack();
+                    bulletMode = 0;
+                }
+                if (stateInfo.IsName("CupHead_shot_Diagonal_Up") || stateInfo.IsName("CupHead_Aim_Shot_Diagonal_Up"))
+                {
+                    UpDiagonalBullet();
+                    UpDiagonalAttack();
+                    bulletMode = 3;
+                }
+                if (stateInfo.IsName("CupHead_Aim_Shot_Diagonal_Down"))
+                {
+                    DownDiagonalBullet();
+                    DownDiagonalAttack();
+                    bulletMode = 4;
+                }
+                if (stateInfo.IsName("CupHead_Aim_Shot_Up") || stateInfo.IsName("CupHead_Aim_Shot_Up 0"))
+                {
+                    UpBullet();
+                    UpAttack();
+                    bulletMode = 2;
+                }
+                if (stateInfo.IsName("CupHead_Aim_Shot_Down"))
+                {
+                    CDownBullet();
+                    CDownAttack();
+                    bulletMode = 5;
+                }
+            }
         }
-        
         #endregion
-
         #region 대쉬에 사용되는 레이캐스트
         int layerMask = 1 << LayerMask.NameToLayer("Floor");
         Debug.DrawRay(transform.position, transform.right * MaxDistance, Color.blue, 4);
-        hit = Physics2D.Raycast(transform.position, transform.right, MaxDistance,layerMask);
-        
+        hit = Physics2D.Raycast(transform.position, transform.right, MaxDistance, layerMask);
 
         Debug.DrawRay(foot.transform.position, foot.transform.right * MaxDistance, Color.blue, 4);
-        hitFoot = Physics2D.Raycast(foot.transform.position, foot.transform.right, MaxDistance,layerMask);
+        hitFoot = Physics2D.Raycast(foot.transform.position, foot.transform.right, MaxDistance, layerMask);
         #endregion
-
         #region 좌우반전구현 
         if (isDash == false)
         {
@@ -232,41 +317,58 @@ public class Player : MonoBehaviour
     #region 죽음구현
     public void Die()
     {
-        playerAudio.clip = DeathClip;
-        playerAudio.Play();
-        PR.velocity = Vector2.zero;
+        animator.SetTrigger("Die");
         isDead = true;
     }
     #endregion
     #region 피격구현
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if ((collision.tag == "Boss" || collision.tag == "BossATK")&& isDead ==false)
+        if ((collision.tag == "Boss" || collision.tag == "BossAtk") && isDead == false)
         {
+            Debug.LogFormat("들어오니?");
             life -= 1;
-            animator.SetTrigger("hit");
+
             if (life == 0)
             {
-                animator.SetBool("Die",true);
                 Die();
-            }            
+            }
+            if (isDead == false)
+                animator.SetTrigger("hit");
         }
+
 
     }
     #endregion
-    #region 막힘체크
+    #region 막힘체크, 아랫점프 체크
     private void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.contacts[0].normal.y < 0.5f)
         {
             isBlocked = true;
         }
+        if (collision.collider.tag.Equals("floor") || collision.collider.tag.Equals("Obstacles") || collision.collider.tag.Equals("JumpObstacles"))
+        {
+            jumpCount = 0;
+            jumpChk = true;
+            animator.SetBool("isGround", true);
+        }
+        if (collision.collider.tag.Equals("JumpObstacles"))
+        {
+            collider = collision.collider.GetComponent<EdgeCollider2D>();
+            isDownJump = true;
+        }
     }
     private void OnCollisionExit2D(Collision2D collision)
     {
         isBlocked = false;
+        if (collision.collider.tag.Equals("JumpObstacles"))
+        {
+            isDownJump = false;
+        }
     }
     #endregion
+
     #region 대쉬
     IEnumerator Dash(Vector2 current)
     {
@@ -277,14 +379,14 @@ public class Player : MonoBehaviour
         while (timeElapsed < 1f)
         {
             // 시간 경과에 따라 스케일 값 보간
-            timeElapsed += Time.deltaTime*3;
+            timeElapsed += Time.deltaTime * 3;
 
             // Lerp 값을 0 ~ 1 사이로 변환
             float time = Mathf.Clamp01(timeElapsed / 1f);
 
-            if ((hit.collider !=null|| hitFoot.collider !=null))
+            if ((hit.collider != null || hitFoot.collider != null))
             { // 레이와 발에있는 레이가 둘중하나라도 무언가에 맞았을때
-                if ((hit.collider != null && hitFoot.collider==null) && hit.collider.tag == "Floor")
+                if ((hit.collider != null && hitFoot.collider == null) && hit.collider.tag == "Floor")
                 {   //만약 레이만 맞고 맞은게 Floor일때
                     transform.position = Vector2.Lerp(current, new Vector2(hit.point.x, PR.velocity.y), time);
                 }
@@ -319,36 +421,273 @@ public class Player : MonoBehaviour
         animator.SetBool("dash", false);
     }
     #endregion
-
-
-    public void SetBullet()
+    #region 기본공격 
+    //총알 발사 포지션세팅
+    public void NormalBullet()
     {
+        //Debug.LogFormat("잘 조준된것이야?");
+        //오른쪽 발사 포지션 세팅
         bulletPos = new Vector2[4];
-        bulletPos[0] = new Vector2((float)(transform.position.x + 0.25), transform.position.y);
-        bulletPos[1] = new Vector2((float)(transform.position.x + 0.25), (float)(transform.position.y+0.25));
-        bulletPos[2] = new Vector2((float)(transform.position.x + 0.25), (float)(transform.position.y+0.5));
-        bulletPos[3] = new Vector2((float)(transform.position.x + 0.25), (float)(transform.position.y+0.25));
+        bulletPos[0] = new Vector2((float)(transform.position.x + 1), transform.position.y + 0.7f);
+        bulletPos[1] = new Vector2((float)(transform.position.x + 1), transform.position.y + 0.8f);
+        bulletPos[2] = new Vector2((float)(transform.position.x + 1), transform.position.y + 0.9f);
+        bulletPos[3] = new Vector2((float)(transform.position.x + 1), transform.position.y + 0.8f);
+        //왼쪽 발사 포지션 세팅
         bulletPos2 = new Vector2[4];
-        bulletPos2[0] = new Vector2((float)(transform.position.x - 0.25), transform.position.y);
-        bulletPos2[1] = new Vector2((float)(transform.position.x - 0.25), (float)(transform.position.y + 0.25));
-        bulletPos2[2] = new Vector2((float)(transform.position.x - 0.25), (float)(transform.position.y + 0.5));
-        bulletPos2[3] = new Vector2((float)(transform.position.x - 0.25), (float)(transform.position.y + 0.25));
+        bulletPos2[0] = new Vector2((float)(transform.position.x - 1), transform.position.y + 0.7f);
+        bulletPos2[1] = new Vector2((float)(transform.position.x - 1), (float)(transform.position.y + 0.8));
+        bulletPos2[2] = new Vector2((float)(transform.position.x - 1), (float)(transform.position.y + 0.9));
+        bulletPos2[3] = new Vector2((float)(transform.position.x - 1), (float)(transform.position.y + 0.8));
     }
-    public void JustAttack()
+    //총알 발사 코루틴
+    IEnumerator NormalFire(Vector2[] bulletPositions)
     {
-        if (dirX >= 0)
+        isFiring = true; // 코루틴이 시작되면 플래그를 설정합니다.
+
+        for (int i = 0; i < bulletPositions.Length; i++)
         {
-            for (int i = 0; i < 4; i++)
+            if (!Input.GetKey(KeyCode.X)) // X 키가 눌리지 않았다면
             {
-                bullet = Instantiate(shot1Prefab, bulletPos[i], quaternion.identity);
+                break; // 코루틴을 종료합니다.
             }
+            Instantiate(shot1Prefab, bulletPositions[i], Quaternion.identity);
+            yield return new WaitForSeconds(0.2f); // 0.5초 대기
         }
-        if(dirX <0)
+
+        isFiring = false; // 코루틴이 끝나면 플래그를 초기화합니다.
+    }
+    public void NormalAttack()
+    {
+        // Debug.LogFormat("왜 발사가 되지 않는것이야?");
+        if (isFiring) return; // 이미 발사 중이면 코루틴을 시작하지 않습니다.
+
+        if (transform.rotation.y >= 0)
         {
-            for (int i = 0; i < 4; i++)
-            {
-                bullet = Instantiate(shot1Prefab, bulletPos2[i], quaternion.identity);
-            }
+            Player.instance.bulletDirection = 1;
+            StartCoroutine(NormalFire(bulletPos));
+        }
+        else if (transform.rotation.y < 0)
+        {
+            Player.instance.bulletDirection = -1;
+            StartCoroutine(NormalFire(bulletPos2));
         }
     }
+    #endregion
+    #region 위로공격
+    public void UpBullet()
+    {
+        //오른쪽 발사 포지션 세팅
+        bulletPos = new Vector2[4];
+        bulletPos[0] = new Vector2((float)(transform.position.x + 0.2), transform.position.y + 1);
+        bulletPos[1] = new Vector2((float)(transform.position.x + 0.2), transform.position.y + 1);
+        bulletPos[2] = new Vector2((float)(transform.position.x + 0.2), transform.position.y + 1);
+        bulletPos[3] = new Vector2((float)(transform.position.x + 0.2), transform.position.y + 1);
+        //왼쪽 발사 포지션 세팅
+        bulletPos2 = new Vector2[4];
+        bulletPos2[0] = new Vector2((float)(transform.position.x - 0.2), transform.position.y + 1);
+        bulletPos2[1] = new Vector2((float)(transform.position.x - 0.2), transform.position.y + 1);
+        bulletPos2[2] = new Vector2((float)(transform.position.x - 0.2), transform.position.y + 1);
+        bulletPos2[3] = new Vector2((float)(transform.position.x - 0.2), transform.position.y + 1);
+    }
+    //총알 발사 코루틴
+    IEnumerator UpFire(Vector2[] bulletPositions)
+    {
+        isFiring = true; // 코루틴이 시작되면 플래그를 설정합니다.
+        for (int i = 0; i < bulletPositions.Length; i++)
+        {
+            if (!Input.GetKey(KeyCode.X)) // X 키가 눌리지 않았다면
+            {
+                break; // 코루틴을 종료합니다.
+            }
+            Instantiate(shot1Prefab, bulletPositions[i], Quaternion.identity);
+            yield return new WaitForSeconds(0.2f); // 0.2초 대기
+        }
+        isFiring = false; // 코루틴이 끝나면 플래그를 초기화합니다.
+    }
+    public void UpAttack()
+    {
+        if (isFiring) return; // 이미 발사 중이면 코루틴을 시작하지 않습니다.
+
+        if (transform.rotation.y >= 0)
+        {
+            Player.instance.bulletDirection = 1;
+            StartCoroutine(UpFire(bulletPos));
+        }
+        else if (transform.rotation.y < 0)
+        {
+            Player.instance.bulletDirection = -1;
+            StartCoroutine(UpFire(bulletPos2));
+        }
+    }
+    #endregion
+    #region 대각선위 공격구현
+    public void UpDiagonalBullet()
+    {
+        //오른쪽 발사 포지션 세팅
+        bulletPos = new Vector2[1];
+        bulletPos[0] = new Vector2((float)(transform.position.x + 0.5), (float)(transform.position.y + 0.75));
+        //왼쪽 발사 포지션 세팅
+        bulletPos2 = new Vector2[1];
+        bulletPos2[0] = new Vector2((float)(transform.position.x - 0.5), (float)(transform.position.y + 0.75));
+    }
+    //총알 발사 코루틴
+    IEnumerator UpDiagonalFire(Vector2[] bulletPositions)
+    {
+        isFiring = true; // 코루틴이 시작되면 플래그를 설정합니다.
+        for (int i = 0; i < bulletPositions.Length; i++)
+        {
+            if (!Input.GetKey(KeyCode.X)) // X 키가 눌리지 않았다면
+            {
+                break; // 코루틴을 종료합니다.
+            }
+            Instantiate(shot1Prefab, bulletPositions[i], Quaternion.identity);
+            yield return new WaitForSeconds(0.2f); // 0.2초 대기
+        }
+        isFiring = false; // 코루틴이 끝나면 플래그를 초기화합니다.
+    }
+    public void UpDiagonalAttack()
+    {
+        if (isFiring) return; // 이미 발사 중이면 코루틴을 시작하지 않습니다.
+
+        if (transform.rotation.y >= 0)
+        {
+            Player.instance.bulletDirection = 1;
+            StartCoroutine(UpDiagonalFire(bulletPos));
+        }
+        else if (transform.rotation.y < 0)
+        {
+            Player.instance.bulletDirection = -1;
+            StartCoroutine(UpDiagonalFire(bulletPos2));
+        }
+    }
+    #endregion
+    #region 대각선아래 공격구현
+    public void DownDiagonalBullet()
+    {
+        //오른쪽 발사 포지션 세팅
+        bulletPos = new Vector2[1];
+        bulletPos[0] = new Vector2((float)(transform.position.x + 0.5), (float)(transform.position.y));
+        //왼쪽 발사 포지션 세팅
+        bulletPos2 = new Vector2[1];
+        bulletPos2[0] = new Vector2((float)(transform.position.x - 0.5), (float)(transform.position.y));
+    }
+    //총알 발사 코루틴
+    IEnumerator DownDiagonalFire(Vector2[] bulletPositions)
+    {
+        isFiring = true; // 코루틴이 시작되면 플래그를 설정합니다.
+        for (int i = 0; i < bulletPositions.Length; i++)
+        {
+            if (!Input.GetKey(KeyCode.X)) // X 키가 눌리지 않았다면
+            {
+                break; // 코루틴을 종료합니다.
+            }
+            Instantiate(shot1Prefab, bulletPositions[i], Quaternion.identity);
+            yield return new WaitForSeconds(0.2f); // 0.2초 대기
+        }
+        isFiring = false; // 코루틴이 끝나면 플래그를 초기화합니다.
+    }
+    public void DownDiagonalAttack()
+    {
+        if (isFiring) return; // 이미 발사 중이면 코루틴을 시작하지 않습니다.
+
+        if (transform.rotation.y >= 0)
+        {
+            Player.instance.bulletDirection = 1;
+            StartCoroutine(DownDiagonalFire(bulletPos));
+        }
+        else if (transform.rotation.y < 0)
+        {
+            Player.instance.bulletDirection = -1;
+            StartCoroutine(DownDiagonalFire(bulletPos2));
+        }
+    }
+    #endregion
+    #region 아래로공격
+    public void DownBullet()
+    {
+        //오른쪽 발사 포지션 세팅
+        bulletPos = new Vector2[1];
+        bulletPos[0] = new Vector2((float)(transform.position.x + 0.5), (float)(transform.position.y + 0.35));
+        //왼쪽 발사 포지션 세팅
+        bulletPos2 = new Vector2[1];
+        bulletPos2[0] = new Vector2((float)(transform.position.x - 0.5), (float)(transform.position.y + 0.35));
+    }
+    //총알 발사 코루틴
+    IEnumerator DownFire(Vector2[] bulletPositions)
+    {
+        isFiring = true; // 코루틴이 시작되면 플래그를 설정합니다.
+        for (int i = 0; i < bulletPositions.Length; i++)
+        {
+            if (!Input.GetKey(KeyCode.X)) // X 키가 눌리지 않았다면
+            {
+                break; // 코루틴을 종료합니다.
+            }
+            Instantiate(shot1Prefab, bulletPositions[i], Quaternion.identity);
+            yield return new WaitForSeconds(0.2f); // 0.2초 대기
+        }
+        isFiring = false; // 코루틴이 끝나면 플래그를 초기화합니다.
+    }
+    public void DownAttack()
+    {
+        if (isFiring) return; // 이미 발사 중이면 코루틴을 시작하지 않습니다.
+
+        if (transform.rotation.y >= 0)
+        {
+            Player.instance.bulletDirection = 1;
+            StartCoroutine(DownFire(bulletPos));
+        }
+        else if (transform.rotation.y < 0)
+        {
+            Player.instance.bulletDirection = -1;
+            StartCoroutine(DownFire(bulletPos2));
+        }
+    }
+    #endregion
+    #region c누른상태에서 아래공격
+    public void CDownBullet()
+    {
+        //오른쪽 발사 포지션 세팅
+        bulletPos = new Vector2[1];
+        bulletPos[0] = new Vector2((float)(transform.position.x + 0.2), (float)(transform.position.y - 0.5));
+        //왼쪽 발사 포지션 세팅
+        bulletPos2 = new Vector2[1];
+        bulletPos2[0] = new Vector2((float)(transform.position.x - 0.2), (float)(transform.position.y - 0.5));
+    }
+    //총알 발사 코루틴
+    IEnumerator CDownFire(Vector2[] bulletPositions)
+    {
+        isFiring = true; // 코루틴이 시작되면 플래그를 설정합니다.
+        for (int i = 0; i < bulletPositions.Length; i++)
+        {
+            if (!Input.GetKey(KeyCode.X)) // X 키가 눌리지 않았다면
+            {
+                break; // 코루틴을 종료합니다.
+            }
+            Instantiate(shot1Prefab, bulletPositions[i], Quaternion.identity);
+            yield return new WaitForSeconds(0.2f); // 0.2초 대기
+        }
+        isFiring = false; // 코루틴이 끝나면 플래그를 초기화합니다.
+    }
+    public void CDownAttack()
+    {
+        if (isFiring) return; // 이미 발사 중이면 코루틴을 시작하지 않습니다.
+
+        if (transform.rotation.y >= 0)
+        {
+            Player.instance.bulletDirection = 1;
+            StartCoroutine(CDownFire(bulletPos));
+        }
+        else if (transform.rotation.y < 0)
+        {
+            Player.instance.bulletDirection = -1;
+            StartCoroutine(CDownFire(bulletPos2));
+        }
+    }
+    #endregion
+
+    public void EnableCollider()
+    {
+        collider.enabled = true;
+    }
+
 }

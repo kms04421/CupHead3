@@ -9,6 +9,9 @@ TagManager:
   - PinkBossAtk
   - Obstacles
   - NPC
+  - PlayerAttack
+  - floor
+  - JumpObstacles
   layers:
   - Default
   - TransparentFX
