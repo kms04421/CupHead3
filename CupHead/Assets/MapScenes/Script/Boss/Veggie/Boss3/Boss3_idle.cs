@@ -111,7 +111,7 @@ public class Boss3_idle : MonoBehaviour
                         if (atkCount == 0)
                         {
                             audioSource.PlayOneShot(ringAudio);
-                            target = FindObjectOfType<Test>().transform; // 타겟 포지션
+                            target = FindObjectOfType<Player>().transform; // 타겟 포지션
                             targetPos = new Vector2(target.position.x, target.position.y); // 타겟 위치 저장
 
                             charge.SetActive(true);

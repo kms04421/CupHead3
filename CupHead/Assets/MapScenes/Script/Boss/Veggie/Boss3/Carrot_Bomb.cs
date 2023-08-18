@@ -29,7 +29,7 @@ public class Carrot_Bomb : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        target = FindObjectOfType<Test>().transform;
+        target = FindObjectOfType<Player>().transform;
 
         Vector2 directionToTarget = (target.position - transform.position);
 
