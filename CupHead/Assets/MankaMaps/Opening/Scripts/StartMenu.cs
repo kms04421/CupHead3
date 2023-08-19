@@ -4,21 +4,15 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using UnityEditor;
+
 public class StartMenu : MonoBehaviour
 {
     //새게임텍스트 오브젝트
     public GameObject Create1;
     public GameObject Create2;
     public GameObject Create3;
-    //기존게임텍스트 오브젝트
-    public GameObject Ex1;
-    public GameObject Ex2;
-    public GameObject Ex3;
-    //기존게임텍스트 수정하기위한 변수
-    public TMP_Text ExText1;
-    public TMP_Text ExText2;
-    public TMP_Text ExText3;
-    //슬롯 빨간색컬러
+    //슬롯 빨간색컬러 이미지
     public GameObject Slot1Color;
     public GameObject Slot2Color;
     public GameObject Slot3Color;
@@ -26,18 +20,14 @@ public class StartMenu : MonoBehaviour
     public GameObject Slot1ColorMug;
     public GameObject Slot2ColorMug;
     public GameObject Slot3ColorMug;
-    //슬롯 컵헤드 비선택
-    public GameObject Slot1CupHead;
-    public GameObject Slot2CupHead;
-    public GameObject Slot3CupHead;
     //슬롯 머그컵 비선택
     public GameObject Slot1CupMug;
     public GameObject Slot2CupMug;
     public GameObject Slot3CupMug;
-    //슬롯 플레이 선택 텍스트
-    public GameObject Slot1choice;
-    public GameObject Slot2choice;
-    public GameObject Slot3choice;
+    //슬롯 컵헤드 비선택
+    public GameObject Slot1CupHead;
+    public GameObject Slot2CupHead;
+    public GameObject Slot3CupHead;
     //슬롯 컵헤드선택
     public GameObject Slot1CupHeadChoice;
     public GameObject Slot2CupHeadChoice;
@@ -46,7 +36,7 @@ public class StartMenu : MonoBehaviour
     public GameObject Slot1CupMugChoice;
     public GameObject Slot2CupMugChoice;
     public GameObject Slot3CupMugChoice;
-    //슬롯들어갔는지 확인용 변수
+    //1~3슬롯들어갔는지 확인용 변수
     private bool isEnter1 =false;
     private bool isEnter2 =false;
     private bool isEnter3 =false;
@@ -57,8 +47,8 @@ public class StartMenu : MonoBehaviour
     private int choiceNum2;
     private int choiceNum3;
     //메뉴 체크
-    private bool isMenu;
-    private bool isChoice;
+    private bool isMenu; // 메뉴 선택 화면인지
+    private bool isSlotChoice; // 슬롯 선택 화면인지
     //프롤로그 오브젝트
     public GameObject Prologue;
     /*public GameObject choice1;
@@ -73,17 +63,52 @@ public class StartMenu : MonoBehaviour
         choiceNum2 = 0;
         choiceNum3 = 0;
         isMenu = true;
-        isChoice = false;
+        isSlotChoice = false;
 
     }
 
     // Update is called once per frame
     void Update()
     {
-        Debug.LogFormat("{0},{1},{2}", isEnter1, isEnter2, isEnter3);
-        #region 커서이동
-        if (Input.GetKeyDown(KeyCode.DownArrow))
+
+        #region 씬창으로 입장하기
+        if (isSlotChoice == true && isMenu == false && isEnter1)
         {
+            if (choiceNum1 == 0 && Input.GetKeyDown(KeyCode.Z))
+            {//컵헤드가 활성화 된 상태일때 입장
+                EnterGameAnimator(Slot1CupHeadChoice);
+                Invoke("EnterGame",1.0f);
+            }
+            if (choiceNum1 == 1 && Input.GetKeyDown(KeyCode.Z))
+            {//머크컵이 활성화 된 상태일때 입장
+            }
+        }
+        if (isSlotChoice == true && isMenu == false && isEnter2)
+        {
+            if (choiceNum2 == 0 && Input.GetKeyDown(KeyCode.Z))
+            {//컵헤드가 활성화 된 상태일때 입장
+                EnterGameAnimator(Slot1CupHeadChoice);
+                Invoke("EnterGame", 1.0f);
+            }
+            if (choiceNum2 == 1 && Input.GetKeyDown(KeyCode.Z))
+            {//머크컵이 활성화 된 상태일때 입장
+            }
+        }
+        if (isSlotChoice == true && isMenu == false && isEnter3)
+        {
+            if (choiceNum3 == 0 && Input.GetKeyDown(KeyCode.Z))
+            {//컵헤드가 활성화 된 상태일때 입장
+                EnterGameAnimator(Slot1CupHeadChoice);
+                Invoke("EnterGame", 1.0f);
+            }
+            if (choiceNum3 == 1 && Input.GetKeyDown(KeyCode.Z))
+            {//머크컵이 활성화 된 상태일때 입장
+            }
+        }
+        #endregion
+        #region 커서이동 // 키보드 입력 up과 down을 받을때마다 cursorNum의 값에 변화를줌
+        if (Input.GetKeyDown(KeyCode.DownArrow))
+        {  //
             if (isEnter1 == false && isEnter2 == false && isEnter3 == false)
             {
                 cursorNum++;
@@ -106,7 +131,7 @@ public class StartMenu : MonoBehaviour
                 }
             }
         }
-
+        //cursorNum의 값이 변함에따라서 메뉴 텍스트들의 색깔이 달라짐
         if(cursorNum == 0)
         {
             Slot1Color.SetActive(true);
@@ -148,82 +173,85 @@ public class StartMenu : MonoBehaviour
         */
         #endregion
 
-        #region 슬롯선택
-        if(cursorNum == 0&& Input.GetKeyDown(KeyCode.Return))
-        {
-            isChoice = true;
-            isMenu = false;
-            isEnter1 = true;
-            Slot1choice.SetActive(true);
-            Slot1CupHead.SetActive(true);
-            Slot1CupMug.SetActive(true);
+        #region 슬롯선택해서 캐릭터 창 들어가기
+        if(cursorNum == 0&& Input.GetKeyDown(KeyCode.Z))
+        { 
+            isSlotChoice = true;                                    //슬롯선택화면인지 체크하는 변수 true
+            isMenu = false;                                         //메뉴선택화면인지 체크하는 변수 false
+            isEnter1 = true;                                        //슬롯1에 들어갔는 체크하는 변수 true
+            //Slot1choice.SetActive(true);
+            Slot1CupHead.SetActive(true);                           //슬롯1컵헤드의 비선택이미지 오브젝트 활성화
+            Slot1CupMug.SetActive(true);                            //슬롯1머그컵의 비선택이미지 오브젝트 활성화
         }
-        else if(cursorNum == 1 && Input.GetKeyDown(KeyCode.Return))
+        else if(cursorNum == 1 && Input.GetKeyDown(KeyCode.Z))
         {
-            isChoice = true;
-            isMenu = false;
-            isEnter2 = true;
-            Slot2choice.SetActive(true);
-            Slot2CupHead.SetActive(true);
-            Slot2CupMug.SetActive(true);
+            isSlotChoice = true;                                    //슬롯선택화면인지 체크하는 변수 true
+            isMenu = false;                                         //메뉴선택화면인지 체크하는 변수 false
+            isEnter2 = true;                                        //슬롯2에 들어갔는 체크하는 변수 true
+            //Slot2choice.SetActive(true);                              
+            Slot2CupHead.SetActive(true);                           //슬롯2컵헤드의 비선택이미지 오브젝트 활성화
+            Slot2CupMug.SetActive(true);                            //슬롯2머그컵의 비선택이미지 오브젝트 활성화
         }
-        else if(cursorNum == 2 && Input.GetKeyDown(KeyCode.Return))
+        else if(cursorNum == 2 && Input.GetKeyDown(KeyCode.Z))
         {
-            isChoice= true;
-            isMenu = false;
-            isEnter3 = true;
-            Slot3choice.SetActive(true);
-            Slot3CupHead.SetActive(true);
-            Slot3CupMug.SetActive(true);
+            isSlotChoice= true;                                     //슬롯선택화면인지 체크하는 변수 true
+            isMenu = false;                                         //메뉴선택화면인지 체크하는 변수 false
+            isEnter3 = true;                                        //슬롯3에 들어갔는 체크하는 변수 true
+            //Slot3choice.SetActive(true);
+            Slot3CupHead.SetActive(true);                           //슬롯3컵헤드의 비선택이미지 오브젝트 활성화
+            Slot3CupMug.SetActive(true);                            //슬롯3머그컵의 비선택이미지 오브젝트 활성화
         }
         #endregion
 
         #region 슬롯나가기
         if(cursorNum ==0 && isEnter1 == true && Input.GetKeyDown(KeyCode.Escape))
         {
-            isChoice = false;
-            isEnter1 = false;
-            Slot1choice.SetActive(false);
+            isSlotChoice = false;                                   //슬롯선택화면인지를 체크하는변수 false
+            isEnter1 = false;                                       //슬롯1에 들어갔는지 체크하는 변수 false
+            //Slot1choice.SetActive(false);
+            //슬롯 1의 모든 오브젝트를 비활성화
             Slot1CupHead.SetActive(false);
             Slot1CupMug.SetActive(false);
             Slot1ColorMug.SetActive(false);
             Slot1Color.SetActive(false);
             Slot1CupMugChoice.SetActive(false);
             Slot1CupHeadChoice.SetActive(false);
-            Invoke("ExitChoice", 1f);
+            Invoke("ExitChoice", 1f);                               //ExitChoice를 1초 늦게실행해서 한번에 슬롯선택화면도 나가지않게만듬
 
         }
         else if(cursorNum == 1 && isEnter2 == true && Input.GetKeyDown(KeyCode.Escape))
         {
-            isChoice = false;
+            isSlotChoice = false;
             isEnter2 = false;
-            Slot2choice.SetActive(false);
+            //Slot2choice.SetActive(false);
+            //슬롯 2의 모든 오브젝트를 비활성화
             Slot2CupHead.SetActive(false);
             Slot2CupMug.SetActive(false);
             Slot2ColorMug.SetActive(false);
             Slot2Color.SetActive(false);
             Slot2CupMugChoice.SetActive(false);
             Slot2CupHeadChoice.SetActive(false);
-            Invoke("ExitChoice", 1f);
+            Invoke("ExitChoice", 1f);                               //ExitChoice를 1초 늦게실행해서 한번에 슬롯선택화면도 나가지않게만듬
         }
         else if(cursorNum == 2 && isEnter3 == true && Input.GetKeyDown(KeyCode.Escape))
         {
-            isChoice = false;
+            isSlotChoice = false;
             isEnter3 = false;
-            Slot3choice.SetActive(false);
+            //슬롯 3의 모든 오브젝트를 비활성화
+            //Slot3choice.SetActive(false);
             Slot3CupHead.SetActive(false);
             Slot3CupMug.SetActive(false);
             Slot3ColorMug.SetActive(false);
             Slot3Color.SetActive(false);
             Slot3CupMugChoice.SetActive(false);
             Slot3CupHeadChoice.SetActive(false);
-            Invoke("ExitChoice", 1f);
+            Invoke("ExitChoice", 1f);                               //ExitChoice를 1초 늦게실행해서 한번에 슬롯선택화면도 나가지않게만듬
         }
         #endregion
 
         #region 캐릭터 선택하는 커서이동하기 
         if (cursorNum ==0 && isEnter1 == true && Input.GetKeyDown(KeyCode.LeftArrow))
-        {
+        { // 캐릭터 선택 슬롯 창에서 키보드 입력값에 따라서 choiceNum 의 값을 바꿈 
             choiceNum1--;
             if( choiceNum1 == -1)
             {
@@ -274,16 +302,20 @@ public class StartMenu : MonoBehaviour
 
         #region 캐릭선택 커서이동에 따른 변경
         if (cursorNum == 0 && isEnter1 == true)
-        {
+        {//curorNum이 0 이면서 isEnter1 가 true 인경우 즉 첫번쨰 슬롯에 들어가서 캐릭터를 선택할떄
             if(choiceNum1 ==0)
-            {
+            {//choiceNum이 0 일경우 커서가 왼쪽이여서  slot1의 컵헤드 오브젝트들을 활성화
+                Slot1CupHead.SetActive(true);
+                Slot1CupMug.SetActive(false);
                 Slot1Color.SetActive(true);
                 Slot1ColorMug.SetActive(false);
                 Slot1CupHeadChoice.SetActive(true);
                 Slot1CupMugChoice.SetActive(false);
             }
             else if(choiceNum1 ==1)
-            {
+            {//choiceNum이 0 일경우 커서가 오른쪽이여서  slot1의 머그컵 오브젝트들을 활성화
+                Slot1CupHead.SetActive(false);
+                Slot1CupMug.SetActive(true);
                 Slot1Color.SetActive(false);
                 Slot1ColorMug.SetActive(true);
                 Slot1CupHeadChoice.SetActive(false);
@@ -294,6 +326,8 @@ public class StartMenu : MonoBehaviour
         {
             if (choiceNum2 == 0)
             {
+                Slot2CupMug.SetActive(false);
+                Slot2CupHead.SetActive(true);
                 Slot2Color.SetActive(true);
                 Slot2ColorMug.SetActive(false);
                 Slot2CupHeadChoice.SetActive(true);
@@ -301,6 +335,8 @@ public class StartMenu : MonoBehaviour
             }
             else if (choiceNum2 == 1)
             {
+                Slot2CupMug.SetActive(true);
+                Slot2CupHead.SetActive(false);
                 Slot2Color.SetActive(false);
                 Slot2ColorMug.SetActive(true);
                 Slot2CupHeadChoice.SetActive(false);
@@ -311,6 +347,8 @@ public class StartMenu : MonoBehaviour
         {
             if (choiceNum3 == 0)
             {
+                Slot3CupMug.SetActive(false);
+                Slot3CupHead.SetActive(true);
                 Slot3Color.SetActive(true);
                 Slot3ColorMug.SetActive(false);
                 Slot3CupHeadChoice.SetActive(true);
@@ -318,6 +356,8 @@ public class StartMenu : MonoBehaviour
             }
             else if (choiceNum3 == 1)
             {
+                Slot3CupMug.SetActive(true);
+                Slot3CupHead.SetActive(false);
                 Slot3Color.SetActive(false);
                 Slot3ColorMug.SetActive(true);
                 Slot3CupHeadChoice.SetActive(false);
@@ -327,13 +367,14 @@ public class StartMenu : MonoBehaviour
         #endregion
 
         #region 캐릭터 슬롯 선택창 나가기
-        if(isEnter1 ==false && isEnter2 == false && isEnter3 ==false && isChoice ==false 
+        if (isEnter1 ==false && isEnter2 == false && isEnter3 ==false && isSlotChoice ==false 
             && isMenu ==true&& Input.GetKeyDown(KeyCode.Escape))
         {
             gameObject.SetActive(false);
 
         }
         #endregion
+
     }
 
     public void Slot(int number)
@@ -351,14 +392,29 @@ public class StartMenu : MonoBehaviour
     {
         Prologue.SetActive(true);
     }
-    public void GoGame()
+    public void EnterGame()
     {
-        //DataManager.dataInstance.playerData.progress =
         SceneManager.LoadScene("CupHead");
     }
-
     public void ExitChoice()
     {
         isMenu = true;
+    }
+
+    public void EnterGameAnimator(GameObject gameObject)
+    {
+        if (gameObject != null)
+        {
+            Animator targetAnimator = gameObject.GetComponent<Animator>(); // 애니메이터 컴포넌트 가져오기
+
+            if (targetAnimator != null)
+            {
+                targetAnimator.enabled = true; // 애니메이터 활성화/비활성화
+            }
+            else
+            {
+                Debug.LogError("해당 오브젝트에 Animator 컴포넌트가 없습니다.");
+            }
+        }
     }
 }
