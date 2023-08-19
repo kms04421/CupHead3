@@ -151,6 +151,12 @@ public class Tallfrog_FireFly : MonoBehaviour
            StartCoroutine(ObjAnimator());
             
         }
+        if (collision.tag.Equals("PlayerAttack"))
+        {
+            animator.SetBool("Die", true);
+            StartCoroutine(ObjAnimator());
+
+        }
     }
     private IEnumerator ObjAnimator()
     {

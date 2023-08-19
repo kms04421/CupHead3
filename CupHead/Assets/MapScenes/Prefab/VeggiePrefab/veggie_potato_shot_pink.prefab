@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 2762507670322133609}
   m_Layer: 0
   m_Name: veggie_potato_shot_pink
-  m_TagString: Boss
+  m_TagString: PinkBossAtk
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

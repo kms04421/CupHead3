@@ -11,6 +11,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: shortfrog_fist_p
       objectReference: {fileID: 0}
+    - target: {fileID: 695410016553636400, guid: b93854f17ba32454dacd9101a29ff474, type: 3}
+      propertyPath: m_TagString
+      value: PinkBossAtk
+      objectReference: {fileID: 0}
     - target: {fileID: 695410016553636429, guid: b93854f17ba32454dacd9101a29ff474, type: 3}
       propertyPath: m_RootOrder
       value: 0

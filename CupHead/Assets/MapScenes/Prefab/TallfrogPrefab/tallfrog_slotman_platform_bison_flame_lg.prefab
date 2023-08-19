@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 5202844632824927206}
   m_Layer: 0
   m_Name: tallfrog_slotman_platform_bison_flame_lg
-  m_TagString: Untagged
+  m_TagString: BossAtk
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -72,7 +72,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 510439895
-  m_SortingLayer: 5
+  m_SortingLayer: 0
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 66525d80e51d45d43b71a5e7f42587a5, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}

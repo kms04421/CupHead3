@@ -77,7 +77,6 @@ public class Tallfrog : MonoBehaviour
                 if (allAtkCount < 3)
                 {
                
-
                     animator.SetBool("Atk", true);
 
                     AnimatorStateInfo stateInfoAtk = animator.GetCurrentAnimatorStateInfo(0);
@@ -167,7 +166,13 @@ public class Tallfrog : MonoBehaviour
    
     private void Tallfrog_fireflyAtk() //ºÒ ¹ú·¡ »ý¼º
     {
-
+        for (int i = 0; i < fireflyList.Count; i++)
+        {
+            if (!fireflyList[i].activeSelf)
+            {
+                fireflyList[i].transform.position = new Vector3(transform.position.x - 3, transform.position.y + 3, 0);
+            }
+        }
         StartCoroutine(fireflySp());
      
     }
@@ -236,6 +241,7 @@ public class Tallfrog : MonoBehaviour
         if(collision.tag.Equals("PlayerAttack"))
         {
             BossManager.instance.BossHpMinus();
+          
         }
     }
 

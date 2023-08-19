@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 8035180545626170328}
   m_Layer: 0
   m_Name: shorfrog_clap_ball
-  m_TagString: Untagged
+  m_TagString: BossAtk
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

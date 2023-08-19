@@ -12,6 +12,9 @@ TagManager:
   - PlayerAttack
   - floor
   - JumpObstacles
+  - Wall
+  - Farring
+  - Test
   layers:
   - Default
   - TransparentFX
@@ -51,4 +54,19 @@ TagManager:
     locked: 0
   - name: UI
     uniqueID: 1474511511
+    locked: 0
+  - name: TallFrog
+    uniqueID: 256533245
+    locked: 0
+  - name: ShotFrog
+    uniqueID: 3996240079
+    locked: 0
+  - name: BackObj
+    uniqueID: 4013352283
+    locked: 0
+  - name: TopObj
+    uniqueID: 1637886069
+    locked: 0
+  - name: Player
+    uniqueID: 3579692787
     locked: 0

@@ -1,16 +1,9 @@
-using System;
+
+using Cinemachine;
 using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
-using System.Threading;
-using Unity.Mathematics;
-using Unity.VisualScripting;
 using UnityEditor;
-using UnityEditor.Experimental.GraphView;
 using UnityEngine;
-using UnityEngine.UIElements;
-using Cinemachine;
 
 public class Player : MonoBehaviour
 {
@@ -20,11 +13,25 @@ public class Player : MonoBehaviour
 
     //공격 프리팹
     public GameObject shot1Prefab;
+    //저장 오브젝트
+    public GameObject saveObj = default;
+    //공격 리스트 
+    private List<GameObject> shot1PrefabList;
+    //공격 딜레이용
+    private float bulletAtkTime = 0f;
+
     private Vector2[] bulletPos;
     private Vector2[] bulletPos2;
     public float bulletDirection;
     public AnimatorStateInfo stateInfo;
     public int bulletMode;
+
+    //좌우 체크
+    private bool MoveRight = false;
+    private bool MoveLeft = false;
+    //보는 방향
+    private bool LRChk = false;
+
     //총알이 발사중인지 확인하는변수
     private bool isFiring = false;
     //이동 키 받는변수
@@ -66,9 +73,15 @@ public class Player : MonoBehaviour
     //점프
     private bool jumpChk = true;
     private int jumpCount = 0;
-    public float jumpForce = 10f;
+    private float jumpForce = 10f;
     private Rigidbody2D PR;
     private Animator animator;
+
+    private float maxJumpTime = 1f; // 최대 점프 시간
+
+    private bool isJumping = false;
+    private float jumpStartTime = 0f;
+    private float jumpEndTime = 0f;
 
     //시네머신카메라 오브젝트
     public CinemachineVirtualCamera virtualCamera;
@@ -82,6 +95,15 @@ public class Player : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        shot1PrefabList = new List<GameObject>();
+
+        for (int i = 0; i < 50; i++)
+        {
+            saveObj = Instantiate(shot1Prefab);
+            shot1PrefabList.Add(saveObj);
+            shot1PrefabList[i].SetActive(false);
+        }
+
         PR = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
         instance = this;
@@ -94,26 +116,183 @@ public class Player : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        #region 점프동작
-        if (Input.GetKeyDown(KeyCode.Z) && jumpChk && jumpCount == 0 && !(stateInfo.IsName("CupHeadDown") || stateInfo.IsName("CupHeadDownIdle")))
+         // 2023 08 19 ssm 
+
+        if (Input.GetKeyDown(KeyCode.LeftArrow))
         {
-            jumpCount++;
-            jumpChk = false;
-            PR.velocity = new Vector2(PR.velocity.x, jumpForce);
+            MoveLeft = true;
+            LRChk = true; // 왼 쪽 true 오른쪾 false
+
+        }
+        if (Input.GetKeyUp(KeyCode.LeftArrow))
+        {
+            MoveLeft = false;
+        }
+
+
+
+        if (Input.GetKeyDown(KeyCode.RightArrow))
+        {
+            LRChk = false;
+            MoveRight = true;
+
+        }
+        if (Input.GetKeyUp(KeyCode.RightArrow))
+        {
+            MoveRight = false;
+        }
+
+        bulletAtkTime += Time.deltaTime;
+        if (Input.GetKey(KeyCode.X))
+        {
+
+            if (isDash == false)
+            {
+
+                Debug.Log("isUp :" + isUp);
+                Debug.Log("LRChk :" + LRChk);
+                if (bulletAtkTime > 0.2f)
+                {
+                    bulletAtkTime = 0f;
+                    for (int i = 0; i < shot1PrefabList.Count; i++)
+                    {
+                        if (!shot1PrefabList[i].activeSelf)
+                        {
+                            float Ynum = Random.Range(-0.1f, 0.3f);
+                            float Xnum = Random.Range(-0.1f, 0.3f);
+                            shot1PrefabList[i].SetActive(true);
+
+                            float jumpPlu = 0f;
+                            if (jumpChk == false) //위에 볼때 체크
+                            {
+                                jumpPlu = 1f;
+                            }
+
+                            if (LRChk) // 왼쪽 오른쪽 체크 
+                            {
+
+
+                                shot1PrefabList[i].transform.position = new Vector3(transform.position.x - 0.7f, transform.position.y + (1.3f + Ynum) - jumpPlu, 0);
+                                shot1PrefabList[i].transform.eulerAngles = new Vector3(0, 0, 180);
+                            }
+                            else
+                            {
+
+                                shot1PrefabList[i].transform.position = new Vector3(transform.position.x + 0.7f, transform.position.y + (1.3f + Ynum) - jumpPlu, 0);
+
+                                shot1PrefabList[i].transform.eulerAngles = new Vector3(0, 0, 0);
+                            }
+
+
+
+
+
+                            if (isUp && jumpChk) //위에 볼때 체크
+                            {
+                                if (LRChk)
+                                {
+                                    shot1PrefabList[i].transform.position = new Vector3(transform.position.x - (0.3f + Xnum), transform.position.y + 3f, 0);
+                                }
+                                else
+                                {
+                                    shot1PrefabList[i].transform.position = new Vector3(transform.position.x + (0.3f + Xnum), transform.position.y + 3f, 0);
+                                }
+                                shot1PrefabList[i].transform.eulerAngles = new Vector3(0, 0, 90);
+                            }
+                            if (MoveRight && isUp && jumpChk)//대각 공격
+                            {
+                                shot1PrefabList[i].transform.position = new Vector3(transform.position.x + (0.7f + Xnum), transform.position.y + 2f, 0);
+                                shot1PrefabList[i].transform.eulerAngles = new Vector3(0, 0, 45);
+                            }
+                            if (MoveLeft && isUp && jumpChk)//대각 공격
+                            {
+                                shot1PrefabList[i].transform.position = new Vector3(transform.position.x - (0.7f + Xnum), transform.position.y + 2f, 0);
+                                shot1PrefabList[i].transform.eulerAngles = new Vector3(0, 0, 135);
+                            }
+
+                            if (isDown && jumpChk && isAim) //하단에 볼때 체크
+                            {
+                                if (LRChk)
+                                {
+                                    shot1PrefabList[i].transform.position = new Vector3(transform.position.x - (0.3f + Xnum), transform.position.y , 0);
+                                }
+                                else
+                                {
+                                    shot1PrefabList[i].transform.position = new Vector3(transform.position.x + (0.3f + Xnum), transform.position.y - 3f, 0);
+                                }
+                                shot1PrefabList[i].transform.eulerAngles = new Vector3(0, 0, 270);
+                            }
+
+
+                            if (MoveRight && isDown && jumpChk && isAim)//오른 대각
+                            {
+                                shot1PrefabList[i].transform.position = new Vector3(transform.position.x + (0.8f + Xnum), transform.position.y +0.5f, 0);
+                                shot1PrefabList[i].transform.eulerAngles = new Vector3(0, 0, 315);
+                            }
+
+
+                            if (MoveLeft && isDown && jumpChk && isAim)//왼쪽 대각
+                            {
+                                shot1PrefabList[i].transform.position = new Vector3(transform.position.x - (0.8f + Xnum), transform.position.y + 0.7f, 0);
+                                shot1PrefabList[i].transform.eulerAngles = new Vector3(0, 0, 225);
+                            }
+                            break;
+                        }
+                    }
+                }
+
+
+            }
+        }
+        //jumpEndTime
+        if (Input.GetKeyDown(KeyCode.Z) && jumpChk && !(stateInfo.IsName("CupHeadDown") || stateInfo.IsName("CupHeadDownIdle")))
+        {
             animator.SetTrigger("jump");
             animator.SetBool("isGround", false);
+            Debug.Log(jumpChk);
         }
+
+
+        #region 점프동작
+        if (Input.GetKey(KeyCode.Z) && jumpChk  && !(stateInfo.IsName("CupHeadDown") || stateInfo.IsName("CupHeadDownIdle")))
+        {
+         
+          jumpEndTime += Time.deltaTime;
+
+            if (jumpEndTime > 0.2f)
+            {
+                PR.velocity = new Vector2(dirX * speed, PR.velocity.y);
+            }
+            else
+            {
+                
+                Debug.Log("z");
+              
+                PR.velocity = new Vector3(dirX * speed, 16f);
+            }
+        }
+        if(Input.GetKeyUp(KeyCode.Z))
+        {
+            jumpChk = false;
+            jumpEndTime = 0f;
+        }
+
+
+        
+
+        // 2023 08 19 ssm end
+
         #endregion
         if (isDead)
         {
             return;
         }
-/*
-        if(transform.position.x >= 0 && transform.position.x <= 68)
-        {
-            virtualCamera.gameObject.SetActive(true);
-        }
-        else { virtualCamera.gameObject.SetActive(false); }*/
+        /*
+                if(transform.position.x >= 0 && transform.position.x <= 68)
+                {
+                    virtualCamera.gameObject.SetActive(true);
+                }
+                else { virtualCamera.gameObject.SetActive(false); }*/
 
         #region 위를올려다보는동작
         if (Input.GetKeyDown(KeyCode.UpArrow))
@@ -159,22 +338,25 @@ public class Player : MonoBehaviour
         {
             animator.SetBool("diagonal", true);
         }
-        else
+        else 
         {
             animator.SetBool("diagonal", false);
         }
         #endregion
+
         #region 대각선아래 동작
         //대각선 아래 동작
         if (isDown == true && Mathf.Abs(dirX) > 0)
+      
         {
             animator.SetBool("downdiagonal", true);
         }
-        else
+        else 
         {
             animator.SetBool("downdiagonal", false);
         }
         #endregion
+
         #region 조준동작
         if (Input.GetKey(KeyCode.C))
         {
@@ -231,7 +413,11 @@ public class Player : MonoBehaviour
         if ((!(isDown == true || isUp == true || isAim == true || isDash == true || isGround == false) && !isAttack)
             || (isDown == false && isAim == false && isDash == false && isAttack) || (isDown == true && isAim == false && isDash == false && isAttack))
         {
-            PR.velocity = new Vector2(dirX * speed, PR.velocity.y);
+            if (!isDown)
+            {
+                PR.velocity = new Vector2(dirX * speed, PR.velocity.y);
+            }
+           
 
             if (dirX > 0)
             {
@@ -248,50 +434,79 @@ public class Player : MonoBehaviour
 
         }
         #endregion
-        #region 공격구현
-        if (Input.GetKey(KeyCode.X))
-        {
-            if (isDash == false)
-            {
-                if (stateInfo.IsName("CupHead_Shot_Down"))
-                {
-                    DownBullet();
-                    DownAttack();
-                    bulletMode = 1;
-                }
-                if (stateInfo.IsName("CupHead_Shot_Run") || stateInfo.IsName("CupHead_Aim_Shot"))
-                {
-                    NormalBullet();
-                    NormalAttack();
-                    bulletMode = 0;
-                }
-                if (stateInfo.IsName("CupHead_shot_Diagonal_Up") || stateInfo.IsName("CupHead_Aim_Shot_Diagonal_Up"))
-                {
-                    UpDiagonalBullet();
-                    UpDiagonalAttack();
-                    bulletMode = 3;
-                }
-                if (stateInfo.IsName("CupHead_Aim_Shot_Diagonal_Down"))
-                {
-                    DownDiagonalBullet();
-                    DownDiagonalAttack();
-                    bulletMode = 4;
-                }
-                if (stateInfo.IsName("CupHead_Aim_Shot_Up") || stateInfo.IsName("CupHead_Aim_Shot_Up 0"))
-                {
-                    UpBullet();
-                    UpAttack();
-                    bulletMode = 2;
-                }
-                if (stateInfo.IsName("CupHead_Aim_Shot_Down"))
-                {
-                    CDownBullet();
-                    CDownAttack();
-                    bulletMode = 5;
-                }
-            }
-        }
-        #endregion
+
+        /*  #region 공격구현
+          if (Input.GetKeyDown(KeyCode.X))
+          {
+
+              if (isDash == false)
+              {
+                  *//*if (stateInfo.IsName("CupHead_Shot_Down"))
+                  {
+                      DownBullet();
+                      DownAttack();
+                      bulletMode = 1;
+                  }
+                  if (stateInfo.IsName("CupHead_Shot_Run") || stateInfo.IsName("CupHead_Aim_Shot"))
+                  {
+                      NormalBullet();
+                      NormalAttack();
+                      bulletMode = 0;
+                  }
+                  if (stateInfo.IsName("CupHead_shot_Diagonal_Up") || stateInfo.IsName("CupHead_Aim_Shot_Diagonal_Up"))
+                  {
+                      UpDiagonalBullet();
+                      UpDiagonalAttack();
+                      bulletMode = 3;
+                  }
+                  if (stateInfo.IsName("CupHead_Aim_Shot_Diagonal_Down"))
+                  {
+                      DownDiagonalBullet();
+                      DownDiagonalAttack();
+                      bulletMode = 4;
+                  }
+                  if (stateInfo.IsName("CupHead_Aim_Shot_Up") || stateInfo.IsName("CupHead_Aim_Shot_Up 0"))
+                  {
+                      UpBullet();
+                      UpAttack();
+                      bulletMode = 2;
+                  }
+                  if (stateInfo.IsName("CupHead_Aim_Shot_Down"))
+                  {
+                      CDownBullet();
+                      CDownAttack();
+                      bulletMode = 5;
+                  }*//*
+                  Debug.Log("?");
+                  if (bulletAtkTime > 0.1f)
+                  {
+                      bulletAtkTime = 0f; 
+                      for (int i = 0; i < shot1PrefabList.Count; i++)
+                      {
+                          if (!shot1PrefabList[i].activeSelf)
+                          {
+                              shot1PrefabList[i].transform.position = new Vector3( transform.position.x+0.5f,transform.position.y,0);
+                              shot1PrefabList[i].SetActive(true);
+
+
+                              if (isUp) 
+                              {
+                                  transform.eulerAngles = new Vector3(0,0, 180);
+                              }
+                              if (MoveRight && isUp)
+                              {
+                                  transform.eulerAngles = new Vector3(0, 0, 45);
+                              }
+
+                               break;
+                          }
+                      }
+                  }
+
+
+              }
+          }
+          #endregion*/
         #region 대쉬에 사용되는 레이캐스트
         int layerMask = 1 << LayerMask.NameToLayer("Floor");
         Debug.DrawRay(transform.position, transform.right * MaxDistance, Color.blue, 4);
@@ -324,7 +539,7 @@ public class Player : MonoBehaviour
     #region 피격구현
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if ((collision.tag == "Boss" || collision.tag == "BossAtk") && isDead == false)
+        if ((collision.tag == "Boss" || collision.tag == "BossAtk" || collision.tag == "PinkBossAtk") && isDead == false)
         {
             Debug.LogFormat("들어오니?");
             life -= 1;
@@ -358,6 +573,15 @@ public class Player : MonoBehaviour
             collider = collision.collider.GetComponent<EdgeCollider2D>();
             isDownJump = true;
         }
+    }
+    private void OnCollisionStay2D(Collision2D collision)
+    {
+        if (collision.collider.tag.Equals("floor") || collision.collider.tag.Equals("Obstacles") || collision.collider.tag.Equals("JumpObstacles"))
+        {
+         
+            jumpChk = true;
+        }
+        
     }
     private void OnCollisionExit2D(Collision2D collision)
     {

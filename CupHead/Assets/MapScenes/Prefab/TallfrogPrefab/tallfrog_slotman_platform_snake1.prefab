@@ -83,6 +83,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: tallfrog_slotman_platform_snake
       objectReference: {fileID: 0}
+    - target: {fileID: 3250982192971559403, guid: 9adb0d859358401429ec6cefab1f639a, type: 3}
+      propertyPath: m_TagString
+      value: BossAtk
+      objectReference: {fileID: 0}
     - target: {fileID: 3724110670965576327, guid: 9adb0d859358401429ec6cefab1f639a, type: 3}
       propertyPath: m_RootOrder
       value: 0

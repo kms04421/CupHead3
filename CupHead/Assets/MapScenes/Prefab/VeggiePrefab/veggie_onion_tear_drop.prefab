@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: 1936226636004824825}
   m_Layer: 0
   m_Name: veggie_onion_tear_drop
-  m_TagString: Untagged
+  m_TagString: BossAtk
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

@@ -2,18 +2,19 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+
 public class Bullet : MonoBehaviour
 {
     private float speed = 15f;
     Rigidbody2D bulletRB;
     private float dirBullet;
-
+    private Transform playerPost;
     // Start is called before the first frame update
-    private void Awake()
+/*    private void Awake()
     {
         bulletRB = GetComponent<Rigidbody2D>();
         dirBullet = Player.instance.bulletDirection;
-        if (Player.instance.bulletMode == 0)
+      *//*  if (Player.instance.bulletMode == 0)
         {//일반달리기 와 일반쏘기
             if (dirBullet > 0)
             {
@@ -78,8 +79,8 @@ public class Bullet : MonoBehaviour
 
             bulletRB.velocity = transform.up * -1 * speed;
             transform.eulerAngles = new Vector3(0, 0, -90);
-        }
-    }
+        }*//*
+    }*/
     void Start()
     {
        
@@ -88,6 +89,7 @@ public class Bullet : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+
         /*  if (!Camera.main.orthographicSize.Equals(null))
           {
               if (Mathf.Abs(transform.position.x) > Camera.main.orthographicSize * Camera.main.aspect + 1 || Mathf.Abs(transform.position.y) > Camera.main.orthographicSize + 1)
@@ -96,15 +98,35 @@ public class Bullet : MonoBehaviour
               }
           }*/
 
-        Vector3 viewPos = Camera.main.WorldToViewportPoint(transform.position);
-        if (viewPos.x < 0 || viewPos.x > 1 || viewPos.y < 0 || viewPos.y > 1)
+        /* Vector3 viewPos = Camera.main.WorldToViewportPoint(transform.position);
+         if (viewPos.x < 0 || viewPos.x > 1 || viewPos.y < 0 || viewPos.y > 1)
+         {
+             Destroy(gameObject);
+         }*/
+
+
+        playerPost = FindObjectOfType<Player>().transform;
+        transform.Translate(Vector3.right * 10 * Time.deltaTime);
+        Vector3 bulletPos = transform.position - playerPost.position;
+        if (bulletPos.y > 20 || bulletPos.y < -20)
         {
-            Destroy(gameObject);
+            gameObject.SetActive(false);
+        }
+
+        if (bulletPos.x > 20 || bulletPos.x < -20)
+        {
+            gameObject.SetActive(false);
         }
     }
 
-    public void OnTriggerEnter(Collider other)
-    {
+    
 
+
+    public void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.tag.Equals("Boss"))
+        {
+            gameObject.SetActive(false);
+        }
     }
 }

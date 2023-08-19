@@ -9,7 +9,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 2023017486743990994, guid: 8ebe292856ce55146b88e1488b82c27d, type: 3}
       propertyPath: m_Name
-      value: tallfrog_slotman_platform_bison_flame_lg
+      value: tallfrog_slotman_platform_bison_flame_lg Variant
+      objectReference: {fileID: 0}
+    - target: {fileID: 2023017486743990994, guid: 8ebe292856ce55146b88e1488b82c27d, type: 3}
+      propertyPath: m_TagString
+      value: BossAtk
       objectReference: {fileID: 0}
     - target: {fileID: 7072090724497972664, guid: 8ebe292856ce55146b88e1488b82c27d, type: 3}
       propertyPath: m_RootOrder
