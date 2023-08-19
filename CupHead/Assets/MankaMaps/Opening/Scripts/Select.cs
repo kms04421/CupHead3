@@ -70,19 +70,19 @@ public class Select : MonoBehaviour
         }
         #endregion
 
-        if(cursorNum ==0 &&Input.GetKeyDown(KeyCode.Return))
+        if(cursorNum ==0 &&Input.GetKeyDown(KeyCode.Z))
         {
             startMenu.SetActive(true);
         }
-        if (cursorNum == 1 && Input.GetKeyDown(KeyCode.Return))
+        if (cursorNum == 1 && Input.GetKeyDown(KeyCode.Z))
         {
 
         }
-        if (cursorNum == 2 && Input.GetKeyDown(KeyCode.Return))
+        if (cursorNum == 2 && Input.GetKeyDown(KeyCode.Z))
         {
 
         }
-        if (cursorNum == 3 && Input.GetKeyDown(KeyCode.Return))
+        if (cursorNum == 3 && Input.GetKeyDown(KeyCode.Z))
         {
             Application.Quit();
         }
