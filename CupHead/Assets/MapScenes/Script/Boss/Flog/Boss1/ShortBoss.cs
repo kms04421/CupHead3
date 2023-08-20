@@ -34,8 +34,8 @@ public class ShortBoss : MonoBehaviour
         shortFrogList =new List<GameObject>();
         shortFrogVector = new Vector2[]
         {       
-            new Vector2(transform.position.x -3.5f,transform.position.y-2f),
-            new Vector2(transform.position.x -3.5f,transform.position.y-0.5f),
+            new Vector2(transform.position.x -3.5f,transform.position.y-1.7f),
+            new Vector2(transform.position.x -3.5f,transform.position.y-0.8f),
             new Vector2(transform.position.x -3.5f,transform.position.y+1f),
         };
         int p_shortFrog = Random.Range(0, 3);

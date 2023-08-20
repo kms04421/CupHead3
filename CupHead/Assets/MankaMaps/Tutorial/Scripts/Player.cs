@@ -12,6 +12,20 @@ public class Player : MonoBehaviour
     public AudioClip JumpClip;
     public AudioClip DeathClip;
 
+
+    //카메라 진동 
+ 
+    public float shakeMagnitude = 0.1f; // 진폭정도 
+    public Camera cameraTransform; // 카메라 Transform
+    private Vector3 originalPosition; // 원래 카메라 위치 
+    private float shakeTimer = 0.2f; // 진폭시간 
+    //피격여부 체크 
+    private bool charDam = false; //피격시 true
+
+    //무적상태 
+    private float invincibleTimer = 0f; // 무적 타이머
+    public float invincibilityDuration = 0.5f; // 무적 지속 시간
+    private bool isInvincible = false; // 무적 상태 여부
     //공격 프리팹
     public GameObject shot1Prefab;
     //저장 오브젝트
@@ -68,6 +82,10 @@ public class Player : MonoBehaviour
     private bool isDownJump;
     //다른 오브젝트의 콜린더
     private Collider2D collider;
+
+    //콜라이더 
+
+    private CapsuleCollider2D collider2D;
     // 땅에 닿기까지의 시간을 계산하는 변수
     protected float timer;
     protected float timeToFloor;
@@ -96,6 +114,8 @@ public class Player : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        originalPosition = cameraTransform.transform.position; // 원래 카메라 포지션 
+        collider2D = GetComponent<CapsuleCollider2D>();
         shot1PrefabList = new List<GameObject>();
 
         for (int i = 0; i < 50; i++)
@@ -117,6 +137,35 @@ public class Player : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (isDead)
+        {
+            PR.velocity = Vector3.zero;
+            transform.Translate(Vector3.up*3*Time.deltaTime);
+            collider2D.isTrigger = true;
+            return;
+        }
+        else
+        {
+            collider2D.isTrigger = false;
+        }
+        if (charDam)
+        {
+
+            CameraShake();
+            
+        }
+        Invincibility();
+
+        if(isDown)
+        {
+            collider2D.size = new Vector2(0.6f, 0.5f);
+
+        }
+        else
+        {
+            collider2D.size = new Vector2(0.6f, 1.1f);
+        }
+
         // 2023 08 19 ssm 
         if (Input.GetKeyDown(KeyCode.LeftArrow))
         {
@@ -252,7 +301,7 @@ public class Player : MonoBehaviour
         {
             animator.SetTrigger("jump");
             animator.SetBool("isGround", false);
-            Debug.Log(jumpChk);
+            Debug.Log(life);
         }
 
 
@@ -267,10 +316,7 @@ public class Player : MonoBehaviour
                 PR.velocity = new Vector2(movement.x * speed, PR.velocity.y);
             }
             else
-            {
-                
-                Debug.Log("z");
-              
+            {                          
                 PR.velocity = new Vector3(movement.x * speed, 16f);
             }
         }
@@ -286,10 +332,7 @@ public class Player : MonoBehaviour
         // 2023 08 19 ssm end
 
         #endregion
-        if (isDead)
-        {
-            return;
-        }
+       
         /*
                 if(transform.position.x >= 0 && transform.position.x <= 68)
                 {
@@ -476,15 +519,22 @@ public class Player : MonoBehaviour
     {
         if ((collision.tag == "Boss" || collision.tag == "BossAtk" || collision.tag == "PinkBossAtk") && isDead == false)
         {
-            Debug.LogFormat("들어오니?");
-            life -= 1;
-
-            if (life == 0)
+            if (!isInvincible) // 무적 상태
             {
-                Die();
+                Debug.LogFormat("들어오니?");
+                life -= 1;
+
+                invincibleTimer = 1f;
+
+                charDam = true;
+                if (life == 0)
+                {
+                    Die();
+                }
+                if (isDead == false)
+                    animator.SetTrigger("hit");
             }
-            if (isDead == false)
-                animator.SetTrigger("hit");
+           
         }
 
 
@@ -849,4 +899,37 @@ public class Player : MonoBehaviour
         collider.enabled = true;
     }
 
+    public void CameraShake()
+    {
+        if (shakeTimer > 0)
+        {
+           
+            Vector3 randomPosition = originalPosition + Random.insideUnitSphere * shakeMagnitude;
+
+            cameraTransform.transform.position = randomPosition;
+
+            
+            shakeTimer -= Time.deltaTime;
+        }
+        else
+        {
+            charDam = false;
+            shakeTimer = 0.2f;
+            cameraTransform.transform.position = originalPosition;
+        }
+    }
+    public void Invincibility()
+    {
+        invincibleTimer -= Time.deltaTime;
+
+        if(invincibleTimer > 0 )
+        {
+            isInvincible = true;
+        }
+        else
+        {
+            isInvincible = false;
+        }
+       
+    }
 }
