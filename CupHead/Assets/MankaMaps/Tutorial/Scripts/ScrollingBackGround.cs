@@ -20,11 +20,11 @@ public class ScrollingBackGround : MonoBehaviour
     {
         if (!((Player.instance.isBlocked == true) || (Player.instance.isAim == true)))
         {
-            if (Player.instance.dirX > 0)
+            if (Player.instance.movement.x > 0)
             {
                 transform.Translate(Vector2.right * speed * Time.deltaTime);
             }
-            if (Player.instance.dirX < 0)
+            if (Player.instance.movement.x < 0)
             {
                 
                 transform.Translate(Vector2.left * speed * Time.deltaTime);

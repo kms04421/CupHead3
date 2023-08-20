@@ -2,6 +2,7 @@
 using Cinemachine;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 
@@ -35,7 +36,7 @@ public class Player : MonoBehaviour
     //총알이 발사중인지 확인하는변수
     private bool isFiring = false;
     //이동 키 받는변수
-    public float dirX;
+    public Vector2 movement;
     //목숨
     private int life = 3;
     //이동속도
@@ -116,13 +117,11 @@ public class Player : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-         // 2023 08 19 ssm 
-
+        // 2023 08 19 ssm 
         if (Input.GetKeyDown(KeyCode.LeftArrow))
         {
             MoveLeft = true;
             LRChk = true; // 왼 쪽 true 오른쪾 false
-
         }
         if (Input.GetKeyUp(KeyCode.LeftArrow))
         {
@@ -135,17 +134,21 @@ public class Player : MonoBehaviour
         {
             LRChk = false;
             MoveRight = true;
-
         }
         if (Input.GetKeyUp(KeyCode.RightArrow))
         {
             MoveRight = false;
         }
+        stateInfo = animator.GetCurrentAnimatorStateInfo(0);
+        if (isDash == true && isDashing == false)
+        {
+            StartCoroutine(Dash(transform.position));
+        }
+
 
         bulletAtkTime += Time.deltaTime;
         if (Input.GetKey(KeyCode.X))
         {
-
             if (isDash == false)
             {
 
@@ -261,14 +264,14 @@ public class Player : MonoBehaviour
 
             if (jumpEndTime > 0.2f)
             {
-                PR.velocity = new Vector2(dirX * speed, PR.velocity.y);
+                PR.velocity = new Vector2(movement.x * speed, PR.velocity.y);
             }
             else
             {
                 
                 Debug.Log("z");
               
-                PR.velocity = new Vector3(dirX * speed, 16f);
+                PR.velocity = new Vector3(movement.x * speed, 16f);
             }
         }
         if(Input.GetKeyUp(KeyCode.Z))
@@ -297,8 +300,11 @@ public class Player : MonoBehaviour
         #region 위를올려다보는동작
         if (Input.GetKeyDown(KeyCode.UpArrow))
         {
-            isUp = true;
-            animator.SetBool("lookup", true);
+            //if (!(MoveLeft == true || MoveRight == true))
+            //{
+                isUp = true;
+                animator.SetBool("lookup", true);
+            //}
         }
         if (Input.GetKeyUp(KeyCode.UpArrow))
         {
@@ -334,7 +340,7 @@ public class Player : MonoBehaviour
         }
         #endregion
         #region 대각선 위 동작
-        if (isUp == true && Mathf.Abs(dirX) > 0)
+        if (isUp == true && Mathf.Abs(movement.x) > 0)
         {
             animator.SetBool("diagonal", true);
         }
@@ -346,7 +352,7 @@ public class Player : MonoBehaviour
 
         #region 대각선아래 동작
         //대각선 아래 동작
-        if (isDown == true && Mathf.Abs(dirX) > 0)
+        if (isDown == true && Mathf.Abs(movement.x) > 0)
       
         {
             animator.SetBool("downdiagonal", true);
@@ -393,6 +399,7 @@ public class Player : MonoBehaviour
 
     private void FixedUpdate()
     {
+
         if (isDead)
         {
             virtualCamera.enabled = false;
@@ -401,29 +408,26 @@ public class Player : MonoBehaviour
             transform.Translate(Vector3.up * speed * Time.deltaTime);
             return;
         }
-        stateInfo = animator.GetCurrentAnimatorStateInfo(0);
-        if (isDash == true && isDashing == false)
-        {
-            StartCoroutine(Dash(transform.position));
-        }
+
+     
 
         #region 이동구현
-        dirX = Input.GetAxis("Horizontal");
+        movement.x = Input.GetAxis("Horizontal");
+        movement.y = Input.GetAxis("Vertical");
 
-        if ((!(isDown == true || isUp == true || isAim == true || isDash == true || isGround == false) && !isAttack)
-            || (isDown == false && isAim == false && isDash == false && isAttack) || (isDown == true && isAim == false && isDash == false && isAttack))
+        if (isAim == false)
         {
             if (!isDown)
             {
-                PR.velocity = new Vector2(dirX * speed, PR.velocity.y);
+                PR.velocity = new Vector2(movement.x * speed, PR.velocity.y);
             }
-           
 
-            if (dirX > 0)
+
+            if (movement.x > 0)
             {
                 animator.SetBool("run", true);
             }
-            else if (dirX < 0)
+            else if (movement.x < 0)
             {
                 animator.SetBool("run", true);
             }
@@ -431,82 +435,13 @@ public class Player : MonoBehaviour
             {
                 animator.SetBool("run", false);
             }
-
         }
         #endregion
+        #region 움직임에따른 애니메이터 float설정
+        animator.SetFloat("Horizontal", movement.x);
+        animator.SetFloat("Vertical", movement.y);
+        #endregion
 
-        /*  #region 공격구현
-          if (Input.GetKeyDown(KeyCode.X))
-          {
-
-              if (isDash == false)
-              {
-                  *//*if (stateInfo.IsName("CupHead_Shot_Down"))
-                  {
-                      DownBullet();
-                      DownAttack();
-                      bulletMode = 1;
-                  }
-                  if (stateInfo.IsName("CupHead_Shot_Run") || stateInfo.IsName("CupHead_Aim_Shot"))
-                  {
-                      NormalBullet();
-                      NormalAttack();
-                      bulletMode = 0;
-                  }
-                  if (stateInfo.IsName("CupHead_shot_Diagonal_Up") || stateInfo.IsName("CupHead_Aim_Shot_Diagonal_Up"))
-                  {
-                      UpDiagonalBullet();
-                      UpDiagonalAttack();
-                      bulletMode = 3;
-                  }
-                  if (stateInfo.IsName("CupHead_Aim_Shot_Diagonal_Down"))
-                  {
-                      DownDiagonalBullet();
-                      DownDiagonalAttack();
-                      bulletMode = 4;
-                  }
-                  if (stateInfo.IsName("CupHead_Aim_Shot_Up") || stateInfo.IsName("CupHead_Aim_Shot_Up 0"))
-                  {
-                      UpBullet();
-                      UpAttack();
-                      bulletMode = 2;
-                  }
-                  if (stateInfo.IsName("CupHead_Aim_Shot_Down"))
-                  {
-                      CDownBullet();
-                      CDownAttack();
-                      bulletMode = 5;
-                  }*//*
-                  Debug.Log("?");
-                  if (bulletAtkTime > 0.1f)
-                  {
-                      bulletAtkTime = 0f; 
-                      for (int i = 0; i < shot1PrefabList.Count; i++)
-                      {
-                          if (!shot1PrefabList[i].activeSelf)
-                          {
-                              shot1PrefabList[i].transform.position = new Vector3( transform.position.x+0.5f,transform.position.y,0);
-                              shot1PrefabList[i].SetActive(true);
-
-
-                              if (isUp) 
-                              {
-                                  transform.eulerAngles = new Vector3(0,0, 180);
-                              }
-                              if (MoveRight && isUp)
-                              {
-                                  transform.eulerAngles = new Vector3(0, 0, 45);
-                              }
-
-                               break;
-                          }
-                      }
-                  }
-
-
-              }
-          }
-          #endregion*/
         #region 대쉬에 사용되는 레이캐스트
         int layerMask = 1 << LayerMask.NameToLayer("Floor");
         Debug.DrawRay(transform.position, transform.right * MaxDistance, Color.blue, 4);
@@ -518,11 +453,11 @@ public class Player : MonoBehaviour
         #region 좌우반전구현 
         if (isDash == false)
         {
-            if (dirX > 0)
+            if (movement.x > 0)
             {
                 transform.eulerAngles = new Vector3(0, 0, 0);
             }
-            else if (dirX < 0)
+            else if (movement.x < 0)
             {
                 transform.eulerAngles = new Vector3(0, 180, 0);
             }
