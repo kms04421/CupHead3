@@ -451,6 +451,10 @@ PrefabInstance:
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 8833587205327335452, guid: c235f108c99e13a4cbe7b2c97202de0e, type: 3}
+      propertyPath: ParryObj
+      value: 
+      objectReference: {fileID: 1713109093}
+    - target: {fileID: 8833587205327335452, guid: c235f108c99e13a4cbe7b2c97202de0e, type: 3}
       propertyPath: cameraTransform
       value: 
       objectReference: {fileID: 1881418672}
@@ -3355,6 +3359,57 @@ MonoBehaviour:
   BossHp: 70
   BossLv: 0
   ready: 0
+--- !u!1 &1656804208
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1656804209}
+  - component: {fileID: 1656804210}
+  m_Layer: 0
+  m_Name: GameManager_1
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1656804209
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1656804208}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -1.1431631, y: -0.7645084, z: -0.0030026212}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 10
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1656804210
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1656804208}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3d2a7ec5198665d40b58afcc27015fa9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  menu: {fileID: 1728129605}
+  menuList:
+  - {fileID: 426198622}
+  - {fileID: 2136583809}
+  - {fileID: 743695519}
+  - {fileID: 313367724}
+  hexColor: 413F3F
 --- !u!1 &1713109093
 GameObject:
   m_ObjectHideFlags: 0
@@ -3365,6 +3420,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1713109094}
   - component: {fileID: 1713109095}
+  - component: {fileID: 1713109096}
   m_Layer: 2
   m_Name: Parring
   m_TagString: Parring
@@ -3403,6 +3459,18 @@ CircleCollider2D:
   m_Offset: {x: 0.007288693, y: 0.013932039}
   serializedVersion: 2
   m_Radius: 0.68111646
+--- !u!114 &1713109096
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1713109093}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 29b331a83332f4a4eb4f717cb327f9a6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1728129605
 GameObject:
   m_ObjectHideFlags: 0

@@ -12,7 +12,13 @@ public class Player : MonoBehaviour
     public AudioClip JumpClip;
     public AudioClip DeathClip;
 
+    public GameObject ParryObj;
 
+    public bool parrySuccess = false;
+
+    private float DashTime = 1f;
+
+    private bool parryChk = false;
     //카메라 진동 
  
     public float shakeMagnitude = 0.1f; // 진폭정도 
@@ -54,7 +60,7 @@ public class Player : MonoBehaviour
     //목숨
     private int life = 3;
     //이동속도
-    public float speed = 4f;
+    public float speed = 7f;
     //생존상태
     private bool isDead = false;
     //막힘여부
@@ -92,7 +98,7 @@ public class Player : MonoBehaviour
 
 
     //레이 길이
-    public float rayDistance = 0.5f; // 레이 길이
+    public float rayDistance = 3f; // 레이 길이
 
     private CapsuleCollider2D collider2D;
     // 땅에 닿기까지의 시간을 계산하는 변수
@@ -161,6 +167,7 @@ public class Player : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+
         if (isDead)
         {
             PR.velocity = Vector3.zero;
@@ -187,7 +194,14 @@ public class Player : MonoBehaviour
             return;
 
         }
-
+        
+        if (parrySuccess)
+        {
+            
+           
+            transform.Translate(Vector3.up * 10 * Time.deltaTime);
+            parrySuccess = false;
+        }
    
 
         if (isDown)
@@ -208,6 +222,14 @@ public class Player : MonoBehaviour
             PR.gravityScale = 4;
             collider2D.size = new Vector2(0.6f, 0.5f);
             collider2D.offset = new Vector2(-0.04870152f, 0.6f);
+
+            if(Input.GetKeyDown(KeyCode.Z) && parryChk == false)
+            {
+                ParryObj.SetActive(true);
+                animator.SetBool("Parry", true);
+                parryChk = true;
+            }
+          
         }
         else if(!jumpChk && !isDown)
         {
@@ -239,9 +261,25 @@ public class Player : MonoBehaviour
             MoveRight = false;
         }
         stateInfo = animator.GetCurrentAnimatorStateInfo(0);
+
+
+        if(stateInfo.IsName("CupHead_Parry_Jump")&& stateInfo.normalizedTime >= 0.99f)
+        {
+            animator.SetBool("Parry", false);
+            ParryObj.SetActive(false);
+       
+        }
+
+
+        DashTime += Time.deltaTime;
         if (isDash == true && isDashing == false)
         {
-            StartCoroutine(Dash(transform.position));
+            if(DashTime >= 0.7f)
+            {
+                StartCoroutine(Dash(transform.position));
+                DashTime = 0f;
+            }
+           
         }
 
 
@@ -251,8 +289,6 @@ public class Player : MonoBehaviour
             if (isDash == false)
             {
 
-                Debug.Log("isUp :" + isUp);
-                Debug.Log("LRChk :" + LRChk);
                 if (bulletAtkTime > 0.2f)
                 {
                     bulletAtkTime = 0f;
@@ -490,9 +526,12 @@ public class Player : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.LeftShift))
         {
-            animator.SetBool("dash", true);
-            isDash = true;
-            Debug.LogFormat("isDash?{0}", isDash);
+            if (DashTime >= 0.7f)
+            {
+                animator.SetBool("dash", true);
+                isDash = true;
+                Debug.LogFormat("isDash?{0}", isDash);
+            }
         }
         #endregion
         #region 아래점프
@@ -611,6 +650,7 @@ public class Player : MonoBehaviour
         }
         if (collision.collider.tag.Equals("floor") || collision.collider.tag.Equals("Obstacles") || collision.collider.tag.Equals("JumpObstacles"))
         {
+            parryChk = false;
             jumpCount = 0;
             jumpChk = true;
             animator.SetBool("isGround", true);
@@ -628,6 +668,7 @@ public class Player : MonoBehaviour
             GroundChk += Time.deltaTime;
             if (GroundChk > 0.8f)
             {
+
                 jumpCount = 0;
                 jumpChk = true;
                 GroundChk = 0;
@@ -655,8 +696,8 @@ public class Player : MonoBehaviour
         isDash = true;
          isDashing = true;
 
-        Vector3 rayOrigin = transform.position; // 레이 시작 지점은 현재 오브젝트의 위치
-        Vector2 dashDirection = new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical")).normalized;
+
+        Vector2 dashDirection ;
         Vector3 rayDirection = Vector3.left;
         if (LRChk)
         {
@@ -671,27 +712,43 @@ public class Player : MonoBehaviour
         float startY = transform.position.y;
 
 
-        Ray ray = new Ray(rayOrigin, rayDirection);
+ 
 
-        RaycastHit2D hitInfo2D = Physics2D.Raycast(rayOrigin, rayDirection, rayDistance);
-
+        RaycastHit2D hitInfo2D = Physics2D.Raycast(current, rayDirection, 5f);
+       
         Vector2 hitPoint2D;
         Vector2 endPos;
         if (hitInfo2D.collider != null)
         {
-
-
             hitPoint2D = hitInfo2D.point; // 충돌 지점
             Transform hitObject2D = hitInfo2D.transform; // 충돌한 객체
 
-            Debug.Log("Hit point: " + hitPoint2D);
+            Debug.Log("Hit point: " + hitPoint2D.x);
+          
             Debug.Log("Hit object: " + hitObject2D.name);
-            endPos = new Vector2(current.x + dashDirection.x * 3f- hitPoint2D.x, startY);
+            endPos = new Vector2(current.x + dashDirection.x * 4f, startY);
 
+            if (LRChk)
+            {
+                if (endPos.x < hitPoint2D.x)
+                {
+                    endPos.x = hitPoint2D.x;
+                }
+            }
+            else 
+            {
+                if (endPos.x > hitPoint2D.x)
+                {
+                    endPos.x = hitPoint2D.x;
+                }
+            }
+              
+            Debug.Log(" endPos.x : " + endPos.x);
         }
         else
         {
-            endPos = new Vector2(current.x + dashDirection.x * 3f, startY);
+           
+            endPos = new Vector2(current.x + dashDirection.x * 4f, startY);
         }
 
 
@@ -713,12 +770,16 @@ public class Player : MonoBehaviour
 
         isDashing = false;
 
-      
+       
         isDash = false;
         isDashing = false;
         animator.SetBool("dash", false);
+       
     }
     #endregion
+
+ 
+
     #region 기본공격 
     //총알 발사 포지션세팅
     public void NormalBullet()
@@ -1020,5 +1081,10 @@ public class Player : MonoBehaviour
             isInvincible = false;
         }
        
+    }
+
+    public void parryAction()
+    {
+        parrySuccess = true;
     }
 }
