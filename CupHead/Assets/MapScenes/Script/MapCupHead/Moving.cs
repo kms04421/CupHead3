@@ -2,17 +2,16 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-
-
 using Unity.Mathematics;
 using Unity.VisualScripting;
 using UnityEditor;
-
 using UnityEngine;
 using UnityEngine.UIElements;
-
+using UnityEngine.SceneManagement;
+using TMPro;
 public class Moving : MonoBehaviour
 {
+    static public Moving cupHead;
     Vector2 movement;
     // 버퍼링 및 방향을 위한 변수들을 정의합니다.
     Vector2 currentmovement;
@@ -25,12 +24,16 @@ public class Moving : MonoBehaviour
     public GameObject Z3;
     private string objectName;
 
+    private int coinCount  = 0;
+    public TMP_Text coin;
+
     public GameObject HomeText;
     public GameObject ForestText;
     public GameObject VeggiText;
     public GameObject FrogText;
     public GameObject ShopText;
 
+    public GameObject backgroundDark;
 
     public GameObject[] AppleText = new GameObject[4];
     public GameObject[] BeforeAppleText = new GameObject[6];
@@ -42,9 +45,9 @@ public class Moving : MonoBehaviour
     public bool isApple;
     public bool isMet;
     public bool isZ;
-
-    private string previousStateName = ""; // 이전 애니메이션 스테이트의 이름을 저장하기 위한 변수
-    private string currentStateName = ""; // 현재 애니메이션 스테이트의 이름을 저장하기 위한 변수
+    public bool isEscape;
+    public GameObject End;
+    public GameObject Status;
 
     // Start is called before the first frame update
     void Start()
@@ -52,12 +55,42 @@ public class Moving : MonoBehaviour
         objectName = "i";
         headMoving = GetComponent<Rigidbody2D>();
         ani = GetComponent<Animator>();
+        coinCount = 1;
+        cupHead = this;
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+        #region 다른씬 입장
+        if (isMet == true && isZ == true && Input.GetKeyDown(KeyCode.Z))
+        {
+            if(objectName == "Home")
+            {
+                End.SetActive(true);
+                Invoke("HomeLoad",1f);
+
+            }
+            else if(objectName == "Tomb_Boss")
+            {
+
+            }
+            else if(objectName == "Veggie")
+            {
+                End.SetActive(true);
+                Invoke("VeggieLoad", 1f);
+            }
+            else if(objectName == "Frogs_Boss")
+            {
+                End.SetActive(true);
+                Invoke("FrogLoad", 1f);
+            }
+            else if(objectName == "Shop")
+            {
+
+            }
+        }
+        #endregion
         #region z표시 움직임
         Z1.transform.position = new Vector3(gameObject.transform.position.x, gameObject.transform.position.y+80,gameObject.transform.position.z);
         Z2.transform.position = new Vector3(gameObject.transform.position.x, gameObject.transform.position.y + 85, gameObject.transform.position.z);
@@ -95,7 +128,7 @@ public class Moving : MonoBehaviour
         #endregion
         #endregion
         #region 이동구현
-        if (isZ == false)
+        if (!(isZ == true || isEscape == true))
         {
             this.movement.x = Input.GetAxisRaw("Horizontal");
             this.movement.y = Input.GetAxisRaw("Vertical");
@@ -113,35 +146,14 @@ public class Moving : MonoBehaviour
             ani.SetFloat("Vertical", movement.y);
             ani.SetFloat("LastHorizontal", movement.x);
             ani.SetFloat("LastVertical", movement.y);
-            headMoving.MovePosition(headMoving.position + movement * speed);
-            /* if (movement != Vector2.zero)
-             {
-                 bufferedInput = movement;
-                 lastInputTime = Time.time;
-                 lastDirection = bufferedInput; // 입력 방향을 저장합니다.
-             }
-             else if (Time.time - lastInputTime < bufferTime)
-             {
-                 movement = bufferedInput;
-             }
-
-             // 입력값이 없을 때 (Idle 상태)
-             if (movement == Vector2.zero)
-             {
-                 ani.SetFloat("LastHorizontal", lastDirection.x);
-                 ani.SetFloat("LastVertical", lastDirection.y);
-             }
-             else
-             {
-                 // 캐릭터 움직임 구현
-                 ani.SetFloat("Horizontal", movement.x);
-                 ani.SetFloat("Vertical", movement.y);
-                 headMoving.MovePosition(headMoving.position + movement * speed * Time.deltaTime);
-             }*/
-
-
-
-            //headMoving.MovePosition(headMoving.position + movement * speed * Time.deltaTime);
+            if (Mathf.Abs(movement.x) > 0 && Mathf.Abs(movement.y) > 0)
+            {   //대각선일 경우 속도
+                headMoving.MovePosition(headMoving.position + movement * speed*0.75f);
+            }
+            else
+            {
+                headMoving.MovePosition(headMoving.position + movement * speed);
+            }
         }
         #endregion
         #region 좌우반전구현
@@ -166,11 +178,15 @@ public class Moving : MonoBehaviour
             {
                 isZ = true;
                 HomeText.SetActive(true);
+                backgroundDark.SetActive(true);
+
             }
             if (Input.GetKeyDown(KeyCode.Escape))
             {
                 isZ = false;
                 HomeText.SetActive(false);
+                backgroundDark.SetActive(false);
+
             }
         }
         //무덤보스 
@@ -181,11 +197,15 @@ public class Moving : MonoBehaviour
             {
                 isZ = true;
                 ForestText.SetActive(true);
+                backgroundDark.SetActive(true);
+
             }
             if (Input.GetKeyDown(KeyCode.Escape))
             {
                 isZ = false;
                 ForestText.SetActive(false);
+                backgroundDark.SetActive(false);
+
             }
         }
         //야채보스
@@ -196,11 +216,15 @@ public class Moving : MonoBehaviour
             {
                 isZ = true;
                 VeggiText.SetActive(true);
+                backgroundDark.SetActive(true);
+
             }
             if (Input.GetKeyDown(KeyCode.Escape))
             {
                 isZ = false;
                 VeggiText.SetActive(false);
+                backgroundDark.SetActive(false);
+
             }
         }
         //개구리보스
@@ -211,11 +235,14 @@ public class Moving : MonoBehaviour
             {
                 isZ = true;
                 FrogText.SetActive(true);
+                backgroundDark.SetActive(true);
+
             }
             if (Input.GetKeyDown(KeyCode.Escape))
             {
                 isZ = false;
                 FrogText.SetActive(false);
+                backgroundDark.SetActive(false);
             }
         }
         //상점
@@ -226,11 +253,13 @@ public class Moving : MonoBehaviour
             {
                 isZ = true;
                 ShopText.SetActive(true);
+                backgroundDark.SetActive(true);
             }
             if (Input.GetKeyDown(KeyCode.Escape))
             {
                 isZ = false;
                 ShopText.SetActive(false);
+                backgroundDark.SetActive(false);
             }
         }
         #endregion
@@ -244,7 +273,7 @@ public class Moving : MonoBehaviour
                 isZ = true;
                 AppleNum++;
                 BeforeSetTrueApple(AppleNum);
-                if (AppleNum >= 7)
+                if (AppleNum >= 6)
                 {
                     isZ = false;
                     isApple = true;
@@ -298,6 +327,38 @@ public class Moving : MonoBehaviour
             }
         }
         #endregion
+        #region shift로 상태창볼때
+        if(Input.GetKeyDown(KeyCode.LeftShift))
+        {
+            if(Status.activeSelf == false)
+            {
+                Status.SetActive(true);
+            }
+            if(Status.activeSelf == true)
+            {
+                Status.SetActive(false);
+            }
+        }
+
+
+
+        #endregion
+        #region 코인갯수
+        coin.text = "" + coinCount.ToString();
+        #endregion
+        #region 옵션창 Esc로 띄울때 못움직이게 하는장치
+        if (Input.GetKeyDown(KeyCode.Escape)&& isMet == false)
+        {
+            if (isEscape == false)
+            {
+                isEscape = true;
+            }
+            else if (isEscape == true)
+            {
+                isEscape = false;
+            }
+        }
+        #endregion
 
     }
 
@@ -318,7 +379,7 @@ public class Moving : MonoBehaviour
         }
     }
 
-    #region NPC함수
+    #region NPC Text 출력
     public void SetTrueApple(int appleNum)
     {
         for(int i=0; i<4; i++)
@@ -347,7 +408,7 @@ public class Moving : MonoBehaviour
     }
     public void BeforeSetTrueApple(int appleNum)
     {
-        for (int i = 0; i < 6; i++)
+        for (int i = 0; i < 5; i++)
         {
             if (appleNum - 1 == i && BeforeAppleText[i].activeSelf == false)
             {
@@ -422,5 +483,18 @@ public class Moving : MonoBehaviour
         }
     }
     #endregion
+
+    public void HomeLoad()
+    {
+        SceneManager.LoadScene("ElderKettle");
+    }
+    public void VeggieLoad()
+    {
+        SceneManager.LoadScene("VeggieBoss");
+    }
+    public void FrogLoad()
+    {
+        SceneManager.LoadScene("Tallfrog");
+    }
 
 }

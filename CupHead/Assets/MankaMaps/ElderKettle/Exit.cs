@@ -1,10 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Exit : MonoBehaviour
 {
     public GameObject z;
+    public GameObject end;
     // Start is called before the first frame update
     void Start()
     {
@@ -15,6 +17,11 @@ public class Exit : MonoBehaviour
     void Update()
     {
         
+        if (z.activeSelf == true&& Input.GetKeyDown(KeyCode.Z))
+        {
+            end.SetActive(true);
+            Invoke("LoadWorldMap", 1f);
+        }
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -30,5 +37,10 @@ public class Exit : MonoBehaviour
         {
             z.SetActive(false);
         }
+    }
+
+    public void LoadWorldMap()
+    {
+        SceneManager.LoadScene("CupHead");
     }
 }
