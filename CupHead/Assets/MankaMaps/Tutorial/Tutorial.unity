@@ -8330,6 +8330,14 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3455929891937356, guid: 6b70f650738036c4e948a1db1ff696e0, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1.6
+      objectReference: {fileID: 0}
+    - target: {fileID: 3455929891937356, guid: 6b70f650738036c4e948a1db1ff696e0, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1.6
+      objectReference: {fileID: 0}
+    - target: {fileID: 3455929891937356, guid: 6b70f650738036c4e948a1db1ff696e0, type: 3}
       propertyPath: m_LocalPosition.x
       value: -5.59
       objectReference: {fileID: 0}
@@ -8369,10 +8377,18 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3455929891937357, guid: 6b70f650738036c4e948a1db1ff696e0, type: 3}
+      propertyPath: m_GravityScale
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 3455929891937358, guid: 6b70f650738036c4e948a1db1ff696e0, type: 3}
       propertyPath: m_Name
       value: CupHead
       objectReference: {fileID: 0}
+    - target: {fileID: 3455930258274188, guid: 6b70f650738036c4e948a1db1ff696e0, type: 3}
+      propertyPath: cameraTransform
+      value: 
+      objectReference: {fileID: 1774910892}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6b70f650738036c4e948a1db1ff696e0, type: 3}
 --- !u!1 &1686996213
