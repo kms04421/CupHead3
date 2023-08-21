@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using TMPro;
+using UnityEngine.SceneManagement;
 
 public class MapOptions : MonoBehaviour
 {
@@ -55,26 +56,24 @@ public class MapOptions : MonoBehaviour
     void Update()
     {
         #region 옵션창 Esc로 띄우기
-        if (Moving.cupHead.isMet == false)
+        if (Input.GetKeyDown(KeyCode.Escape))
         {
-            if (Input.GetKeyDown(KeyCode.Escape))
+            if (pause.activeSelf == false)
             {
-                if (pause.activeSelf == false )
-                {
-                    backgroundDark.SetActive(true);
-                    pause.SetActive(true);
-                }
-                else if (pause.activeSelf == true)
-                {
-                    backgroundDark.SetActive(false);
-                    pause.SetActive(false);
-                }
+                Moving.cupHead.isEsc = true;
+                backgroundDark.SetActive(true);
+                pause.SetActive(true);
+            }
+            else if (pause.activeSelf == true)
+            {
+                Moving.cupHead.isEsc= false;
+                backgroundDark.SetActive(false);
+                pause.SetActive(false);
             }
         }
         #endregion
-
         #region 옵션창 커서 움직이기
-        if(Input.GetKeyDown(KeyCode.DownArrow))
+        if (Input.GetKeyDown(KeyCode.DownArrow))
         {
             opCursor++;
             if(opCursor == 4)
@@ -91,7 +90,6 @@ public class MapOptions : MonoBehaviour
             }
         }
         #endregion
-
         #region 커서에 따라서 색변경
         if(opCursor ==0)
         {
@@ -120,6 +118,27 @@ public class MapOptions : MonoBehaviour
             optionsTextMesh.color = defaultColor;
             backTitleTextMesh.color = defaultColor;
             exitGameTextMesh.color = selectedColor;
+        }
+        #endregion
+        #region 커서에따른 z를 눌렀을때
+        if (opCursor == 0 && Input.GetKeyDown(KeyCode.Z))
+        {
+            Moving.cupHead.isEscape = false;
+            Moving.cupHead.isEsc = false;
+            backgroundDark.SetActive(false);
+            pause.SetActive(false);
+        }
+        else if (opCursor == 1 && Input.GetKeyDown(KeyCode.Z))
+        {
+
+        }
+        else if (opCursor == 2 && Input.GetKeyDown(KeyCode.Z))
+        {
+            SceneManager.LoadScene("Opening");
+        }
+        else if (opCursor == 3 && Input.GetKeyDown(KeyCode.Z))
+        {
+            Application.Quit();
         }
         #endregion
     }

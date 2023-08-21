@@ -21,8 +21,6 @@ public class Moving : MonoBehaviour
     private Animator ani;
 
     public GameObject Z1;
-    public GameObject Z2;
-    public GameObject Z3;
     private string objectName;
 
     private int coinCount  = 0;
@@ -56,8 +54,10 @@ public class Moving : MonoBehaviour
     public Transform appleNPC;
     public Transform coinNPC;
 
+    public bool isEsc;
+
     //
-    private float lerpTime = 0.5f;  // 보간에 걸리는 시간. 이 값을 조절하면 변환 속도를 제어할 수 있습니다.
+    private float lerpTime = 1f;  // 보간에 걸리는 시간. 이 값을 조절하면 변환 속도를 제어할 수 있습니다.
     private Vector3 targetScaleZ1, targetScaleZ2, targetScaleZ3;
     // Start is called before the first frame update
     void Start()
@@ -67,6 +67,7 @@ public class Moving : MonoBehaviour
         ani = GetComponent<Animator>();
         coinCount = 1;
         cupHead = this;
+        Z1.transform.localScale =  new Vector3 (0.01f, 0.01f, 1);
     }
 
     // Update is called once per frame
@@ -103,34 +104,31 @@ public class Moving : MonoBehaviour
         #endregion
         #region z표시 움직임
         Z1.transform.position = new Vector3(gameObject.transform.position.x, gameObject.transform.position.y+80,gameObject.transform.position.z);
-        Z2.transform.position = new Vector3(gameObject.transform.position.x, gameObject.transform.position.y + 85, gameObject.transform.position.z);
-        Z3.transform.position = new Vector3(gameObject.transform.position.x, gameObject.transform.position.y + 40, gameObject.transform.position.z);
-       
-        if(isMet == true)
+        if (isMet == true)
         {
             targetScaleZ1 = new Vector3(1f, 1f, 1);
-            targetScaleZ2 = new Vector3(0.5f, 0.5f, 1);
-            targetScaleZ3 = new Vector3(0.5f, 0.5f, 1);
-        /*  Z1.transform.localScale = new Vector3(1f,1f,1);
-            Z2.transform.localScale = new Vector3(0.5f, 0.5f, 1);
-            Z3.transform.localScale = new Vector3(0.5f, 0.5f, 1);*/
         }
         else
         {
-           /* Z1.transform.localScale = new Vector3(0.01f, 0.01f, 1);
-            Z2.transform.localScale = new Vector3(0.01f, 0.01f, 1);
-            Z3.transform.localScale = new Vector3(0.01f, 0.01f, 1);*/
             targetScaleZ1 = new Vector3(0.01f, 0.01f, 1);
-            targetScaleZ2 = new Vector3(0.01f, 0.01f, 1);
-            targetScaleZ3 = new Vector3(0.01f, 0.01f, 1);
         }
-        Z1.transform.localScale = Vector3.Lerp(Z1.transform.localScale, targetScaleZ1, Time.deltaTime / lerpTime);
-        Z2.transform.localScale = Vector3.Lerp(Z2.transform.localScale, targetScaleZ2, Time.deltaTime / lerpTime);
-        Z3.transform.localScale = Vector3.Lerp(Z3.transform.localScale, targetScaleZ3, Time.deltaTime / lerpTime);
+        if (isMet == true)
+        {
+            //lerpTime = 1f;  // isMet이 true일 때마다 time 값을 초기화
+            lerpTime = Mathf.Clamp01(lerpTime + Time.deltaTime / lerpTime);
+        }
+        else
+        {
+            lerpTime = Mathf.Clamp01(lerpTime - Time.deltaTime / lerpTime);
+        }
+
+        // Vector3.Lerp 함수를 사용하여 크기 보간을 수행합니다.
+        Z1.transform.localScale = Vector3.Lerp(Z1.transform.localScale, targetScaleZ1, lerpTime);
+
 
         #endregion
         #region 이동구현
-        if (!(isZ == true || isEscape == true))
+        if (!(isZ == true || isEscape == true || isEsc ==true))
         {
             this.movement.x = Input.GetAxisRaw("Horizontal");
             this.movement.y = Input.GetAxisRaw("Vertical");
@@ -269,7 +267,7 @@ public class Moving : MonoBehaviour
         // 애플 NPC
         if (isMet == true && objectName.Equals("AppleNpc"))
         {
-            if (Input.GetKeyDown(KeyCode.Z) && isApple == false)
+            if (Input.GetKeyDown(KeyCode.Z) && isApple == false&& isEsc == false)
             {
                 vCam.LookAt = appleNPC;
                 vCam.Follow = appleNPC;
@@ -286,7 +284,7 @@ public class Moving : MonoBehaviour
                     AppleNum = 0;
                 }
             }
-            else if (Input.GetKeyDown(KeyCode.Z) && isApple == true)
+            else if (Input.GetKeyDown(KeyCode.Z) && isApple == true && isEsc == false)
             {
                 vCam.LookAt = appleNPC;
                 vCam.Follow = appleNPC;
@@ -304,7 +302,7 @@ public class Moving : MonoBehaviour
             }
         }
         // 코인NPC
-        if (isMet == true && objectName == "CoinNpc")
+        if (isMet == true && objectName == "CoinNpc" && isEsc == false)
         {
             if (Input.GetKeyDown(KeyCode.Z))
             {
@@ -324,7 +322,7 @@ public class Moving : MonoBehaviour
             }
         }
         //물고기 NPC
-        if (isMet == true && objectName == "FishNpc")
+        if (isMet == true && objectName == "FishNpc" && isEsc == false)
         {
             if (Input.GetKeyDown(KeyCode.Z))
             {
@@ -372,7 +370,6 @@ public class Moving : MonoBehaviour
             }
         }
         #endregion
-
     }
 
 
@@ -401,7 +398,6 @@ public class Moving : MonoBehaviour
         {
             if(appleNum - 1== i && AppleText[i].activeSelf == false)
             {
-                
                 AppleText[i].SetActive(true);
             }
             else

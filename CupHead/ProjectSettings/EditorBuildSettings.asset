@@ -20,4 +20,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/MapScenes/Tallfrog.unity
     guid: 08e1464eedcbd4a4ba8d78980b1feba6
+  - enabled: 1
+    path: Assets/MankaMaps/Tutorial/Tutorial.unity
+    guid: 151c6f93978cc0b4e9da8784272c25ea
   m_configObjects: {}

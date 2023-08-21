@@ -204,6 +204,9 @@ public class Player : MonoBehaviour
         {
             MoveRight = false;
         }
+
+
+
         stateInfo = animator.GetCurrentAnimatorStateInfo(0);
         if (isDash == true && isDashing == false)
         {
@@ -426,7 +429,6 @@ public class Player : MonoBehaviour
             animator.SetBool("diagonal", false);
         }
         #endregion
-
         #region 대각선아래 동작
         //대각선 아래 동작
         if (isDown == true && Mathf.Abs(movement.x) > 0)
@@ -439,7 +441,6 @@ public class Player : MonoBehaviour
             animator.SetBool("downdiagonal", false);
         }
         #endregion
-
         #region 조준동작
         if (Input.GetKey(KeyCode.C))
         {
@@ -485,21 +486,15 @@ public class Player : MonoBehaviour
             transform.Translate(Vector3.up * speed * Time.deltaTime);
             return;
         }
-
-     
-
         #region 이동구현
         movement.x = Input.GetAxis("Horizontal");
         movement.y = Input.GetAxis("Vertical");
-
         if (isAim == false)
         {
             if (!isDown)
             {
                 PR.velocity = new Vector2(movement.x * speed, PR.velocity.y);
             }
-
-
             if (movement.x > 0)
             {
                 animator.SetBool("run", true);
@@ -518,7 +513,6 @@ public class Player : MonoBehaviour
         animator.SetFloat("Horizontal", movement.x);
         animator.SetFloat("Vertical", movement.y);
         #endregion
-
         #region 대쉬에 사용되는 레이캐스트
         int layerMask = 1 << LayerMask.NameToLayer("Floor");
         Debug.DrawRay(transform.position, transform.right * MaxDistance, Color.blue, 4);
