@@ -102,6 +102,7 @@ public class Player : MonoBehaviour
     private float jumpStartTime = 0f;
     private float jumpEndTime = 0f;
 
+    private float GroundChk = 0f;
     //시네머신카메라 오브젝트
     public CinemachineVirtualCamera virtualCamera;
     //줄어들고 늘어나는 속도
@@ -159,11 +160,26 @@ public class Player : MonoBehaviour
         if(isDown)
         {
             collider2D.size = new Vector2(0.6f, 0.5f);
-
+            collider2D.offset = new Vector2(-0.04870152f, 0.4f);
         }
         else
         {
             collider2D.size = new Vector2(0.6f, 1.1f);
+            collider2D.offset = new Vector2(-0.04870152f, 0.6915575f);
+        }
+
+
+        if (!jumpChk)
+        {
+            PR.gravityScale = 6;
+            collider2D.size = new Vector2(0.6f, 0.5f);
+            collider2D.offset = new Vector2(-0.04870152f, 0.6f);
+        }
+        else
+        {
+            PR.gravityScale = 2;
+            collider2D.size = new Vector2(0.6f, 1.1f);
+            collider2D.offset = new Vector2(-0.04870152f, 0.6915575f);
         }
 
         // 2023 08 19 ssm 
@@ -235,7 +251,23 @@ public class Player : MonoBehaviour
                                 shot1PrefabList[i].transform.eulerAngles = new Vector3(0, 0, 0);
                             }
 
+                            if(isDown)
+                            {
+                                if (LRChk) // 왼쪽 오른쪽 체크 
+                                {
 
+
+                                    shot1PrefabList[i].transform.position = new Vector3(transform.position.x - 0.7f, transform.position.y + (0.5f + Ynum) - jumpPlu, 0);
+                                    shot1PrefabList[i].transform.eulerAngles = new Vector3(0, 0, 180);
+                                }
+                                else
+                                {
+
+                                    shot1PrefabList[i].transform.position = new Vector3(transform.position.x + 0.7f, transform.position.y + (0.5f + Ynum) - jumpPlu, 0);
+
+                                    shot1PrefabList[i].transform.eulerAngles = new Vector3(0, 0, 0);
+                                }
+                            }
 
 
 
@@ -297,16 +329,17 @@ public class Player : MonoBehaviour
             }
         }
         //jumpEndTime
-        if (Input.GetKeyDown(KeyCode.Z) && jumpChk && !(stateInfo.IsName("CupHeadDown") || stateInfo.IsName("CupHeadDownIdle")))
+        if (Input.GetKeyDown(KeyCode.Z) && jumpChk && jumpCount < 1 && !(stateInfo.IsName("CupHeadDown") || stateInfo.IsName("CupHeadDownIdle")))
         {
             animator.SetTrigger("jump");
             animator.SetBool("isGround", false);
-            Debug.Log(life);
+        
+            jumpChk = false;
         }
 
 
         #region 점프동작
-        if (Input.GetKey(KeyCode.Z) && jumpChk  && !(stateInfo.IsName("CupHeadDown") || stateInfo.IsName("CupHeadDownIdle")))
+        if (Input.GetKey(KeyCode.Z) && !jumpChk && jumpCount < 1 && !(stateInfo.IsName("CupHeadDown") || stateInfo.IsName("CupHeadDownIdle")))
         {
          
           jumpEndTime += Time.deltaTime;
@@ -317,12 +350,13 @@ public class Player : MonoBehaviour
             }
             else
             {                          
-                PR.velocity = new Vector3(movement.x * speed, 16f);
+                PR.velocity = new Vector3(movement.x * speed, 13f);
             }
         }
-        if(Input.GetKeyUp(KeyCode.Z))
+        if(Input.GetKeyUp(KeyCode.Z)&& !jumpChk)
         {
-            jumpChk = false;
+            
+            jumpCount++;
             jumpEndTime = 0f;
         }
 
@@ -563,8 +597,17 @@ public class Player : MonoBehaviour
     {
         if (collision.collider.tag.Equals("floor") || collision.collider.tag.Equals("Obstacles") || collision.collider.tag.Equals("JumpObstacles"))
         {
-         
-            jumpChk = true;
+            GroundChk += Time.deltaTime;
+            if (GroundChk > 0.8f)
+            {
+                jumpCount = 0;
+                jumpChk = true;
+                GroundChk = 0;
+            }
+        
+               
+            
+           
         }
         
     }
