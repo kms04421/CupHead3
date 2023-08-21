@@ -48,7 +48,7 @@ public class Carrot_Bomb : MonoBehaviour
     private void OnTriggerEnter2D(Collider2D collision)
     {
   
-        if (collision.tag.Equals("Test"))
+        if (collision.tag.Equals("Player"))
         {
             audioSource.PlayOneShot(die);
             animator.SetBool("Die", true);

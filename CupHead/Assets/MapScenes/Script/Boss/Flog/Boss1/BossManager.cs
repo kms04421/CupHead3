@@ -12,13 +12,14 @@ public class BossManager : MonoBehaviour
     public int atkCount = 0; // 키큰보스
     public int BossChk = 0;// 보스 공격패턴
     public bool BoosDie = false;
-    public int BossHp = 100;
+    public int BossHp = 50;
     public int BossLv = 0;
     public bool ready = false;
     private void Awake()
     {
         if (instance == null)
         {
+           
             instance = this;
         }
         else
@@ -35,12 +36,16 @@ public class BossManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+
+      
         if (BossHp <= 0) // 보스 hp체크 
         {
-            if (BossLv == 0)
+           
+            if (BossLv == 0 )
             {
+                Debug.Log("Die1");
 
-                BossHp = 100;
+                BossHp = 50;
                 atkChk = 0;
                 animatorTime = 0;
                 BossChk = 3;
@@ -51,7 +56,7 @@ public class BossManager : MonoBehaviour
             {
               
                 ready = true;
-                
+            
                 atkChk = 0;
                 animatorTime = 0;
                 BossChk = 3;
@@ -79,6 +84,7 @@ public class BossManager : MonoBehaviour
 
             if (BossChk == 4)
             {
+                Debug.Log("4 : 4");
                 animatorTime += Time.deltaTime;
                 if (animatorTime >= 3)
                 {
@@ -118,7 +124,7 @@ public class BossManager : MonoBehaviour
     public void AtkChange(int i) //공격 순서 변경 
     {
 
-        if (BossChk != 0 && BossLv > 0) //2스테이지 
+        if (BossChk != 0 ) //2스테이지 
         {
 
 
@@ -131,20 +137,34 @@ public class BossManager : MonoBehaviour
             {
                 atkCount1++;
             }
+            if(atkCount >= 2 )
+            {
+                atkCount = 0;
+            }
+            if(atkCount1 >= 2)
+            {
+                atkCount1 = 0;
+            }
+
+
+
+
 
 
             if (atkCount > 0 && atkCount1 > 0)
             {
 
-                BossChk = 4;
+                BossChk = 4; // 다음레벨로
+            
+            }
+            else
+            {
+              
+                BossChk = 0; // 공격변화
             }
 
 
 
-        }
-        else if (BossChk != 0) // 1스테이지 
-        {
-            BossChk = 0;
             atkChk++;
         }
 

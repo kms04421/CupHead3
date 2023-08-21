@@ -47,7 +47,7 @@ public class ShortFrog2 : MonoBehaviour
         {
             animator.SetBool("Start3", true);
 
-            BossManager.instance.BossHp = 100;
+            BossManager.instance.BossHp = 50;
        
         }
 
@@ -187,6 +187,7 @@ public class ShortFrog2 : MonoBehaviour
         if (collision.tag.Equals("PlayerAttack"))
         {
             BossManager.instance.BossHpMinus();
+           
         }
     }
 }

@@ -83,7 +83,16 @@ public class Player : MonoBehaviour
     //다른 오브젝트의 콜린더
     private Collider2D collider;
 
+
+    //대화
+    public GameObject TlakText;  
     //콜라이더 
+
+    public bool isTalk = false;
+
+
+    //레이 길이
+    public float rayDistance = 0.5f; // 레이 길이
 
     private CapsuleCollider2D collider2D;
     // 땅에 닿기까지의 시간을 계산하는 변수
@@ -112,6 +121,20 @@ public class Player : MonoBehaviour
 
     private float minimumDeadZoneWidth = 0.1f;
     private float maximumDeadZoneWidth = 0.32f;
+
+    private void Awake()
+    {
+        if (instance == null)
+        {
+
+            instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
+
     // Start is called before the first frame update
     void Start()
     {
@@ -128,7 +151,7 @@ public class Player : MonoBehaviour
 
         PR = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
-        instance = this;
+    
         if (virtualCamera != null)
         {
             framingTransposer = virtualCamera.GetCinemachineComponent<CinemachineFramingTransposer>();
@@ -157,8 +180,19 @@ public class Player : MonoBehaviour
         }
         Invincibility();
 
-        if(isDown)
+
+        if(isTalk)
         {
+
+            return;
+
+        }
+
+   
+
+        if (isDown)
+        {
+        
             collider2D.size = new Vector2(0.6f, 0.5f);
             collider2D.offset = new Vector2(-0.04870152f, 0.4f);
         }
@@ -171,11 +205,11 @@ public class Player : MonoBehaviour
 
         if (!jumpChk)
         {
-            PR.gravityScale = 6;
+            PR.gravityScale = 4;
             collider2D.size = new Vector2(0.6f, 0.5f);
             collider2D.offset = new Vector2(-0.04870152f, 0.6f);
         }
-        else
+        else if(!jumpChk && !isDown)
         {
             PR.gravityScale = 2;
             collider2D.size = new Vector2(0.6f, 1.1f);
@@ -329,7 +363,7 @@ public class Player : MonoBehaviour
             }
         }
         //jumpEndTime
-        if (Input.GetKeyDown(KeyCode.Z) && jumpChk && jumpCount < 1 && !(stateInfo.IsName("CupHeadDown") || stateInfo.IsName("CupHeadDownIdle")))
+        if (Input.GetKeyDown(KeyCode.Z) && jumpChk && jumpCount < 1 && !(stateInfo.IsName("CupHeadDown") ))
         {
             animator.SetTrigger("jump");
             animator.SetBool("isGround", false);
@@ -339,7 +373,7 @@ public class Player : MonoBehaviour
 
 
         #region 점프동작
-        if (Input.GetKey(KeyCode.Z) && !jumpChk && jumpCount < 1 && !(stateInfo.IsName("CupHeadDown") || stateInfo.IsName("CupHeadDownIdle")))
+        if (Input.GetKey(KeyCode.Z) && !jumpChk && jumpCount < 1 && !(stateInfo.IsName("CupHeadDown") ))
         {
          
           jumpEndTime += Time.deltaTime;
@@ -361,12 +395,12 @@ public class Player : MonoBehaviour
         }
 
 
-        
 
+      
         // 2023 08 19 ssm end
 
         #endregion
-       
+
         /*
                 if(transform.position.x >= 0 && transform.position.x <= 68)
                 {
@@ -519,14 +553,7 @@ public class Player : MonoBehaviour
         animator.SetFloat("Vertical", movement.y);
         #endregion
 
-        #region 대쉬에 사용되는 레이캐스트
-        int layerMask = 1 << LayerMask.NameToLayer("Floor");
-        Debug.DrawRay(transform.position, transform.right * MaxDistance, Color.blue, 4);
-        hit = Physics2D.Raycast(transform.position, transform.right, MaxDistance, layerMask);
-
-        Debug.DrawRay(foot.transform.position, foot.transform.right * MaxDistance, Color.blue, 4);
-        hitFoot = Physics2D.Raycast(foot.transform.position, foot.transform.right, MaxDistance, layerMask);
-        #endregion
+        
         #region 좌우반전구현 
         if (isDash == false)
         {
@@ -568,9 +595,10 @@ public class Player : MonoBehaviour
                 if (isDead == false)
                     animator.SetTrigger("hit");
             }
+
            
         }
-
+   
 
     }
     #endregion
@@ -622,52 +650,70 @@ public class Player : MonoBehaviour
     #endregion
 
     #region 대쉬
-    IEnumerator Dash(Vector2 current)
+    private IEnumerator Dash(Vector2 current)
     {
-        float dashDirection = transform.eulerAngles.y == 0 ? 1 : -1;
-        Vector2 dest = new Vector2(current.x + (dashDirection * 3.5f), current.y);
-        isDashing = true;
-        float timeElapsed = 0.0f;
-        while (timeElapsed < 1f)
+        isDash = true;
+         isDashing = true;
+
+        Vector3 rayOrigin = transform.position; // 레이 시작 지점은 현재 오브젝트의 위치
+        Vector2 dashDirection = new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical")).normalized;
+        Vector3 rayDirection = Vector3.left;
+        if (LRChk)
         {
-            // 시간 경과에 따라 스케일 값 보간
-            timeElapsed += Time.deltaTime * 3;
+            dashDirection = new Vector2(-1.0f, 0.0f);
+            rayDirection = Vector3.left;
+        }
+        else
+        {
+            dashDirection = new Vector2(1.0f, 0.0f);
+            rayDirection = Vector3.right;
+        }
+        float startY = transform.position.y;
 
-            // Lerp 값을 0 ~ 1 사이로 변환
-            float time = Mathf.Clamp01(timeElapsed / 1f);
 
-            if ((hit.collider != null || hitFoot.collider != null))
-            { // 레이와 발에있는 레이가 둘중하나라도 무언가에 맞았을때
-                if ((hit.collider != null && hitFoot.collider == null) && hit.collider.tag == "Floor")
-                {   //만약 레이만 맞고 맞은게 Floor일때
-                    transform.position = Vector2.Lerp(current, new Vector2(hit.point.x, PR.velocity.y), time);
-                }
-                else if ((hit.collider == null && hitFoot.collider != null) && hit.collider.tag == "Floor")
-                {   //만약 발에있는 레이만 맞고 맞은게 Floor일때
-                    transform.position = Vector2.Lerp(current, new Vector2(hitFoot.point.x, PR.velocity.y), time);
-                }
-            }
-            else if ((hit.collider != null && hitFoot.collider != null))
-            {   //레이와 발에있는 레이가 둘다 맞았을때 
-                if (Mathf.Abs(hit.collider.transform.position.x) < Mathf.Abs(hitFoot.collider.transform.position.x))
-                { // 만약 머리에서쏜 레이의 맞은 지점의 x좌표가 발에서 쏜 레이의 맞은 지점의 x좌표보다 절대값이 작을경우 
-                    transform.position = Vector2.Lerp(current, new Vector2(hit.point.x, PR.velocity.y), time);
-                }
-                else if (Mathf.Abs(hit.collider.transform.position.x) > Mathf.Abs(hitFoot.collider.transform.position.x))
-                { // 만약 머리에서 쏜 레이의 맞은 지점의 x좌표가 발에서 쏜 레이의 맞은 지점의 x좌표보다 절대값이 클 경우
-                    transform.position = Vector2.Lerp(current, new Vector2(hitFoot.point.x, PR.velocity.y), time);
-                }
-                else if (Mathf.Abs(hit.collider.transform.position.x) == Mathf.Abs(hitFoot.collider.transform.position.x))
-                {  // 머리와 발의 레이가 맞은 지점의 x좌표 절대값이 둘다 같을떄
-                    transform.position = Vector2.Lerp(current, new Vector2(hitFoot.point.x, PR.velocity.y), time);
-                }
-            }
-            else
-            {
-                transform.position = Vector2.Lerp(current, dest, time);
-            }
+        Ray ray = new Ray(rayOrigin, rayDirection);
+
+        RaycastHit2D hitInfo2D = Physics2D.Raycast(rayOrigin, rayDirection, rayDistance);
+
+        Vector2 hitPoint2D;
+        Vector2 endPos;
+        if (hitInfo2D.collider != null)
+        {
+
+
+            hitPoint2D = hitInfo2D.point; // 충돌 지점
+            Transform hitObject2D = hitInfo2D.transform; // 충돌한 객체
+
+            Debug.Log("Hit point: " + hitPoint2D);
+            Debug.Log("Hit object: " + hitObject2D.name);
+            endPos = new Vector2(current.x + dashDirection.x * 3f- hitPoint2D.x, startY);
+
+        }
+        else
+        {
+            endPos = new Vector2(current.x + dashDirection.x * 3f, startY);
+        }
+
+
+
+        isDashing = true;
+
+      
+
+        float startTime = Time.time;
+        float journeyLength = Vector2.Distance(current, endPos);
+
+        while (Time.time < startTime + journeyLength / 20)
+        {
+            float distanceCovered = (Time.time - startTime) * 20;
+            float fractionOfJourney = distanceCovered / journeyLength;
+            transform.position = Vector2.Lerp(current, endPos, fractionOfJourney);
             yield return null;
         }
+
+        isDashing = false;
+
+      
         isDash = false;
         isDashing = false;
         animator.SetBool("dash", false);

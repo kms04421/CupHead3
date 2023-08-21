@@ -34,7 +34,7 @@ public class Wind : MonoBehaviour
             Rigidbody2D rb = collision.GetComponent<Rigidbody2D>(); //플레이어 리지드바디 정보
             if (rb != null)
             {
-                rb.AddForce(windDirection * 50, ForceMode2D.Force); // 바람의 힘을 적용
+                rb.AddForce(windDirection * 200, ForceMode2D.Force); // 바람의 힘을 적용
             }
         }
     }

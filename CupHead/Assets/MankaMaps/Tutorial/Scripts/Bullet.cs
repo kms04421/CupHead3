@@ -106,7 +106,7 @@ public class Bullet : MonoBehaviour
 
 
         playerPost = FindObjectOfType<Player>().transform;
-        transform.Translate(Vector3.right * 10 * Time.deltaTime);
+        transform.Translate(Vector3.right * 15 * Time.deltaTime);
         Vector3 bulletPos = transform.position - playerPost.position;
         if (bulletPos.y > 20 || bulletPos.y < -20)
         {

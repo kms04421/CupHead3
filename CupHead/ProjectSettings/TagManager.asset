@@ -13,8 +13,8 @@ TagManager:
   - floor
   - JumpObstacles
   - Wall
-  - Farring
   - Test
+  - Parring
   layers:
   - Default
   - TransparentFX

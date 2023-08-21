@@ -161,6 +161,9 @@ public class Tallfrog_FireFly : MonoBehaviour
     private IEnumerator ObjAnimator()
     {
         yield return new WaitForSeconds(0.25f);
+
+        
+        
         animator.SetBool("Die", false);
         gameObject.SetActive(false);
     }

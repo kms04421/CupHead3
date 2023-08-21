@@ -436,7 +436,7 @@ public class TallForg3 : MonoBehaviour
 
 
     Vector3 targetPosition;// 이동 위치 저장용
-    private IEnumerator fireflysMove(GameObject bossSlotAtkType , bool Up ) // 불벌래 생성이동 
+    private IEnumerator fireflysMove(GameObject bossSlotAtkType , bool Up ) 
     {
         
         if (Up)

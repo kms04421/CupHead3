@@ -21,7 +21,7 @@ public class ShortBoss : MonoBehaviour
     float atkTime = 0f;
     int[] AtktimeList = new int[]
     {
-        6,8
+        5,7
     };
     int number = 0;
     //스테이지1 end
@@ -34,9 +34,9 @@ public class ShortBoss : MonoBehaviour
         shortFrogList =new List<GameObject>();
         shortFrogVector = new Vector2[]
         {       
-            new Vector2(transform.position.x -3.5f,transform.position.y-1.7f),
-            new Vector2(transform.position.x -3.5f,transform.position.y-0.8f),
-            new Vector2(transform.position.x -3.5f,transform.position.y+1f),
+            new Vector2(transform.position.x -3.5f,transform.position.y-2f),//하단
+            new Vector2(transform.position.x -3.5f,transform.position.y-0.8f),//중간
+            new Vector2(transform.position.x -3.5f,transform.position.y+1f)//상단
         };
         int p_shortFrog = Random.Range(0, 3);
         for (int i = 0; i < 6; i++)
@@ -107,6 +107,14 @@ public class ShortBoss : MonoBehaviour
                 animator.SetBool("Atk2", false);
                 animator.SetBool("Atk3", false);
                 setTime = 500f;
+                if (Random.Range(0, 2) == 0) 
+                {
+                    shortFrogCount = 0;
+                }
+                else
+                {
+                    shortFrogCount = 2;
+                }
 
                 BossManager.instance.AtkChange(20);
             }
@@ -124,8 +132,17 @@ public class ShortBoss : MonoBehaviour
             {
                 if (!shortFrogList[i].activeSelf)
                 {
-                    shortFrogList[i].transform.position = shortFrogVector[shortFrogCount];
+                   
+                    if(shortFrogCount >=3 )
+                    {
+                        shortFrogCount = 2;
+                    }else if(shortFrogCount <= -1)
+                    {
+                        shortFrogCount = 0;
+                    }
 
+                    shortFrogList[i].transform.position = shortFrogVector[shortFrogCount];
+                   
                     shortFrogList[i].SetActive(true);
                     break;
 
@@ -142,7 +159,7 @@ public class ShortBoss : MonoBehaviour
             }
 
 
-            if (shortFrogCount == 2 || shortFrogCount == 0)
+            if (shortFrogCount >= 2 || shortFrogCount <= 0)
             {
               if(shortUpDown == false)
                 {
@@ -159,8 +176,9 @@ public class ShortBoss : MonoBehaviour
     }
     private void OnTriggerEnter2D(Collider2D collision)// 플레이어 공격 명중
     {
-        if (collision.tag.Equals("atk"))
+        if (collision.tag.Equals("PlayerAttack"))
         {
+
             BossManager.instance.BossHpMinus();
         }
     }
