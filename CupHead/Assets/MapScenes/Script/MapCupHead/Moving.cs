@@ -9,6 +9,7 @@ using UnityEngine;
 using UnityEngine.UIElements;
 using UnityEngine.SceneManagement;
 using TMPro;
+using Cinemachine;
 public class Moving : MonoBehaviour
 {
     static public Moving cupHead;
@@ -49,6 +50,15 @@ public class Moving : MonoBehaviour
     public GameObject End;
     public GameObject Status;
 
+    //cinemachine카메라변수
+    public CinemachineVirtualCamera vCam;
+    public Transform player;
+    public Transform appleNPC;
+    public Transform coinNPC;
+
+    //
+    private float lerpTime = 0.5f;  // 보간에 걸리는 시간. 이 값을 조절하면 변환 속도를 제어할 수 있습니다.
+    private Vector3 targetScaleZ1, targetScaleZ2, targetScaleZ3;
     // Start is called before the first frame update
     void Start()
     {
@@ -98,34 +108,26 @@ public class Moving : MonoBehaviour
        
         if(isMet == true)
         {
-            Z1.transform.localScale = new Vector3(1f,1f,1);
+            targetScaleZ1 = new Vector3(1f, 1f, 1);
+            targetScaleZ2 = new Vector3(0.5f, 0.5f, 1);
+            targetScaleZ3 = new Vector3(0.5f, 0.5f, 1);
+        /*  Z1.transform.localScale = new Vector3(1f,1f,1);
             Z2.transform.localScale = new Vector3(0.5f, 0.5f, 1);
-            Z3.transform.localScale = new Vector3(0.5f, 0.5f, 1);
+            Z3.transform.localScale = new Vector3(0.5f, 0.5f, 1);*/
         }
         else
         {
-            Z1.transform.localScale = new Vector3(0.01f, 0.01f, 1);
+           /* Z1.transform.localScale = new Vector3(0.01f, 0.01f, 1);
             Z2.transform.localScale = new Vector3(0.01f, 0.01f, 1);
-            Z3.transform.localScale = new Vector3(0.01f, 0.01f, 1);
+            Z3.transform.localScale = new Vector3(0.01f, 0.01f, 1);*/
+            targetScaleZ1 = new Vector3(0.01f, 0.01f, 1);
+            targetScaleZ2 = new Vector3(0.01f, 0.01f, 1);
+            targetScaleZ3 = new Vector3(0.01f, 0.01f, 1);
         }
-        #region z표시 움직임
-        Z1.transform.position = new Vector3(gameObject.transform.position.x, gameObject.transform.position.y+80,gameObject.transform.position.z);
-        Z2.transform.position = new Vector3(gameObject.transform.position.x, gameObject.transform.position.y + 85, gameObject.transform.position.z);
-        Z3.transform.position = new Vector3(gameObject.transform.position.x, gameObject.transform.position.y + 40, gameObject.transform.position.z);
-       
-        if(isMet == true)
-        {
-            Z1.transform.localScale = new Vector3(1f,1f,1);
-            Z2.transform.localScale = new Vector3(0.5f, 0.5f, 1);
-            Z3.transform.localScale = new Vector3(0.5f, 0.5f, 1);
-        }
-        else
-        {
-            Z1.transform.localScale = new Vector3(0.01f, 0.01f, 1);
-            Z2.transform.localScale = new Vector3(0.01f, 0.01f, 1);
-            Z3.transform.localScale = new Vector3(0.01f, 0.01f, 1);
-        }
-        #endregion
+        Z1.transform.localScale = Vector3.Lerp(Z1.transform.localScale, targetScaleZ1, Time.deltaTime / lerpTime);
+        Z2.transform.localScale = Vector3.Lerp(Z2.transform.localScale, targetScaleZ2, Time.deltaTime / lerpTime);
+        Z3.transform.localScale = Vector3.Lerp(Z3.transform.localScale, targetScaleZ3, Time.deltaTime / lerpTime);
+
         #endregion
         #region 이동구현
         if (!(isZ == true || isEscape == true))
@@ -269,12 +271,15 @@ public class Moving : MonoBehaviour
         {
             if (Input.GetKeyDown(KeyCode.Z) && isApple == false)
             {
-                Debug.Log("들어오니");
+                vCam.LookAt = appleNPC;
+                vCam.Follow = appleNPC;
                 isZ = true;
                 AppleNum++;
                 BeforeSetTrueApple(AppleNum);
                 if (AppleNum >= 6)
                 {
+                    vCam.LookAt = player;
+                    vCam.Follow = player;
                     isZ = false;
                     isApple = true;
                     BeforeSetFalseApple();
@@ -283,11 +288,15 @@ public class Moving : MonoBehaviour
             }
             else if (Input.GetKeyDown(KeyCode.Z) && isApple == true)
             {
+                vCam.LookAt = appleNPC;
+                vCam.Follow = appleNPC;
                 isZ = true;
                 AppleNum++;
                 SetTrueApple(AppleNum);
                 if (AppleNum >= 5)
                 {
+                    vCam.LookAt = player;
+                    vCam.Follow = player;
                     isZ = false;
                     SetFalseApple();
                     AppleNum = 0;
@@ -299,11 +308,15 @@ public class Moving : MonoBehaviour
         {
             if (Input.GetKeyDown(KeyCode.Z))
             {
+                vCam.LookAt = coinNPC;
+                vCam.Follow = coinNPC;
                 isZ = true;
                 CoinNum++;
                 SetTrueCoin(CoinNum);
                 if (CoinNum >= 6)
                 {
+                    vCam.LookAt = player;
+                    vCam.Follow = player;
                     isZ = false;
                     SetFalseCoin();
                     CoinNum = 0;
@@ -362,6 +375,8 @@ public class Moving : MonoBehaviour
 
     }
 
+
+    #region 물체와 충돌감지collision
     public void OnCollisionStay2D(Collision2D collision)
     {
         if (collision.gameObject.tag == "Obstacles" || collision.gameObject.tag == "NPC")
@@ -378,7 +393,7 @@ public class Moving : MonoBehaviour
             isMet = false;
         }
     }
-
+    #endregion
     #region NPC Text 출력
     public void SetTrueApple(int appleNum)
     {
@@ -427,7 +442,7 @@ public class Moving : MonoBehaviour
     }
     public void BeforeSetFalseApple()
     {
-        for (int i = 0; i < 6; i++)
+        for (int i = 0; i < 5; i++)
         {
             BeforeAppleText[i].SetActive(false);
         }
