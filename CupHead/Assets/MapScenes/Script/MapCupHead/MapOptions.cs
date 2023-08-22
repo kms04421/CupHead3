@@ -42,7 +42,7 @@ public class MapOptions : MonoBehaviour
         
         continueRect.anchoredPosition = new Vector2(0, 20);
         optionsRect.anchoredPosition = new Vector2(0, 10);
-        backTitleRect.anchoredPosition = new Vector2 (0, 0);
+        backTitleRect.anchoredPosition = new Vector2(0, 0);
         exitGameRect.anchoredPosition = new Vector2(0, -10);
 
 
@@ -60,38 +60,25 @@ public class MapOptions : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        #region 옵션창 Esc로 띄우기
-        if (Input.GetKeyDown(KeyCode.Escape) && Moving.cupHead.isZ == false)
-        {
-            if (pause.activeSelf == false)
-            {
-                Invoke("ChangeIsEsc", 1f);
-                backgroundDark.SetActive(true);
-                pause.SetActive(true);
-            }
-            else if (pause.activeSelf == true)
-            {
-                Invoke("ChangeIsEsc", 1f);
-                backgroundDark.SetActive(false);
-                pause.SetActive(false);
-            }
-        }
-        #endregion
+       
         #region 옵션창 커서 움직이기
-        if (Input.GetKeyDown(KeyCode.DownArrow))
+        if (Moving.cupHead.isEsc == true)
         {
-            opCursor++;
-            if(opCursor == 4)
+            if (Input.GetKeyDown(KeyCode.DownArrow))
             {
-                opCursor = 0;
+                opCursor++;
+                if (opCursor == 4)
+                {
+                    opCursor = 0;
+                }
             }
-        }
-        else if(Input.GetKeyDown(KeyCode.UpArrow))
-        {
-            opCursor--;
-            if(opCursor ==-1)
+            else if (Input.GetKeyDown(KeyCode.UpArrow))
             {
-                opCursor = 3;
+                opCursor--;
+                if (opCursor == -1)
+                {
+                    opCursor = 3;
+                }
             }
         }
         #endregion
@@ -126,37 +113,25 @@ public class MapOptions : MonoBehaviour
         }
         #endregion
         #region 커서에따른 z를 눌렀을때
-        if (opCursor == 0 && Input.GetKeyDown(KeyCode.Z))
+        if (opCursor == 0 && Input.GetKeyDown(KeyCode.Z) && Moving.cupHead.isEsc == true)
         {
             Moving.cupHead.isEscape = false;
             Moving.cupHead.isEsc = false;
             backgroundDark.SetActive(false);
             pause.SetActive(false);
         }
-        else if (opCursor == 1 && Input.GetKeyDown(KeyCode.Z))
+        else if (opCursor == 1 && Input.GetKeyDown(KeyCode.Z) && Moving.cupHead.isEsc == true)
         {
 
         }
-        else if (opCursor == 2 && Input.GetKeyDown(KeyCode.Z))
+        else if (opCursor == 2 && Input.GetKeyDown(KeyCode.Z) && Moving.cupHead.isEsc == true)
         {
             SceneManager.LoadScene("Opening");
         }
-        else if (opCursor == 3 && Input.GetKeyDown(KeyCode.Z))
+        else if (opCursor == 3 && Input.GetKeyDown(KeyCode.Z) && Moving.cupHead.isEsc == true)
         {
             Application.Quit();
         }
         #endregion
-    }
-
-    private void ChangeIsEsc()
-    {
-        if (Moving.cupHead.isEsc == false)
-        {
-            Moving.cupHead.isEsc = true;
-        }
-        else if(Moving.cupHead.isEsc == true)
-        {
-            Moving.cupHead.isEsc = false;
-        }
     }
 }

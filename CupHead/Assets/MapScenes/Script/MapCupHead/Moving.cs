@@ -13,14 +13,14 @@ using Cinemachine;
 public class Moving : MonoBehaviour
 {
     static public Moving cupHead;
-    Vector2 movement;
+    public Vector2 movement;
     //저장할 데이터
     public bool VeggieClear = false;  //야채보스클리어여부
     public bool FrogClear = true;  //개구리보스클리어여부
-    
+
     public GameObject FlagVeggie; //야채보스 플래그
     public GameObject FlagFrog;   //개구리보스 플래그
-    
+
     // 버퍼링 및 방향을 위한 변수들을 정의합니다.
     Vector2 currentmovement;
     private Rigidbody2D headMoving;
@@ -30,7 +30,7 @@ public class Moving : MonoBehaviour
     public GameObject Z1;
     private string objectName;
 
-    private int coinCount  = 0;
+    private int coinCount = 0;
     public TMP_Text coin;
 
     public GameObject HomeText;
@@ -38,7 +38,7 @@ public class Moving : MonoBehaviour
     public GameObject VeggiText;
     public GameObject FrogText;
     public GameObject ShopText;
-
+    // 검으색배경
     public GameObject backgroundDark;
 
     public GameObject[] AppleText = new GameObject[4];
@@ -63,6 +63,10 @@ public class Moving : MonoBehaviour
 
     public bool isEsc;
 
+    //안개 특수효과 오브젝트
+    public GameObject effectPrefab;
+    private float effectTimer = 0f;
+    private float yOffset = -40f;
     //
     private float lerpTime = 1f;  // 보간에 걸리는 시간. 이 값을 조절하면 변환 속도를 제어할 수 있습니다.
     private Vector3 targetScaleZ1, targetScaleZ2, targetScaleZ3;
@@ -74,7 +78,7 @@ public class Moving : MonoBehaviour
         ani = GetComponent<Animator>();
         coinCount = 1;
         cupHead = this;
-        Z1.transform.localScale =  new Vector3 (0.01f, 0.01f, 1);
+        Z1.transform.localScale = new Vector3(0.01f, 0.01f, 1);
     }
 
     // Update is called once per frame
@@ -83,33 +87,33 @@ public class Moving : MonoBehaviour
         #region 다른씬 입장
         if (isMet == true && isZ == true && Input.GetKeyDown(KeyCode.Z))
         {
-            if(objectName == "Home")
+            if (objectName == "Home")
             {
                 End.SetActive(true);
-                Invoke("HomeLoad",1f);
+                Invoke("HomeLoad", 1f);
             }
-            else if(objectName == "Tomb_Boss")
+            else if (objectName == "Tomb_Boss")
             {
 
             }
-            else if(objectName == "Veggie")
+            else if (objectName == "Veggie")
             {
                 End.SetActive(true);
                 Invoke("VeggieLoad", 1f);
             }
-            else if(objectName == "Frogs_Boss")
+            else if (objectName == "Frogs_Boss")
             {
                 End.SetActive(true);
                 Invoke("FrogLoad", 1f);
             }
-            else if(objectName == "Shop")
+            else if (objectName == "Shop")
             {
 
             }
         }
         #endregion
         #region z표시 움직임
-        Z1.transform.position = new Vector3(gameObject.transform.position.x, gameObject.transform.position.y+80,gameObject.transform.position.z);
+        Z1.transform.position = new Vector3(gameObject.transform.position.x, gameObject.transform.position.y + 80, gameObject.transform.position.z);
         if (isMet == true)
         {
             targetScaleZ1 = new Vector3(1f, 1f, 1);
@@ -134,19 +138,13 @@ public class Moving : MonoBehaviour
 
         #endregion
         #region 이동구현
-        if (!(isZ == true || isEscape == true || isEsc ==true))
+        if (!(isZ == true || isEscape == true || isEsc == true))
         {
             this.movement.x = Input.GetAxisRaw("Horizontal");
             this.movement.y = Input.GetAxisRaw("Vertical");
 
             ani.SetFloat("Horizontal", movement.x);
             ani.SetFloat("Vertical", movement.y);
-
-            if (movement != Vector2.zero)
-            {
-                // 현재 움직이는 방향을 저장
-                currentmovement = movement;
-            }
             // 항상 마지막 움직이던 방향을 사용해서 애니메이션 값을 설정
             ani.SetFloat("Horizontal", movement.x);
             ani.SetFloat("Vertical", movement.y);
@@ -154,7 +152,7 @@ public class Moving : MonoBehaviour
             ani.SetFloat("LastVertical", movement.y);
             if (Mathf.Abs(movement.x) > 0 && Mathf.Abs(movement.y) > 0)
             {   //대각선일 경우 속도
-                headMoving.MovePosition(headMoving.position + movement * speed*0.75f);
+                headMoving.MovePosition(headMoving.position + movement * speed * 0.75f);
             }
             else
             {
@@ -162,8 +160,26 @@ public class Moving : MonoBehaviour
             }
         }
         #endregion
+        #region 안개처리
+        if (!(movement.x == 0 && movement.y == 0))
+        {
+            effectTimer += Time.deltaTime;
+
+            if (effectTimer >= 0.4f)
+            {
+                Vector3 effectPosition = transform.position + new Vector3(0, yOffset, 0);
+                Instantiate(effectPrefab, effectPosition, Quaternion.identity);
+                effectTimer = 0f;
+
+            }
+        }
+        else
+        {
+            effectTimer = 0f;
+        }
+        #endregion
         #region 좌우반전구현
-        if (isZ ==false)
+        if (isZ == false)
         {
             if (movement.x > 0)
             {
@@ -177,9 +193,9 @@ public class Moving : MonoBehaviour
         #endregion
         #region Obstacles 만났을때 구현
         //홈에 만났을때
-        if(isMet == true&& objectName == "Home" && isEsc == false)
+        if (isMet == true && objectName == "Home" && isEsc == false)
         {
-            if(Input.GetKeyDown(KeyCode.Z))
+            if (Input.GetKeyDown(KeyCode.Z))
             {
                 isZ = true;
                 HomeText.SetActive(true);
@@ -192,10 +208,8 @@ public class Moving : MonoBehaviour
                 backgroundDark.SetActive(false);
             }
         }
-        //무덤보스 
-        if (isMet == true && objectName == "Tomb_Boss" && isEsc == false)
-        {
-
+        else if (isMet == true && objectName == "Tomb_Boss" && isEsc == false)
+        { //무덤보스 
             if (Input.GetKeyDown(KeyCode.Z))
             {
                 isZ = true;
@@ -208,13 +222,10 @@ public class Moving : MonoBehaviour
                 isZ = false;
                 ForestText.SetActive(false);
                 backgroundDark.SetActive(false);
-
             }
         }
-        //야채보스
-        if (isMet == true && objectName == "Veggie" && isEsc == false)
-        {
-
+        else if (isMet == true && objectName == "Veggie" && isEsc == false)
+        { //야채보스
             if (Input.GetKeyDown(KeyCode.Z))
             {
                 isZ = true;
@@ -230,10 +241,8 @@ public class Moving : MonoBehaviour
 
             }
         }
-        //개구리보스
-        if (isMet == true && objectName == "Frogs_Boss" && isEsc == false)
-        {
-
+        else if (isMet == true && objectName == "Frogs_Boss" && isEsc == false)
+        {//개구리보스
             if (Input.GetKeyDown(KeyCode.Z))
             {
                 isZ = true;
@@ -248,10 +257,8 @@ public class Moving : MonoBehaviour
                 backgroundDark.SetActive(false);
             }
         }
-        //상점
-        if (isMet == true && objectName == "Shop" && isEsc == false)
-        {
-
+        else if (isMet == true && objectName == "Shop" && isEsc == false)
+        { //상점
             if (Input.GetKeyDown(KeyCode.Z))
             {
                 isZ = true;
@@ -265,12 +272,22 @@ public class Moving : MonoBehaviour
                 backgroundDark.SetActive(false);
             }
         }
+        else if (Input.GetKeyDown(KeyCode.Escape) && Moving.cupHead.isZ == false)
+        { //옵션창 Esc로 띄우기
+            if (MapOptions.instance.pause.activeSelf == false)
+            {
+                isEsc = true;
+                isEscape = true;
+                backgroundDark.SetActive(true);
+                MapOptions.instance.pause.SetActive(true);
+            }
+        }
         #endregion
         #region NPC 만났을때
         // 애플 NPC
         if (isMet == true && objectName.Equals("AppleNpc"))
         {
-            if (Input.GetKeyDown(KeyCode.Z) && isApple == false&& isEsc == false)
+            if (Input.GetKeyDown(KeyCode.Z) && isApple == false && isEsc == false)
             {
                 vCam.LookAt = appleNPC;
                 vCam.Follow = appleNPC;
@@ -342,13 +359,13 @@ public class Moving : MonoBehaviour
         }
         #endregion
         #region shift로 상태창볼때
-        if(Input.GetKeyDown(KeyCode.LeftShift))
+        if (Input.GetKeyDown(KeyCode.LeftShift))
         {
-            if(Status.activeSelf == false)
+            if (Status.activeSelf == false)
             {
                 Status.SetActive(true);
             }
-            if(Status.activeSelf == true)
+            if (Status.activeSelf == true)
             {
                 Status.SetActive(false);
             }
@@ -361,7 +378,7 @@ public class Moving : MonoBehaviour
         coin.text = "" + coinCount.ToString();
         #endregion
         #region 옵션창 Esc로 띄울때 못움직이게 하는장치
-        if (Input.GetKeyDown(KeyCode.Escape)&& isMet == false)
+        if (Input.GetKeyDown(KeyCode.Escape) && isMet == false)
         {
             if (isEscape == false)
             {
@@ -374,7 +391,7 @@ public class Moving : MonoBehaviour
         }
         #endregion
         #region 보스클리어에따른 깃발표시
-        if(VeggieClear == true)
+        if (VeggieClear == true)
         {
             FlagVeggie.SetActive(true);
         }
@@ -382,7 +399,7 @@ public class Moving : MonoBehaviour
         {
             FlagVeggie.SetActive(false);
         }
-        if(FrogClear == true)
+        if (FrogClear == true)
         {
             FlagFrog.SetActive(true);
         }
@@ -415,9 +432,9 @@ public class Moving : MonoBehaviour
     #region NPC Text 출력
     public void SetTrueApple(int appleNum)
     {
-        for(int i=0; i<4; i++)
+        for (int i = 0; i < 4; i++)
         {
-            if(appleNum - 1== i && AppleText[i].activeSelf == false)
+            if (appleNum - 1 == i && AppleText[i].activeSelf == false)
             {
                 AppleText[i].SetActive(true);
             }
@@ -427,7 +444,7 @@ public class Moving : MonoBehaviour
                 {
                     AppleText[i].SetActive(false);
                 }
-                
+
             }
         }
     }
@@ -531,7 +548,7 @@ public class Moving : MonoBehaviour
 
     private void ChangeIsZ()
     {
-        if(isZ == false)
+        if (isZ == false)
         {
             isZ = true;
         }
