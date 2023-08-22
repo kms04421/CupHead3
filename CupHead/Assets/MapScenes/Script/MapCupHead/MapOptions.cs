@@ -3,9 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using TMPro;
+using UnityEngine.SceneManagement;
+using System.Runtime.CompilerServices;
 
 public class MapOptions : MonoBehaviour
 {
+    static public MapOptions instance;
+
     public GameObject pause;
     public GameObject backgroundDark;
     public GameObject continueText;
@@ -38,7 +42,7 @@ public class MapOptions : MonoBehaviour
         
         continueRect.anchoredPosition = new Vector2(0, 20);
         optionsRect.anchoredPosition = new Vector2(0, 10);
-        backTitleRect.anchoredPosition = new Vector2 (0, 0);
+        backTitleRect.anchoredPosition = new Vector2(0, 0);
         exitGameRect.anchoredPosition = new Vector2(0, -10);
 
 
@@ -49,49 +53,35 @@ public class MapOptions : MonoBehaviour
 
         selectedColor = Color.red; // 선택된 메뉴 항목의 색상
         defaultColor = Color.black;   // 기본 메뉴 항목의 색상
+
+        instance = this;
     }
 
     // Update is called once per frame
     void Update()
     {
-        #region 옵션창 Esc로 띄우기
-        if (Moving.cupHead.isMet == false)
-        {
-            if (Input.GetKeyDown(KeyCode.Escape))
-            {
-                if (pause.activeSelf == false )
-                {
-                    backgroundDark.SetActive(true);
-                    pause.SetActive(true);
-                }
-                else if (pause.activeSelf == true)
-                {
-                    backgroundDark.SetActive(false);
-                    pause.SetActive(false);
-                }
-            }
-        }
-        #endregion
-
+       
         #region 옵션창 커서 움직이기
-        if(Input.GetKeyDown(KeyCode.DownArrow))
+        if (Moving.cupHead.isEsc == true)
         {
-            opCursor++;
-            if(opCursor == 4)
+            if (Input.GetKeyDown(KeyCode.DownArrow))
             {
-                opCursor = 0;
+                opCursor++;
+                if (opCursor == 4)
+                {
+                    opCursor = 0;
+                }
             }
-        }
-        else if(Input.GetKeyDown(KeyCode.UpArrow))
-        {
-            opCursor--;
-            if(opCursor ==-1)
+            else if (Input.GetKeyDown(KeyCode.UpArrow))
             {
-                opCursor = 3;
+                opCursor--;
+                if (opCursor == -1)
+                {
+                    opCursor = 3;
+                }
             }
         }
         #endregion
-
         #region 커서에 따라서 색변경
         if(opCursor ==0)
         {
@@ -120,6 +110,27 @@ public class MapOptions : MonoBehaviour
             optionsTextMesh.color = defaultColor;
             backTitleTextMesh.color = defaultColor;
             exitGameTextMesh.color = selectedColor;
+        }
+        #endregion
+        #region 커서에따른 z를 눌렀을때
+        if (opCursor == 0 && Input.GetKeyDown(KeyCode.Z) && Moving.cupHead.isEsc == true)
+        {
+            Moving.cupHead.isEscape = false;
+            Moving.cupHead.isEsc = false;
+            backgroundDark.SetActive(false);
+            pause.SetActive(false);
+        }
+        else if (opCursor == 1 && Input.GetKeyDown(KeyCode.Z) && Moving.cupHead.isEsc == true)
+        {
+
+        }
+        else if (opCursor == 2 && Input.GetKeyDown(KeyCode.Z) && Moving.cupHead.isEsc == true)
+        {
+            SceneManager.LoadScene("Opening");
+        }
+        else if (opCursor == 3 && Input.GetKeyDown(KeyCode.Z) && Moving.cupHead.isEsc == true)
+        {
+            Application.Quit();
         }
         #endregion
     }
