@@ -4,9 +4,12 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using TMPro;
 using UnityEngine.SceneManagement;
+using System.Runtime.CompilerServices;
 
 public class MapOptions : MonoBehaviour
 {
+    static public MapOptions instance;
+
     public GameObject pause;
     public GameObject backgroundDark;
     public GameObject continueText;
@@ -50,23 +53,25 @@ public class MapOptions : MonoBehaviour
 
         selectedColor = Color.red; // 선택된 메뉴 항목의 색상
         defaultColor = Color.black;   // 기본 메뉴 항목의 색상
+
+        instance = this;
     }
 
     // Update is called once per frame
     void Update()
     {
         #region 옵션창 Esc로 띄우기
-        if (Input.GetKeyDown(KeyCode.Escape))
+        if (Input.GetKeyDown(KeyCode.Escape) && Moving.cupHead.isZ == false)
         {
             if (pause.activeSelf == false)
             {
-                Moving.cupHead.isEsc = true;
+                Invoke("ChangeIsEsc", 1f);
                 backgroundDark.SetActive(true);
                 pause.SetActive(true);
             }
             else if (pause.activeSelf == true)
             {
-                Moving.cupHead.isEsc= false;
+                Invoke("ChangeIsEsc", 1f);
                 backgroundDark.SetActive(false);
                 pause.SetActive(false);
             }
@@ -141,5 +146,17 @@ public class MapOptions : MonoBehaviour
             Application.Quit();
         }
         #endregion
+    }
+
+    private void ChangeIsEsc()
+    {
+        if (Moving.cupHead.isEsc == false)
+        {
+            Moving.cupHead.isEsc = true;
+        }
+        else if(Moving.cupHead.isEsc == true)
+        {
+            Moving.cupHead.isEsc = false;
+        }
     }
 }

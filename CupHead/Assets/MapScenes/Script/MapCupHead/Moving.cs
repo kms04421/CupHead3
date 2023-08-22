@@ -14,6 +14,13 @@ public class Moving : MonoBehaviour
 {
     static public Moving cupHead;
     Vector2 movement;
+    //저장할 데이터
+    public bool VeggieClear = false;  //야채보스클리어여부
+    public bool FrogClear = true;  //개구리보스클리어여부
+    
+    public GameObject FlagVeggie; //야채보스 플래그
+    public GameObject FlagFrog;   //개구리보스 플래그
+    
     // 버퍼링 및 방향을 위한 변수들을 정의합니다.
     Vector2 currentmovement;
     private Rigidbody2D headMoving;
@@ -80,7 +87,6 @@ public class Moving : MonoBehaviour
             {
                 End.SetActive(true);
                 Invoke("HomeLoad",1f);
-
             }
             else if(objectName == "Tomb_Boss")
             {
@@ -171,26 +177,23 @@ public class Moving : MonoBehaviour
         #endregion
         #region Obstacles 만났을때 구현
         //홈에 만났을때
-        if(isMet == true&& objectName == "Home")
+        if(isMet == true&& objectName == "Home" && isEsc == false)
         {
-            
             if(Input.GetKeyDown(KeyCode.Z))
             {
                 isZ = true;
                 HomeText.SetActive(true);
                 backgroundDark.SetActive(true);
-
             }
             if (Input.GetKeyDown(KeyCode.Escape))
             {
                 isZ = false;
                 HomeText.SetActive(false);
                 backgroundDark.SetActive(false);
-
             }
         }
         //무덤보스 
-        if (isMet == true && objectName == "Tomb_Boss")
+        if (isMet == true && objectName == "Tomb_Boss" && isEsc == false)
         {
 
             if (Input.GetKeyDown(KeyCode.Z))
@@ -209,7 +212,7 @@ public class Moving : MonoBehaviour
             }
         }
         //야채보스
-        if (isMet == true && objectName == "Veggie")
+        if (isMet == true && objectName == "Veggie" && isEsc == false)
         {
 
             if (Input.GetKeyDown(KeyCode.Z))
@@ -228,7 +231,7 @@ public class Moving : MonoBehaviour
             }
         }
         //개구리보스
-        if (isMet == true && objectName == "Frogs_Boss")
+        if (isMet == true && objectName == "Frogs_Boss" && isEsc == false)
         {
 
             if (Input.GetKeyDown(KeyCode.Z))
@@ -246,7 +249,7 @@ public class Moving : MonoBehaviour
             }
         }
         //상점
-        if (isMet == true && objectName == "Shop")
+        if (isMet == true && objectName == "Shop" && isEsc == false)
         {
 
             if (Input.GetKeyDown(KeyCode.Z))
@@ -368,6 +371,24 @@ public class Moving : MonoBehaviour
             {
                 isEscape = false;
             }
+        }
+        #endregion
+        #region 보스클리어에따른 깃발표시
+        if(VeggieClear == true)
+        {
+            FlagVeggie.SetActive(true);
+        }
+        else
+        {
+            FlagVeggie.SetActive(false);
+        }
+        if(FrogClear == true)
+        {
+            FlagFrog.SetActive(true);
+        }
+        else
+        {
+            FlagFrog.SetActive(false);
         }
         #endregion
     }
@@ -508,4 +529,15 @@ public class Moving : MonoBehaviour
         SceneManager.LoadScene("Tallfrog");
     }
 
+    private void ChangeIsZ()
+    {
+        if(isZ == false)
+        {
+            isZ = true;
+        }
+        else
+        {
+            isZ = false;
+        }
+    }
 }
