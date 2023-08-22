@@ -17,6 +17,10 @@ public class Player : MonoBehaviour
 
     private float DashTime = 1f;
 
+
+    public GameObject eXShot;
+    private List<GameObject> exShotList;
+
     private bool parryChk = false;
     //카메라 진동 
  
@@ -145,12 +149,22 @@ public class Player : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+
+        exShotList = new List<GameObject>();
         sparkList = new List<GameObject>(); 
         originalPosition = cameraTransform.transform.position; // 원래 카메라 포지션 
         collider2D = GetComponent<CapsuleCollider2D>();
         shot1PrefabList = new List<GameObject>();
 
-        for(int i = 0; i< 10; i++)
+
+        for (int i = 0; i < 6; i++)
+        {
+            saveObj = Instantiate(eXShot);
+            exShotList.Add(saveObj);
+            exShotList[i].SetActive(false);
+        }
+
+            for (int i = 0; i< 10; i++)
         {
             saveObj = Instantiate(spark);
             sparkList.Add(saveObj);
@@ -198,11 +212,46 @@ public class Player : MonoBehaviour
         Invincibility();
 
 
-        if (Input.GetKeyDown(KeyCode.V))
+        if (Input.GetKeyDown(KeyCode.V)) //ex샷 
         {
-            GameManager_1.instance.ChargeFillMin();
+            if(GameManager_1.instance.num >= 1)
+            {
+                for (int i = 0; i < shot1PrefabList.Count; i++)
+                {
+                    if (!exShotList[i].activeSelf)
+                    {
+                        animator.SetBool("Exshot", true);
+                        exShotList[i].SetActive(true);
+                        float jumpPlu = 0f;
+                        if (jumpChk == false) //위에 볼때 체크
+                        {
+                            jumpPlu = 1f;
+                        }
+                        if (LRChk) // 왼쪽 오른쪽 체크 
+                        {
+                            exShotList[i].transform.position = new Vector3(transform.position.x - 0.7f, transform.position.y + 1.3f - jumpPlu, 0);
+                            exShotList[i].transform.eulerAngles = new Vector3(0, 0, 180);
+                        }
+                        else
+                        {
+
+                            exShotList[i].transform.position = new Vector3(transform.position.x + 0.7f, transform.position.y + 1.3f - jumpPlu, 0);
+
+                            exShotList[i].transform.eulerAngles = new Vector3(0, 0, 0);
+                        }
+                        GameManager_1.instance.ChargeFillMin();
+                    }
+                }
+            }
+            
         }
-       
+       AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0);
+        // 특수 공격 종료시 처리로직
+        if( stateInfo.IsName("cuphead_exShot") || stateInfo.IsName("cuphead_exShot_jump"))// 애니메이션이 짧아 인식이힘들어 에니메이션 종료후 꺼지는 애니메이션 효과 체크
+        {
+          
+            animator.SetBool("Exshot", false);
+        }
 
         if (isTalk)
         {
@@ -211,16 +260,16 @@ public class Player : MonoBehaviour
 
         }
         
-        if (parrySuccess)
+        if (parrySuccess) // 패링 성공 시 위로 점프 
         {
-            Debug.Log("d");
+          
            
             transform.Translate(Vector3.up * 1 * 1);
             parrySuccess = false;
         }
    
 
-        if (isDown)
+        if (isDown) // 앉을경우 콜라이더 축소, 중심콜라이더 위치 수정
         {
         
             collider2D.size = new Vector2(0.6f, 0.5f);
@@ -257,24 +306,24 @@ public class Player : MonoBehaviour
         }
 
         // 2023 08 19 ssm 
-        if (Input.GetKeyDown(KeyCode.LeftArrow))
+        if (Input.GetKeyDown(KeyCode.LeftArrow)) // 왼쪽 오른쪽 구분용 
         {
             MoveLeft = true;
             LRChk = true; // 왼 쪽 true 오른쪾 false
         }
-        if (Input.GetKeyUp(KeyCode.LeftArrow))
+        if (Input.GetKeyUp(KeyCode.LeftArrow))// 왼쪽 오른쪽 구분용 
         {
             MoveLeft = false;
         }
 
 
 
-        if (Input.GetKeyDown(KeyCode.RightArrow))
+        if (Input.GetKeyDown(KeyCode.RightArrow))// 왼쪽 오른쪽 구분용 
         {
             LRChk = false;
             MoveRight = true;
         }
-        if (Input.GetKeyUp(KeyCode.RightArrow))
+        if (Input.GetKeyUp(KeyCode.RightArrow))// 왼쪽 오른쪽 구분용 
         {
             MoveRight = false;
         }

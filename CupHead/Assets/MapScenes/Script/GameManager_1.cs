@@ -11,12 +11,18 @@ public class GameManager_1 : MonoBehaviour
     //목숨
     public int life = 3;
 
+    public GameObject KO; // 클리어시 문구
+
+    public bool Clear = false;
+
     public GameObject menu; //메뉴
 
     public TMP_Text[] menuList; // 메뉴 텍스트 
 
+    public GameObject gameStart;//게임 시작 오브젝트
+
     public float ChargeFill = 0f;
-    private int num = 0;//증가값
+    public int num = 0;//증가값 , 차지될 exShot카드위치
     // 필살기 차지카드
     public Image card;
 
@@ -45,6 +51,7 @@ public class GameManager_1 : MonoBehaviour
 
     void Start()
     {
+        Invoke("TimeChk", 1.3f);// 게임 시작 문구 타이머 
         CardPosList = new List<Transform>();
         cardList = new List<Image>();
         for (int i = 0; i <= 5; i++)
@@ -105,8 +112,12 @@ public class GameManager_1 : MonoBehaviour
             num = 0;
         }
            
-
-
+       
+        if(Clear)
+        {
+            KO.SetActive(true);
+            Invoke("TimeChk", 1.3f);// 게임 시작 문구 타이머 
+        }
 
         if (menu.activeSelf)
         {
@@ -204,6 +215,18 @@ public class GameManager_1 : MonoBehaviour
             }
            
           
+        }
+    }
+
+    public void TimeChk()
+    {
+        if(gameStart.activeSelf)
+        {
+            gameStart.SetActive(false);
+        }
+        if(KO.activeSelf)
+        {
+            KO.SetActive(false);
         }
     }
 

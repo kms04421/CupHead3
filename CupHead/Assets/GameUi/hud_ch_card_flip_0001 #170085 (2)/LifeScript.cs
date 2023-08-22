@@ -15,7 +15,7 @@ public class LifeScript : MonoBehaviour
     void Update()
     {
 
-        Debug.Log(GameManager_1.instance.life);
+       
         
      
         if (GameManager_1.instance.life == 2)
