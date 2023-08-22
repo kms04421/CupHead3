@@ -9,6 +9,8 @@ public class Bullet : MonoBehaviour
     Rigidbody2D bulletRB;
     private float dirBullet;
     private Transform playerPost;
+    private Animator animator;
+   
     // Start is called before the first frame update
 /*    private void Awake()
     {
@@ -83,7 +85,7 @@ public class Bullet : MonoBehaviour
     }*/
     void Start()
     {
-       
+        animator = GetComponent<Animator>();
     }
 
     // Update is called once per frame
@@ -117,6 +119,16 @@ public class Bullet : MonoBehaviour
         {
             gameObject.SetActive(false);
         }
+        AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0);
+
+        if (stateInfo.IsName("peaShotDie")&& stateInfo.normalizedTime > 0.99f)
+        {
+            animator.SetBool("Die", false);
+            gameObject.SetActive(false);
+
+        }
+
+        
     }
 
     
@@ -126,7 +138,9 @@ public class Bullet : MonoBehaviour
     {
         if (collision.tag.Equals("Boss"))
         {
-            gameObject.SetActive(false);
+            GameManager_1.instance.ChargeFillAdd();
+            animator.SetBool("Die", true);
+            
         }
     }
 }

@@ -25,9 +25,9 @@ public class PinkObjScript : MonoBehaviour
     private void OnTriggerStay2D(Collider2D collision)
     {
         
-        if (collision.tag.Equals("Farring"))
+        if (collision.tag.Equals("Parring"))
         {
-            Debug.Log("Pink");
+         
             chk = true;
         }
     }

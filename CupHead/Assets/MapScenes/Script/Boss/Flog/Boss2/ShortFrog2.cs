@@ -51,9 +51,18 @@ public class ShortFrog2 : MonoBehaviour
        
         }
 
+        if (stateInfoAtk.IsName("ShortFrog2_Ball3") && BossManager.instance.ready ||         
+            stateInfoAtk.IsName("ShortFrog2_Ball") && BossManager.instance.ready ||
+            stateInfoAtk.IsName("ShortFrog2_Ball2") && BossManager.instance.ready)
+        {
+         
+            animator.SetBool("BallEnd", true);
+         
+        }
 
 
-        if (stateInfoAtk.IsName("ShortFrog2") && stateInfoAtk.normalizedTime >= 0.4f && stateInfoAtk.normalizedTime <= 0.85f && gameObject.transform.position.x > -12f)
+
+        if (stateInfoAtk.IsName("ShortFrog2")&& stateInfoAtk.normalizedTime >= 0.4f && stateInfoAtk.normalizedTime <= 0.85f && gameObject.transform.position.x > -12f)
         {
             if (BossManager.instance.ready)
             {
@@ -80,7 +89,7 @@ public class ShortFrog2 : MonoBehaviour
             capsuleCollider.size = newSize;
         }
 
-        if (BossManager.instance.BossChk == 1 && BossManager.instance.BossLv == 1 && BossManager.instance.atkCount1 ==0)
+        if (BossManager.instance.BossChk == 1 && BossManager.instance.BossLv == 1 )
         {
 
 

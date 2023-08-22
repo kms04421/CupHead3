@@ -34,12 +34,12 @@ public class BallMove : MonoBehaviour
 
         if(transform.position.x > 8)
         {
-            Debug.Log("지금이니?");
+            
             gameObject.SetActive(false);
         }
 
 
-        transform.Translate(Vector3.right * 8 * Time.deltaTime);
+        transform.Translate(Vector3.right * 10 * Time.deltaTime);
 
         if (transform.position.y >= 4.5f )
         {

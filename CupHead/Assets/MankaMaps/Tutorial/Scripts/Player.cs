@@ -2,8 +2,7 @@
 using Cinemachine;
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
-using UnityEditor;
+
 using UnityEngine;
 
 public class Player : MonoBehaviour
@@ -47,6 +46,9 @@ public class Player : MonoBehaviour
     public AnimatorStateInfo stateInfo;
     public int bulletMode;
 
+    public GameObject spark = default;// 총발사 시 효과
+
+    private List<GameObject> sparkList;//총발사 시 효과리스트
     //좌우 체크
     private bool MoveRight = false;
     private bool MoveLeft = false;
@@ -57,8 +59,7 @@ public class Player : MonoBehaviour
     private bool isFiring = false;
     //이동 키 받는변수
     public Vector2 movement;
-    //목숨
-    private int life = 3;
+    
     //이동속도
     public float speed = 7f;
     //생존상태
@@ -144,9 +145,18 @@ public class Player : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        sparkList = new List<GameObject>(); 
         originalPosition = cameraTransform.transform.position; // 원래 카메라 포지션 
         collider2D = GetComponent<CapsuleCollider2D>();
         shot1PrefabList = new List<GameObject>();
+
+        for(int i = 0; i< 10; i++)
+        {
+            saveObj = Instantiate(spark);
+            sparkList.Add(saveObj);
+            sparkList[i].SetActive(false);
+        }
+
 
         for (int i = 0; i < 50; i++)
         {
@@ -188,7 +198,13 @@ public class Player : MonoBehaviour
         Invincibility();
 
 
-        if(isTalk)
+        if (Input.GetKeyDown(KeyCode.V))
+        {
+            GameManager_1.instance.ChargeFillMin();
+        }
+       
+
+        if (isTalk)
         {
 
             return;
@@ -197,9 +213,9 @@ public class Player : MonoBehaviour
         
         if (parrySuccess)
         {
-            
+            Debug.Log("d");
            
-            transform.Translate(Vector3.up * 10 * Time.deltaTime);
+            transform.Translate(Vector3.up * 1 * 1);
             parrySuccess = false;
         }
    
@@ -217,14 +233,16 @@ public class Player : MonoBehaviour
         }
 
 
-        if (!jumpChk)
+        if (!jumpChk) // 점프 했을경우  콜라이더 사이즈 줄어듬 
         {
             PR.gravityScale = 4;
             collider2D.size = new Vector2(0.6f, 0.5f);
             collider2D.offset = new Vector2(-0.04870152f, 0.6f);
 
-            if(Input.GetKeyDown(KeyCode.Z) && parryChk == false)
+            if(Input.GetKeyDown(KeyCode.Z) && parryChk == false)// 패링 
             {
+
+                
                 ParryObj.SetActive(true);
                 animator.SetBool("Parry", true);
                 parryChk = true;
@@ -390,6 +408,10 @@ public class Player : MonoBehaviour
                                 shot1PrefabList[i].transform.position = new Vector3(transform.position.x - (0.8f + Xnum), transform.position.y + 0.7f, 0);
                                 shot1PrefabList[i].transform.eulerAngles = new Vector3(0, 0, 225);
                             }
+
+
+                            sparkList[i].transform.position = shot1PrefabList[i].transform.position;
+                            sparkList[i].SetActive(true);
                             break;
                         }
                     }
@@ -413,10 +435,11 @@ public class Player : MonoBehaviour
         {
          
           jumpEndTime += Time.deltaTime;
-
+            movement.x = Input.GetAxis("Horizontal");
+            movement.y = Input.GetAxis("Vertical");
             if (jumpEndTime > 0.2f)
             {
-                PR.velocity = new Vector2(movement.x * speed, PR.velocity.y);
+               
             }
             else
             {                          
@@ -567,9 +590,10 @@ public class Player : MonoBehaviour
 
         if (isAim == false)
         {
-            if (!isDown)
+            if (!isDown )
             {
                 PR.velocity = new Vector2(movement.x * speed, PR.velocity.y);
+                
             }
 
 
@@ -622,12 +646,12 @@ public class Player : MonoBehaviour
             if (!isInvincible) // 무적 상태
             {
                 Debug.LogFormat("들어오니?");
-                life -= 1;
+                GameManager_1.instance.lifeMin();
 
                 invincibleTimer = 1f;
 
                 charDam = true;
-                if (life == 0)
+                if (GameManager_1.instance.life == 0)
                 {
                     Die();
                 }

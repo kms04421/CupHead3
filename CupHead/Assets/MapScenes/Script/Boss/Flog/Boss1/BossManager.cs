@@ -52,7 +52,7 @@ public class BossManager : MonoBehaviour
                 BossLv++;
 
             }
-            else if (BossLv == 1 && atkCount1 >0 && atkCount >0)
+            else if (BossLv == 1)
             {
               
                 ready = true;
@@ -74,7 +74,7 @@ public class BossManager : MonoBehaviour
             if (BossChk == 3) // º¸½º LV ÅÒ 
             {
                 animatorTime += Time.deltaTime;
-                if (animatorTime > 4)
+                if (animatorTime > 2)
                 {
                     animatorTime = 0;
                     BossChk = 0;
@@ -86,7 +86,7 @@ public class BossManager : MonoBehaviour
             {
                 Debug.Log("4 : 4");
                 animatorTime += Time.deltaTime;
-                if (animatorTime >= 3)
+                if (animatorTime >= 2)
                 {
                     atkChk = 0;
                     animatorTime = 0;
@@ -137,18 +137,7 @@ public class BossManager : MonoBehaviour
             {
                 atkCount1++;
             }
-            if(atkCount >= 2 )
-            {
-                atkCount = 0;
-            }
-            if(atkCount1 >= 2)
-            {
-                atkCount1 = 0;
-            }
-
-
-
-
+      
 
 
             if (atkCount > 0 && atkCount1 > 0)

@@ -18,13 +18,15 @@ public class ParringScript : MonoBehaviour
      
     }
 
-    private void OnCollisionStay2D(Collision2D collision)
+ 
+
+
+    private void OnTriggerStay2D(Collider2D collision)
     {
-      
-        if (collision.collider.tag.Equals("PinkBossAtk"))
+        if(collision.tag.Equals("PinkBossAtk")|| collision.tag.Equals("PinkObj"))
         {
             Player.instance.parryAction();
-        
         }
     }
+
 }

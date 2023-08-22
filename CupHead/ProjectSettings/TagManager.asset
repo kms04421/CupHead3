@@ -15,6 +15,7 @@ TagManager:
   - Wall
   - Test
   - Parring
+  - PinkObj
   layers:
   - Default
   - TransparentFX
