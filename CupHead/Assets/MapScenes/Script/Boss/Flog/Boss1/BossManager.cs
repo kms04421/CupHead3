@@ -43,7 +43,7 @@ public class BossManager : MonoBehaviour
            
             if (BossLv == 0 )
             {
-                Debug.Log("Die1");
+               
 
                 BossHp = 50;
                 atkChk = 0;
@@ -160,9 +160,16 @@ public class BossManager : MonoBehaviour
 
     }
 
-    public void BossHpMinus() // hp-
+    public void BossHpMinus(int i) // hp-
     {
-        BossHp -= 1;
+        if (i == 0)
+        {
+            BossHp -= 1;
+        }
+        else if(i == 1)
+        {
+            BossHp -= 15;
+        }
 
     }
 }

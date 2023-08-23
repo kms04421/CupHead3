@@ -64,7 +64,7 @@ MonoBehaviour:
     value: 0
   color:
     overrideState: 1
-    value: {r: 0.26415092, g: 0.24047701, b: 0.24047701, a: 1}
+    value: {r: 0.4245283, g: 0.41451585, b: 0.41451585, a: 1}
   center:
     overrideState: 0
     value: {x: 0.5, y: 0.5}

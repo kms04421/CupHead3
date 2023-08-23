@@ -47,13 +47,14 @@ public class ShortFrog2 : MonoBehaviour
         {
             animator.SetBool("Start3", true);
 
-            BossManager.instance.BossHp = 50;
-       
+            BossManager.instance.BossHp = 10;
+            Vector2 newSize = new Vector2(4f, capsuleCollider.size.y / 2f);
+            capsuleCollider.size = newSize; //보스 콜라이더 보스 사이즈 수정
+
         }
 
-        if (stateInfoAtk.IsName("ShortFrog2_Ball3") && BossManager.instance.ready ||         
-            stateInfoAtk.IsName("ShortFrog2_Ball") && BossManager.instance.ready ||
-            stateInfoAtk.IsName("ShortFrog2_Ball2") && BossManager.instance.ready)
+        if ( BossManager.instance.ready )       
+           
         {
          
             animator.SetBool("BallEnd", true);
@@ -86,7 +87,7 @@ public class ShortFrog2 : MonoBehaviour
             startChk = true;
             animator.SetTrigger("Idle");
             Vector2 newSize = new Vector2(4f, capsuleCollider.size.y * 2f);
-            capsuleCollider.size = newSize;
+            capsuleCollider.size = newSize; //보스 콜라이더 보스 사이즈 수정
         }
 
         if (BossManager.instance.BossChk == 1 && BossManager.instance.BossLv == 1 )
@@ -195,8 +196,13 @@ public class ShortFrog2 : MonoBehaviour
     {
         if (collision.tag.Equals("PlayerAttack"))
         {
-            BossManager.instance.BossHpMinus();
-           
+            BossManager.instance.BossHpMinus(0);
+
+        }
+
+        if (collision.tag.Equals("PlayerAttackEx"))//ex공격 적중시
+        {
+            BossManager.instance.BossHpMinus(1);
         }
     }
 }

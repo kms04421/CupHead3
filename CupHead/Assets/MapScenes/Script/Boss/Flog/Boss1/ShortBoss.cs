@@ -179,7 +179,11 @@ public class ShortBoss : MonoBehaviour
         if (collision.tag.Equals("PlayerAttack"))
         {
 
-            BossManager.instance.BossHpMinus();
+            BossManager.instance.BossHpMinus(0);
+        }
+        if (collision.tag.Equals("PlayerAttackEx"))//ex공격 적중시
+        {
+            BossManager.instance.BossHpMinus(1);
         }
     }
 }

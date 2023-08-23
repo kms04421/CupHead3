@@ -67,7 +67,7 @@ public class Player : MonoBehaviour
     //이동속도
     public float speed = 7f;
     //생존상태
-    private bool isDead = false;
+    public bool isDead = false;
     //막힘여부
     public bool isBlocked = false;
     //점프 
@@ -133,6 +133,7 @@ public class Player : MonoBehaviour
     private float minimumDeadZoneWidth = 0.1f;
     private float maximumDeadZoneWidth = 0.32f;
 
+    private bool ExshotChk = false;
     private void Awake()
     {
         if (instance == null)
@@ -214,38 +215,48 @@ public class Player : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.V)) //ex샷 
         {
-            if(GameManager_1.instance.num >= 1)
+            if(!ExshotChk)
             {
-                for (int i = 0; i < shot1PrefabList.Count; i++)
+                ExshotChk = true;
+                Invoke("ExshotChange", 0.7f);
+                if (GameManager_1.instance.num >= 1)
                 {
-                    if (!exShotList[i].activeSelf)
+                    for (int i = 0; i < exShotList.Count; i++)
                     {
-                        animator.SetBool("Exshot", true);
-                        exShotList[i].SetActive(true);
-                        float jumpPlu = 0f;
-                        if (jumpChk == false) //위에 볼때 체크
+                        if (!exShotList[i].activeSelf)
                         {
-                            jumpPlu = 1f;
-                        }
-                        if (LRChk) // 왼쪽 오른쪽 체크 
-                        {
-                            exShotList[i].transform.position = new Vector3(transform.position.x - 0.7f, transform.position.y + 1.3f - jumpPlu, 0);
-                            exShotList[i].transform.eulerAngles = new Vector3(0, 0, 180);
-                        }
-                        else
-                        {
+                            animator.SetBool("Exshot", true);
+                            exShotList[i].SetActive(true);
+                            float jumpPlu = 0f;
+                            if (jumpChk == false) //위에 볼때 체크
+                            {
+                                jumpPlu = 1f;
+                            }
+                            if (LRChk) // 왼쪽 오른쪽 체크 
+                            {
+                                exShotList[i].transform.position = new Vector3(transform.position.x - 0.7f, transform.position.y + 1.3f - jumpPlu, 0);
+                                exShotList[i].transform.eulerAngles = new Vector3(0, 0, 180);
+                            }
+                            else
+                            {
 
-                            exShotList[i].transform.position = new Vector3(transform.position.x + 0.7f, transform.position.y + 1.3f - jumpPlu, 0);
+                                exShotList[i].transform.position = new Vector3(transform.position.x + 0.7f, transform.position.y + 1.3f - jumpPlu, 0);
 
-                            exShotList[i].transform.eulerAngles = new Vector3(0, 0, 0);
+                                exShotList[i].transform.eulerAngles = new Vector3(0, 0, 0);
+                            }
+
                         }
-                        GameManager_1.instance.ChargeFillMin();
                     }
+                    GameManager_1.instance.ChargeFillMin();
                 }
             }
+           
             
         }
-       AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0);
+
+
+
+        AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0);
         // 특수 공격 종료시 처리로직
         if( stateInfo.IsName("cuphead_exShot") || stateInfo.IsName("cuphead_exShot_jump"))// 애니메이션이 짧아 인식이힘들어 에니메이션 종료후 꺼지는 애니메이션 효과 체크
         {
@@ -1154,6 +1165,10 @@ public class Player : MonoBehaviour
             isInvincible = false;
         }
        
+    }
+    public void ExshotChange() 
+    {
+        ExshotChk = false;
     }
 
     public void parryAction()

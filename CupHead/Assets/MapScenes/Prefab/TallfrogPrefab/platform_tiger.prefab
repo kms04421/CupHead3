@@ -11,9 +11,9 @@ GameObject:
   - component: {fileID: 2382943023419267005}
   - component: {fileID: -7846067150178894992}
   - component: {fileID: 7131668663959453803}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: platform_tiger
-  m_TagString: Untagged
+  m_TagString: Obstacles
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -86,7 +86,7 @@ GameObject:
   - component: {fileID: 6660745909773388567}
   - component: {fileID: 8994133488506364181}
   - component: {fileID: 9086163530699610805}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: tallfrog_slotman_platform_tiger_top
   m_TagString: BossAtk
   m_Icon: {fileID: 0}
@@ -173,7 +173,7 @@ BoxCollider2D:
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: -0.03819236, y: -0.085198164}
+  m_Offset: {x: -0.014804006, y: -0.17422454}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -184,7 +184,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 1.9980772, y: 0.569036}
+  m_Size: {x: 1.6589463, y: 0.39098325}
   m_EdgeRadius: 0
 --- !u!95 &9086163530699610805
 Animator:
@@ -218,7 +218,7 @@ GameObject:
   - component: {fileID: 6354973596218919491}
   - component: {fileID: 642274104316800527}
   - component: {fileID: 5722048444810696834}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: tallfrog_slotman_platform_tiger
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -325,7 +325,7 @@ GameObject:
   - component: {fileID: 8354400918462504270}
   - component: {fileID: 7331756173503045392}
   - component: {fileID: 7285903217027912051}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: tallfrog_slotman_platform_tiger_bullet
   m_TagString: BossAtk
   m_Icon: {fileID: 0}

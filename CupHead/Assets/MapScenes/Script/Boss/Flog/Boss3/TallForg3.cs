@@ -46,6 +46,8 @@ public class TallForg3 : MonoBehaviour
     private bool slotChk = true;
     private float SetTime = 1.5f;
     private bool slotAtkStart = false;
+
+    private bool bossDieExChk = false;
     private void Awake()
     {
 
@@ -119,6 +121,15 @@ public class TallForg3 : MonoBehaviour
     {
         if(BossManager.instance.BoosDie)
         {
+            if(!bossDieExChk)
+            {
+                bossDieExChk = true;
+                GameManager_1.instance.BossDieEX(transform);
+            }
+              
+         
+          
+           
             animator.SetTrigger("Die");
             return;
         }
@@ -473,7 +484,11 @@ public class TallForg3 : MonoBehaviour
         {
             if(collision.tag.Equals("PlayerAttack"))
             {
-                BossManager.instance.BossHpMinus();
+                BossManager.instance.BossHpMinus(0);
+            }
+            if (collision.tag.Equals("PlayerAttackEx"))//ex공격 적중시
+            {
+                BossManager.instance.BossHpMinus(1);
             }
         }
     }

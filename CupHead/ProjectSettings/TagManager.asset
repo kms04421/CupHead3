@@ -16,6 +16,7 @@ TagManager:
   - Test
   - Parring
   - PinkObj
+  - PlayerAttackEx
   layers:
   - Default
   - TransparentFX
@@ -73,4 +74,13 @@ TagManager:
     locked: 0
   - name: TopBack
     uniqueID: 3015626921
+    locked: 0
+  - name: TextWord
+    uniqueID: 3691950345
+    locked: 0
+  - name: TextBackGround
+    uniqueID: 63149207
+    locked: 0
+  - name: LastObj
+    uniqueID: 2034681459
     locked: 0
