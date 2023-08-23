@@ -48,7 +48,6 @@ public class Moving : MonoBehaviour
     private int CoinNum;
     public GameObject[] FishText = new GameObject[4];
     private int FishNum;
-    public bool isApple;
     public bool isMet;
     public bool isZ;
     public bool isEscape;
@@ -79,6 +78,18 @@ public class Moving : MonoBehaviour
         coinCount = 1;
         cupHead = this;
         Z1.transform.localScale = new Vector3(0.01f, 0.01f, 1);
+        if (DataManager.dataInstance.playerData.lastPosition == 3)
+        {
+            cupHead.transform.position = new Vector2(1011, -414);
+        }
+        else if(DataManager.dataInstance.playerData.lastPosition == 4)
+        {
+            cupHead.transform.position = new Vector2(1187, -832);
+        }
+        else if(DataManager.dataInstance.playerData.lastPosition == 2)
+        {
+            cupHead.transform.position = new Vector2(-56, -33);
+        }
     }
 
     // Update is called once per frame
@@ -287,7 +298,7 @@ public class Moving : MonoBehaviour
         // 애플 NPC
         if (isMet == true && objectName.Equals("AppleNpc"))
         {
-            if (Input.GetKeyDown(KeyCode.Z) && isApple == false && isEsc == false)
+            if (Input.GetKeyDown(KeyCode.Z) && DataManager.dataInstance.playerData.isApple == false && isEsc == false)
             {
                 vCam.LookAt = appleNPC;
                 vCam.Follow = appleNPC;
@@ -299,12 +310,12 @@ public class Moving : MonoBehaviour
                     vCam.LookAt = player;
                     vCam.Follow = player;
                     isZ = false;
-                    isApple = true;
+                    DataManager.dataInstance.playerData.isApple = true;
                     BeforeSetFalseApple();
                     AppleNum = 0;
                 }
             }
-            else if (Input.GetKeyDown(KeyCode.Z) && isApple == true && isEsc == false)
+            else if (Input.GetKeyDown(KeyCode.Z) && DataManager.dataInstance.playerData.isApple == true && isEsc == false)
             {
                 vCam.LookAt = appleNPC;
                 vCam.Follow = appleNPC;
@@ -358,6 +369,7 @@ public class Moving : MonoBehaviour
             }
         }
         #endregion
+        /*
         #region shift로 상태창볼때
         if (Input.GetKeyDown(KeyCode.LeftShift))
         {
@@ -370,10 +382,7 @@ public class Moving : MonoBehaviour
                 Status.SetActive(false);
             }
         }
-
-
-
-        #endregion
+        #endregion*/
         #region 코인갯수
         coin.text = "" + coinCount.ToString();
         #endregion
@@ -409,8 +418,6 @@ public class Moving : MonoBehaviour
         }
         #endregion
     }
-
-
     #region 물체와 충돌감지collision
     public void OnCollisionStay2D(Collision2D collision)
     {
@@ -536,14 +543,17 @@ public class Moving : MonoBehaviour
     public void HomeLoad()
     {
         SceneManager.LoadScene("ElderKettle");
+        DataManager.dataInstance.playerData.lastPosition = 0;
     }
     public void VeggieLoad()
     {
         SceneManager.LoadScene("VeggieBoss");
+        DataManager.dataInstance.playerData.lastPosition = 3;
     }
     public void FrogLoad()
     {
         SceneManager.LoadScene("Tallfrog");
+        DataManager.dataInstance.playerData.lastPosition = 4;
     }
 
     private void ChangeIsZ()
