@@ -1,0 +1,72 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &4938688719823476551
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4938688719823476550}
+  - component: {fileID: 4938688719823476549}
+  m_Layer: 0
+  m_Name: GameManager_1
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4938688719823476550
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4938688719823476551}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -1.1431631, y: -0.7645085, z: -0.0030026212}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4938688719823476549
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4938688719823476551}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3d2a7ec5198665d40b58afcc27015fa9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  explosion: {fileID: 6257319510979926754, guid: e89f7072b3f62ac4d8431cd92f4034e6, type: 3}
+  explosionFd: {fileID: 0}
+  DeathCaerd: {fileID: 0}
+  DeathCaerdImage: {fileID: 0}
+  DeathCaerd_Run: {fileID: 0}
+  DeathCaerdWardList:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  save0bj_1: {fileID: 0}
+  life: 3
+  targetImage: {fileID: 0}
+  KO: {fileID: 0}
+  Clear: 0
+  menu: {fileID: 0}
+  menuList:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  gameStart: {fileID: 0}
+  ChargeFill: 0
+  num: 0
+  card: {fileID: 3590557557597115314, guid: 1a5e753963dd0da44a9732bde23f85bd, type: 3}
+  listObj: {fileID: 0}
+  hexColor: 413F3F
