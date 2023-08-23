@@ -5,18 +5,32 @@ using TMPro;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using UnityEditor;
+using System.IO;
 
 public class StartMenu : MonoBehaviour
 {
-    //새게임 데이터 존재여부
-    private bool Game1;
-    private bool Game2;
-    private bool Game3;
 
+    //데이터 존재여부
+    bool[] savefile = new bool[3];
     //새게임텍스트 오브젝트
     public GameObject Create1;
     public GameObject Create2;
     public GameObject Create3;
+
+    //기존게임 텍스 오브젝트
+    public GameObject[] slotExist;
+    //잉크통 텍스트
+    public GameObject[] slotExist2;
+    //기존게임 텍스트
+    public TMP_Text[] slotExistText;
+    //기존게임 트랜스폼
+    private RectTransform rectExist1;
+    private RectTransform rectExist2;
+    private RectTransform rectExist3;
+    //잉크통 텍스트
+    private RectTransform rectExist4;
+    private RectTransform rectExist5;
+    private RectTransform rectExist6;
 
     //새게임텍스트렉트 트랜스폼
     private RectTransform rectCreate1;
@@ -88,6 +102,27 @@ public class StartMenu : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        
+        //슬롯별로 저장된 데이터가 존재하는지 판단
+        for (int i = 0; i < 3; i++)
+        {
+            if(File.Exists(DataManager.dataInstance.path + $"{i}"))
+            {
+                Debug.Log("잘불러오니??"); 
+                savefile[i] = true;
+                DataManager.dataInstance.nowSlot = i;
+                DataManager.dataInstance.LoadData();
+                DataManager.dataInstance.playerData.progress = 30;
+                slotExistText[i].text = "컵헤드 " + (DataManager.dataInstance.nowSlot+1).ToString() +
+                " " + DataManager.dataInstance.playerData.progress.ToString()+ "%" ;
+            }
+            else
+            {
+                Debug.Log("못불러왔구나 ㅜ");
+                savefile[i] = false;
+            }
+        }
+        DataManager.dataInstance.DataClear();
         cursorNum = 0;
         choiceNum1 = 0;
         choiceNum2 = 0;
@@ -111,9 +146,22 @@ public class StartMenu : MonoBehaviour
         rectChoose2.anchoredPosition = new Vector2(-120, 20);
         rectChoose3.anchoredPosition = new Vector2(-120, -140);
 
-        Game1 = true;
-        Game2 = true;
-        Game3 = true;
+        rectExist1 = slotExist[0].GetComponent<RectTransform>();
+        rectExist2 = slotExist[1].GetComponent<RectTransform>();
+        rectExist3 = slotExist[2].GetComponent<RectTransform>();
+
+
+        rectExist1.anchoredPosition = new Vector2(0, 210);
+        rectExist2.anchoredPosition = new Vector2(0, 40);
+        rectExist3.anchoredPosition = new Vector2(0, -110);
+
+        rectExist4 = slotExist2[0].GetComponent<RectTransform>();
+        rectExist5 = slotExist2[1].GetComponent<RectTransform>();
+        rectExist6 = slotExist2[2].GetComponent<RectTransform>();
+
+        rectExist4.anchoredPosition = new Vector2(0, 170);
+        rectExist5.anchoredPosition = new Vector2(0, 0);
+        rectExist6.anchoredPosition = new Vector2(0, -150);
 
         isStory = false;
     }
@@ -121,6 +169,7 @@ public class StartMenu : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        #region 스토리북진행
         if (isWaitingForKey ==true)
         {
             if (storyNum == 10 &&Input.GetKeyDown(KeyCode.Z))
@@ -185,33 +234,48 @@ public class StartMenu : MonoBehaviour
 
 
         }
+        #endregion
         #region 새게임 텍스트 onoff
         if (!(isEnter1 == true || isEnter2 || isEnter3))
         {
-            if (Game1 == true)
+            if (savefile[0] == false)
             {
                 Create1.SetActive(true);
             }
-            if (Game2 == true)
+            if (savefile[1] == false)
             {
                 Create2.SetActive(true);
             }
-            if (Game3 == true)
+            if (savefile[2] == false)
             {
                 Create3.SetActive(true);
             }
-        }
+            if (savefile[0] ==true)
+            {
+                slotExist[0].SetActive(true);
+                slotExist2[0].SetActive(true);
+            }
+            if (savefile[1] == true)
+            {
+                slotExist[1].SetActive(true);
+                slotExist2[1].SetActive(true);
+            }
+            if (savefile[2] == true)
+            {
+                slotExist[2].SetActive(true);
+                slotExist2[2].SetActive(true);
+            }
+        }        
         #endregion
-
         #region 씬창으로 입장하기
         if (isSlotChoice == true && isMenu == false && isEnter1)
         {
-            if (Game1 == false)
+            if (savefile[0] == true)
             { //기존데이터가 있을때
                 if (choiceNum1 == 0 && Input.GetKeyDown(KeyCode.Z))
                 {//컵헤드가 활성화 된 상태일때 입장
                     EnterGameAnimator(Slot1CupHeadChoice);
-                    Invoke("EnterGame", 1.0f);
+                    Slot(0);
                 }
                 if (choiceNum1 == 1 && Input.GetKeyDown(KeyCode.Z))
                 {//머크컵이 활성화 된 상태일때 입장
@@ -221,8 +285,7 @@ public class StartMenu : MonoBehaviour
             { //기존데이터가 없을떄
                 if (choiceNum1 == 0 && Input.GetKeyDown(KeyCode.Z))
                 {//컵헤드가 활성화 된 상태일때 입장
-                    isWaitingForKey = true;
-                    slotBoundary.SetActive(false);
+                    Slot(0);
                     //Invoke("EnterGame", 1.0f);
                 }
                 if (choiceNum1 == 1 && Input.GetKeyDown(KeyCode.Z))
@@ -232,12 +295,12 @@ public class StartMenu : MonoBehaviour
         }
         if (isSlotChoice == true && isMenu == false && isEnter2)
         {
-            if (Game2 == false)
+            if (savefile[1] == true)
             { //기존데이터가 있을때
                 if (choiceNum2 == 0 && Input.GetKeyDown(KeyCode.Z))
                 {//컵헤드가 활성화 된 상태일때 입장
                     EnterGameAnimator(Slot2CupHeadChoice);
-                    Invoke("EnterGame", 1.0f);
+                    Slot(1);
                 }
                 if (choiceNum2 == 1 && Input.GetKeyDown(KeyCode.Z))
                 {//머크컵이 활성화 된 상태일때 입장
@@ -247,8 +310,7 @@ public class StartMenu : MonoBehaviour
             { //기존데이터가 없을떄
                 if (choiceNum2 == 0 && Input.GetKeyDown(KeyCode.Z))
                 {//컵헤드가 활성화 된 상태일때 입장
-                    isWaitingForKey = true;
-                    slotBoundary.SetActive(false);
+                    Slot(1);
                 }
                 if (choiceNum2 == 1 && Input.GetKeyDown(KeyCode.Z))
                 {//머크컵이 활성화 된 상태일때 입장
@@ -257,12 +319,12 @@ public class StartMenu : MonoBehaviour
         }
         if (isSlotChoice == true && isMenu == false && isEnter3)
         {
-            if (Game3 == false)
+            if (savefile[2] == true)
             { //기존데이터가 있을때
                 if (choiceNum3 == 0 && Input.GetKeyDown(KeyCode.Z))
                 {//컵헤드가 활성화 된 상태일때 입장
                     EnterGameAnimator(Slot3CupHeadChoice);
-                    Invoke("EnterGame", 1.0f);
+                    Slot(2);
                 }
                 if (choiceNum3 == 1 && Input.GetKeyDown(KeyCode.Z))
                 {//머크컵이 활성화 된 상태일때 입장
@@ -272,8 +334,7 @@ public class StartMenu : MonoBehaviour
             { //기존데이터가 없을때
                 if (choiceNum3 == 0 && Input.GetKeyDown(KeyCode.Z))
                 {//컵헤드가 활성화 된 상태일때 입장
-                    isWaitingForKey = true;
-                    slotBoundary.SetActive(false);
+                    Slot(2);
                 }
                 if (choiceNum3 == 1 && Input.GetKeyDown(KeyCode.Z))
                 {//머크컵이 활성화 된 상태일때 입장
@@ -281,7 +342,6 @@ public class StartMenu : MonoBehaviour
             }
         }
         #endregion
-
         #region 커서이동 // 키보드 입력 up과 down을 받을때마다 cursorNum의 값에 변화를줌
         if (Input.GetKeyDown(KeyCode.DownArrow))
         {  //
@@ -352,6 +412,12 @@ public class StartMenu : MonoBehaviour
         #region 슬롯선택해서 캐릭터 창 들어가기
         if (cursorNum == 0 && Input.GetKeyDown(KeyCode.Z))
         {
+            slotExist[0].SetActive(false);
+            slotExist2[0].SetActive(false);
+            slotExist[1].SetActive(false);
+            slotExist2[1].SetActive(false);
+            slotExist[2].SetActive(false);
+            slotExist2[2].SetActive(false);
             dark.SetActive(true);
             isSlotChoice = true;                                    //슬롯선택화면인지 체크하는 변수 true
             isMenu = false;                                         //메뉴선택화면인지 체크하는 변수 false
@@ -366,6 +432,12 @@ public class StartMenu : MonoBehaviour
         }
         else if (cursorNum == 1 && Input.GetKeyDown(KeyCode.Z))
         {
+            slotExist[0].SetActive(false);
+            slotExist2[0].SetActive(false);
+            slotExist[1].SetActive(false);
+            slotExist2[1].SetActive(false);
+            slotExist[2].SetActive(false);
+            slotExist[2].SetActive(false);  
             dark.SetActive(true);
             isSlotChoice = true;                                    //슬롯선택화면인지 체크하는 변수 true
             isMenu = false;                                         //메뉴선택화면인지 체크하는 변수 false
@@ -380,6 +452,12 @@ public class StartMenu : MonoBehaviour
         }
         else if (cursorNum == 2 && Input.GetKeyDown(KeyCode.Z))
         {
+            slotExist[0].SetActive(false);
+            slotExist2[0].SetActive(false);
+            slotExist[1].SetActive(false);
+            slotExist2[1].SetActive(false);
+            slotExist[2].SetActive(false);
+            slotExist[2].SetActive(false);
             dark.SetActive(true);
             isSlotChoice = true;                                     //슬롯선택화면인지 체크하는 변수 true
             isMenu = false;                                         //메뉴선택화면인지 체크하는 변수 false
@@ -397,6 +475,8 @@ public class StartMenu : MonoBehaviour
         #region 슬롯나가기
         if (cursorNum == 0 && isEnter1 == true && Input.GetKeyDown(KeyCode.Escape))
         {
+            slotExist[0].SetActive(true);
+            slotExist2[0].SetActive(true);
             dark.SetActive(false);
             isSlotChoice = false;                                   //슬롯선택화면인지를 체크하는변수 false
             isEnter1 = false;                                       //슬롯1에 들어갔는지 체크하는 변수 false
@@ -414,6 +494,8 @@ public class StartMenu : MonoBehaviour
         }
         else if (cursorNum == 1 && isEnter2 == true && Input.GetKeyDown(KeyCode.Escape))
         {
+            slotExist[1].SetActive(true);
+            slotExist2[1].SetActive(true);
             dark.SetActive(false);
             isSlotChoice = false;
             isEnter2 = false;
@@ -430,6 +512,8 @@ public class StartMenu : MonoBehaviour
         }
         else if (cursorNum == 2 && isEnter3 == true && Input.GetKeyDown(KeyCode.Escape))
         {
+            slotExist[2].SetActive(true);
+            slotExist2[2].SetActive(true);
             dark.SetActive(false);
             isSlotChoice = false;
             isEnter3 = false;
@@ -575,16 +659,8 @@ public class StartMenu : MonoBehaviour
         }
         #endregion
 
-
-
     }
 
-
-  
-    public void EnterGame()
-    {
-        SceneManager.LoadScene("CupHead");
-    }
     public void ExitChoice()
     {
         isMenu = true;
@@ -604,6 +680,49 @@ public class StartMenu : MonoBehaviour
             {
                 Debug.LogError("해당 오브젝트에 Animator 컴포넌트가 없습니다.");
             }
+        }
+    }
+
+    public void Slot(int number)
+    {
+        DataManager.dataInstance.nowSlot = number;
+        //1.저장된 데이터가 없을떄
+        if (!savefile[number])
+        {
+            isWaitingForKey = true;
+            slotBoundary.SetActive(false);
+            DataManager.dataInstance.playerData = new PlayerData();
+        }
+        else
+        {
+            //2.저장된 데이터가 있을때 -> 게임씬으로넘어감
+            DataManager.dataInstance.LoadData();
+            Invoke("EnterGame", 1.0f);
+        }
+    }
+
+    public void EnterGame()
+    {
+        //Todo:플레이어의 데이터 장소변수에따라가 포지션을 달리함.)
+        if (DataManager.dataInstance.playerData.lastPosition == 0)
+        {
+            SceneManager.LoadScene("ElderKettle");
+        }
+        else if(DataManager.dataInstance.playerData.lastPosition == 1)
+        {
+            SceneManager.LoadScene("ElderKettle");
+        }
+        else if(DataManager.dataInstance.playerData.lastPosition == 2)
+        {
+            SceneManager.LoadScene("CupHead");
+        }
+        else if(DataManager.dataInstance.playerData.lastPosition == 3)
+        {
+            SceneManager.LoadScene("CupHead");
+        }
+        else if(DataManager.dataInstance.playerData.lastPosition == 4)
+        {
+            SceneManager.LoadScene("CupHead");
         }
     }
 }

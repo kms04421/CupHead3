@@ -39,12 +39,10 @@ public class MapOptions : MonoBehaviour
         backTitleRect = backTitleText.GetComponent<RectTransform>();
         exitGameRect = exitGameText.GetComponent<RectTransform>();
 
-        
         continueRect.anchoredPosition = new Vector2(0, 20);
         optionsRect.anchoredPosition = new Vector2(0, 10);
         backTitleRect.anchoredPosition = new Vector2(0, 0);
         exitGameRect.anchoredPosition = new Vector2(0, -10);
-
 
         continueTextMesh = continueText.GetComponent<TextMeshProUGUI>();
         optionsTextMesh = optionsText.GetComponent<TextMeshProUGUI>();
@@ -126,11 +124,16 @@ public class MapOptions : MonoBehaviour
         }
         else if (opCursor == 2 && Input.GetKeyDown(KeyCode.Z) && Moving.cupHead.isEsc == true)
         {
+            DataManager.dataInstance.playerData.lastPosition = 1;
+            DataManager.dataInstance.SaveData();
             SceneManager.LoadScene("Opening");
         }
         else if (opCursor == 3 && Input.GetKeyDown(KeyCode.Z) && Moving.cupHead.isEsc == true)
         {
+            DataManager.dataInstance.playerData.lastPosition = 1;
+            DataManager.dataInstance.SaveData();
             Application.Quit();
+            
         }
         #endregion
     }

@@ -20,6 +20,8 @@ public class GameManager : MonoBehaviour
     public GameObject PressText;
     private Animator animator;
 
+    public GameObject music;
+
     
     // Start is called before the first frame update
     void Start()
@@ -38,6 +40,7 @@ public class GameManager : MonoBehaviour
         PressAnyKey.SetActive(true);
         PressText.SetActive(true);
         animatorPress.Play("HeadMug");
+        music.SetActive(true);
     }
     // Update is called once per frame
     void Update()
