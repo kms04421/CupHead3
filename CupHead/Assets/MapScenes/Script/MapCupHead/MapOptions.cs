@@ -110,30 +110,27 @@ public class MapOptions : MonoBehaviour
             exitGameTextMesh.color = selectedColor;
         }
         #endregion
-        #region 커서에따른 z를 눌렀을때
-        if (opCursor == 0 && Input.GetKeyDown(KeyCode.Z) && Moving.cupHead.isEsc == true)
+        #region 커서에따른 Enter를 눌렀을때
+        if (opCursor == 0 && Input.GetKeyDown(KeyCode.Return) && Moving.cupHead.isEsc == true)
         {
             Moving.cupHead.isEscape = false;
             Moving.cupHead.isEsc = false;
             backgroundDark.SetActive(false);
             pause.SetActive(false);
         }
-        else if (opCursor == 1 && Input.GetKeyDown(KeyCode.Z) && Moving.cupHead.isEsc == true)
+        else if (opCursor == 1 && Input.GetKeyDown(KeyCode.Return) && Moving.cupHead.isEsc == true)
         {
 
         }
-        else if (opCursor == 2 && Input.GetKeyDown(KeyCode.Z) && Moving.cupHead.isEsc == true)
+        else if (opCursor == 2 && Input.GetKeyDown(KeyCode.Return) && Moving.cupHead.isEsc == true)
         {
-            DataManager.dataInstance.playerData.lastPosition = 1;
             DataManager.dataInstance.SaveData();
             SceneManager.LoadScene("Opening");
         }
-        else if (opCursor == 3 && Input.GetKeyDown(KeyCode.Z) && Moving.cupHead.isEsc == true)
+        else if (opCursor == 3 && Input.GetKeyDown(KeyCode.Return) && Moving.cupHead.isEsc == true)
         {
-            DataManager.dataInstance.playerData.lastPosition = 1;
             DataManager.dataInstance.SaveData();
             Application.Quit();
-            
         }
         #endregion
     }

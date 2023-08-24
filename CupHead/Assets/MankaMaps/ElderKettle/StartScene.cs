@@ -8,14 +8,15 @@ public class StartScene: MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        animator = GetComponent<Animator>();
+        animator = gameObject.GetComponent<Animator>();
+        animator.Play("start");
     }
 
     // Update is called once per frame
     void Update()
     {
         AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0);
-        if (stateInfo.IsName("Start") && stateInfo.normalizedTime >= 1.0f)
+        if (stateInfo.IsName("start") && stateInfo.normalizedTime >= 1.0f)
         {
             gameObject.SetActive(false);
         }

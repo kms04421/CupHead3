@@ -84,7 +84,7 @@ public class Moving : MonoBehaviour
         }
         else if(DataManager.dataInstance.playerData.lastPosition == 4)
         {
-            cupHead.transform.position = new Vector2(1187, -832);
+            cupHead.transform.position = new Vector2(1187, -432);
         }
         else if(DataManager.dataInstance.playerData.lastPosition == 2)
         {
@@ -542,18 +542,25 @@ public class Moving : MonoBehaviour
 
     public void HomeLoad()
     {
-        SceneManager.LoadScene("ElderKettle");
+        isZ = false;
         DataManager.dataInstance.playerData.lastPosition = 0;
+        SceneManager.LoadScene("ElderKettle");
+
+        
     }
     public void VeggieLoad()
     {
-        SceneManager.LoadScene("VeggieBoss");
+        isZ = false;
         DataManager.dataInstance.playerData.lastPosition = 3;
+        SceneManager.LoadScene("VeggieBoss");
+        
     }
     public void FrogLoad()
     {
-        SceneManager.LoadScene("Tallfrog");
+        isZ = false;
         DataManager.dataInstance.playerData.lastPosition = 4;
+        SceneManager.LoadScene("Tallfrog");
+        
     }
 
     private void ChangeIsZ()

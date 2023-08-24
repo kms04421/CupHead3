@@ -95,10 +95,6 @@ public class Player : MonoBehaviour
     private Collider2D collider;
 
 
-    //대화
-    public GameObject TlakText;  
-    //콜라이더 
-
     public bool isTalk = false;
 
 
@@ -128,7 +124,7 @@ public class Player : MonoBehaviour
     //줄어들고 늘어나는 속도
     private float CineSpeed = 0.1f;
     //시네머신 프레이밍 트랜스포저
-    private CinemachineFramingTransposer framingTransposer;
+    //private CinemachineFramingTransposer framingTransposer;
 
     private float minimumDeadZoneWidth = 0.1f;
     private float maximumDeadZoneWidth = 0.32f;
@@ -150,7 +146,6 @@ public class Player : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-
         exShotList = new List<GameObject>();
         sparkList = new List<GameObject>(); 
         originalPosition = cameraTransform.transform.position; // 원래 카메라 포지션 
@@ -183,16 +178,19 @@ public class Player : MonoBehaviour
         PR = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
     
-        if (virtualCamera != null)
+        /*if (virtualCamera != null)
         {
             framingTransposer = virtualCamera.GetCinemachineComponent<CinemachineFramingTransposer>();
-        }
+        }*/
     }
 
     // Update is called once per frame
     void Update()
     {
-
+        if (isTalk == true)
+        {
+            return;
+        }
         if (isDead)
         {
             PR.velocity = Vector3.zero;
@@ -254,8 +252,6 @@ public class Player : MonoBehaviour
             
         }
 
-
-
         AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0);
         // 특수 공격 종료시 처리로직
         if( stateInfo.IsName("cuphead_exShot") || stateInfo.IsName("cuphead_exShot_jump"))// 애니메이션이 짧아 인식이힘들어 에니메이션 종료후 꺼지는 애니메이션 효과 체크
@@ -263,19 +259,24 @@ public class Player : MonoBehaviour
           
             animator.SetBool("Exshot", false);
         }
-
-        if (isTalk)
-        {
-
-            return;
-
-        }
         
         if (parrySuccess) // 패링 성공 시 위로 점프 
         {
-          
-           
-            transform.Translate(Vector3.up * 1 * 1);
+
+            PR.velocity = Vector3.zero;
+            if(movement.x <0)
+            {
+                PR.velocity = new Vector2(5, 8);
+            }
+            else if(movement.x >0)
+            {
+                PR.velocity = new Vector2(5, 8);
+            }
+            else
+            {
+                PR.velocity = Vector2.up*10;
+            }
+
             parrySuccess = false;
         }
    
@@ -302,7 +303,6 @@ public class Player : MonoBehaviour
             if(Input.GetKeyDown(KeyCode.Z) && parryChk == false)// 패링 
             {
 
-                
                 ParryObj.SetActive(true);
                 animator.SetBool("Parry", true);
                 parryChk = true;
@@ -326,9 +326,6 @@ public class Player : MonoBehaviour
         {
             MoveLeft = false;
         }
-
-
-
         if (Input.GetKeyDown(KeyCode.RightArrow))// 왼쪽 오른쪽 구분용 
         {
             LRChk = false;
@@ -417,8 +414,6 @@ public class Player : MonoBehaviour
                                 }
                             }
 
-
-
                             if (isUp && jumpChk) //위에 볼때 체크
                             {
                                 if (LRChk)
@@ -488,13 +483,11 @@ public class Player : MonoBehaviour
         
             jumpChk = false;
         }
-
-
         #region 점프동작
         if (Input.GetKey(KeyCode.Z) && !jumpChk && jumpCount < 1 && !(stateInfo.IsName("CupHeadDown") ))
         {
-         
-          jumpEndTime += Time.deltaTime;
+            
+            jumpEndTime += Time.deltaTime;
             movement.x = Input.GetAxis("Horizontal");
             movement.y = Input.GetAxis("Vertical");
             if (jumpEndTime > 0.2f)
@@ -519,22 +512,11 @@ public class Player : MonoBehaviour
         // 2023 08 19 ssm end
 
         #endregion
-
-        /*
-                if(transform.position.x >= 0 && transform.position.x <= 68)
-                {
-                    virtualCamera.gameObject.SetActive(true);
-                }
-                else { virtualCamera.gameObject.SetActive(false); }*/
-
         #region 위를올려다보는동작
         if (Input.GetKeyDown(KeyCode.UpArrow))
         {
-            //if (!(MoveLeft == true || MoveRight == true))
-            //{
-                isUp = true;
-                animator.SetBool("lookup", true);
-            //}
+            isUp = true;
+            animator.SetBool("lookup", true);
         }
         if (Input.GetKeyUp(KeyCode.UpArrow))
         {
@@ -579,7 +561,6 @@ public class Player : MonoBehaviour
             animator.SetBool("diagonal", false);
         }
         #endregion
-
         #region 대각선아래 동작
         //대각선 아래 동작
         if (isDown == true && Mathf.Abs(movement.x) > 0)
@@ -592,11 +573,11 @@ public class Player : MonoBehaviour
             animator.SetBool("downdiagonal", false);
         }
         #endregion
-
         #region 조준동작
         if (Input.GetKey(KeyCode.C))
         {
             isAim = true;
+            PR.velocity = Vector2.zero;
             animator.SetBool("aim", true);
         }
         else
@@ -632,7 +613,10 @@ public class Player : MonoBehaviour
 
     private void FixedUpdate()
     {
-
+        if (isTalk == true)
+        {
+            return;
+        }
         if (isDead)
         {
             virtualCamera.enabled = false;
@@ -641,22 +625,16 @@ public class Player : MonoBehaviour
             transform.Translate(Vector3.up * speed * Time.deltaTime);
             return;
         }
-
-     
-
         #region 이동구현
         movement.x = Input.GetAxis("Horizontal");
         movement.y = Input.GetAxis("Vertical");
-
         if (isAim == false)
         {
-            if (!isDown )
+            if (!isDown)
             {
                 PR.velocity = new Vector2(movement.x * speed, PR.velocity.y);
-                
+
             }
-
-
             if (movement.x > 0)
             {
                 animator.SetBool("run", true);
@@ -675,8 +653,6 @@ public class Player : MonoBehaviour
         animator.SetFloat("Horizontal", movement.x);
         animator.SetFloat("Vertical", movement.y);
         #endregion
-
-        
         #region 좌우반전구현 
         if (isDash == false)
         {
@@ -773,7 +749,6 @@ public class Player : MonoBehaviour
         }
     }
     #endregion
-
     #region 대쉬
     private IEnumerator Dash(Vector2 current)
     {
@@ -861,9 +836,6 @@ public class Player : MonoBehaviour
        
     }
     #endregion
-
- 
-
     #region 기본공격 
     //총알 발사 포지션세팅
     public void NormalBullet()
@@ -1170,9 +1142,10 @@ public class Player : MonoBehaviour
     {
         ExshotChk = false;
     }
-
     public void parryAction()
     {
+        Debug.Log("패리성공");
         parrySuccess = true;
+        parryChk = false;
     }
 }
