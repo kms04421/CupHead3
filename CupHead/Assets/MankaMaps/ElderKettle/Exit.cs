@@ -7,6 +7,8 @@ public class Exit : MonoBehaviour
 {
     public GameObject z;
     public GameObject end;
+    public GameObject cupHead;
+    public GameObject endFx;
     // Start is called before the first frame update
     void Start()
     {
@@ -18,9 +20,11 @@ public class Exit : MonoBehaviour
     {
         if (z.activeSelf == true&& Input.GetKeyDown(KeyCode.Z))
         {
-            end.SetActive(true);
+            cupHead.SetActive(false);
+            endFx.SetActive(true);
+            Invoke("EndSetActive", 1f);
             DataManager.dataInstance.playerData.lastPosition = 2;
-            Invoke("LoadWorldMap", 1f);
+            Invoke("LoadWorldMap", 2f);
         }
     }
 
@@ -39,6 +43,10 @@ public class Exit : MonoBehaviour
         }
     }
 
+    public void EndSetActive()
+    {
+        end.SetActive(true);
+    }
     public void LoadWorldMap()
     {
         SceneManager.LoadScene("CupHead");

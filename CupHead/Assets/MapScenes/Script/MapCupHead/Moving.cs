@@ -40,7 +40,8 @@ public class Moving : MonoBehaviour
     public GameObject ShopText;
     // 검으색배경
     public GameObject backgroundDark;
-
+    // 보스검은색배경
+    public GameObject backGroundBoss;
     public GameObject[] AppleText = new GameObject[4];
     public GameObject[] BeforeAppleText = new GameObject[6];
     private int AppleNum;
@@ -66,18 +67,39 @@ public class Moving : MonoBehaviour
     public GameObject effectPrefab;
     private float effectTimer = 0f;
     private float yOffset = -40f;
-    //
+    //애플 코루틴
+    public GameObject[] coinFxs;
+    private List<GameObject> inActiveCoinFxs;
+    //애플창 오브젝트들
+    public GameObject EventScene;
+    public GameObject[] coins;
+    public GameObject coinText;
+
     private float lerpTime = 1f;  // 보간에 걸리는 시간. 이 값을 조절하면 변환 속도를 제어할 수 있습니다.
-    private Vector3 targetScaleZ1, targetScaleZ2, targetScaleZ3;
+    private Vector3 targetScaleZ1;
     // Start is called before the first frame update
     void Start()
     {
-        objectName = "i";
-        headMoving = GetComponent<Rigidbody2D>();
-        ani = GetComponent<Animator>();
-        coinCount = 1;
+        //인스턴스 생성
         cupHead = this;
+        objectName = "i";
+        //리지드바디받기
+        headMoving = GetComponent<Rigidbody2D>();
+        //애니메이터받기
+        ani = GetComponent<Animator>();
+        //애플코인구현용 임시아래코드
+        DataManager.dataInstance.playerData.isApple = false;
+        //코인 초기화코드
+        coinCount = DataManager.dataInstance.playerData.coin;
+        //코인이펙트 초기화
+        foreach(var coinFx in coinFxs)
+        {
+            coinFx.SetActive(false);
+        }
+        inActiveCoinFxs = new List<GameObject>(coinFxs);
+        //z의 크기 초기화
         Z1.transform.localScale = new Vector3(0.01f, 0.01f, 1);
+        //캐릭터의 생성위치 정하는코드
         if (DataManager.dataInstance.playerData.lastPosition == 3)
         {
             cupHead.transform.position = new Vector2(1011, -414);
@@ -90,6 +112,11 @@ public class Moving : MonoBehaviour
         {
             cupHead.transform.position = new Vector2(-56, -33);
         }
+        //VeggieClear = DataManager.dataInstance.playerData.clearVeggie;
+        //FrogClear = DataManager.dataInstance.playerData.clearFrog;
+        //임시용
+        VeggieClear = true;
+        FrogClear = true;
     }
 
     // Update is called once per frame
@@ -225,14 +252,14 @@ public class Moving : MonoBehaviour
             {
                 isZ = true;
                 ForestText.SetActive(true);
-                backgroundDark.SetActive(true);
+                backGroundBoss.SetActive(true);
 
             }
             if (Input.GetKeyDown(KeyCode.Escape))
             {
                 isZ = false;
                 ForestText.SetActive(false);
-                backgroundDark.SetActive(false);
+                backGroundBoss.SetActive(false);
             }
         }
         else if (isMet == true && objectName == "Veggie" && isEsc == false)
@@ -241,14 +268,14 @@ public class Moving : MonoBehaviour
             {
                 isZ = true;
                 VeggiText.SetActive(true);
-                backgroundDark.SetActive(true);
+                backGroundBoss.SetActive(true);
 
             }
             if (Input.GetKeyDown(KeyCode.Escape))
             {
                 isZ = false;
                 VeggiText.SetActive(false);
-                backgroundDark.SetActive(false);
+                backGroundBoss.SetActive(false);
 
             }
         }
@@ -258,14 +285,14 @@ public class Moving : MonoBehaviour
             {
                 isZ = true;
                 FrogText.SetActive(true);
-                backgroundDark.SetActive(true);
+                backGroundBoss.SetActive(true);
 
             }
             if (Input.GetKeyDown(KeyCode.Escape))
             {
                 isZ = false;
                 FrogText.SetActive(false);
-                backgroundDark.SetActive(false);
+                backGroundBoss.SetActive(false);
             }
         }
         else if (isMet == true && objectName == "Shop" && isEsc == false)
@@ -307,12 +334,20 @@ public class Moving : MonoBehaviour
                 BeforeSetTrueApple(AppleNum);
                 if (AppleNum >= 6)
                 {
+                    backgroundDark.SetActive(true);
+                    coinText.SetActive(true);
+                    EventScene.SetActive(true);
+                    coins[0].SetActive(true);
+                    coins[1].SetActive(true);
+                    coins[2].SetActive(true);
+                    StartCoroutine(ActiveRandomCoinFxs());
+                    /*코루틴 수정전
                     vCam.LookAt = player;
                     vCam.Follow = player;
                     isZ = false;
                     DataManager.dataInstance.playerData.isApple = true;
                     BeforeSetFalseApple();
-                    AppleNum = 0;
+                    AppleNum = 0; */
                 }
             }
             else if (Input.GetKeyDown(KeyCode.Z) && DataManager.dataInstance.playerData.isApple == true && isEsc == false)
@@ -573,5 +608,62 @@ public class Moving : MonoBehaviour
         {
             isZ = false;
         }
+    }
+
+    private IEnumerator ActiveRandomCoinFxs()
+    {
+        while (inActiveCoinFxs.Count > 0)
+        {
+            int count = Mathf.Min(3, inActiveCoinFxs.Count);
+
+            for (int i = 0; i < count; i++)
+            {
+                int randomIndex = UnityEngine.Random.Range(0, inActiveCoinFxs.Count);
+                inActiveCoinFxs[randomIndex].SetActive(true);
+                inActiveCoinFxs.RemoveAt(randomIndex);
+            }
+            yield return new WaitForSeconds(0.5f);
+        }
+
+        // 모든 오브젝트 활성화 후 다른 코루틴 실행
+        StartCoroutine(WaitForUserInput());
+    }
+
+    private IEnumerator WaitForUserInput()
+    {
+        bool inputReceived = false;
+
+        //사용자가 Z를 누를 때까지 기다림
+        while (!inputReceived)
+        {
+            if (Input.GetKeyDown(KeyCode.Z))
+            {
+                inputReceived = true;
+            }
+            yield return null;
+        }
+
+        // 입력을 받은 후 원하는 작업 수행
+        ProcessUserInput();
+    }
+
+    private void ProcessUserInput()
+    {
+        backgroundDark.SetActive(false);
+        EventScene.SetActive(false);
+        coins[0].SetActive(false);
+        coins[1].SetActive(false);
+        coins[2].SetActive(false);
+        coinText.SetActive(false);
+        for (int i=0; i< coinFxs.Length; i++)
+        {
+            coinFxs[i].SetActive(false);
+        }
+        vCam.LookAt = player;
+        vCam.Follow = player;
+        isZ = false;
+        DataManager.dataInstance.playerData.isApple = true;
+        BeforeSetFalseApple();
+        AppleNum = 0;
     }
 }
