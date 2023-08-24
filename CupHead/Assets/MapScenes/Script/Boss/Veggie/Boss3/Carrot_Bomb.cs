@@ -13,7 +13,7 @@ public class Carrot_Bomb : MonoBehaviour
 
     public AudioClip die;
     private AudioSource audioSource;
-
+    private bool dieChk = false;
     private void Start()
     {
         audioSource = GetComponent<AudioSource>();
@@ -29,16 +29,20 @@ public class Carrot_Bomb : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        target = FindObjectOfType<Player>().transform;
+        if(!dieChk)
+        {
+            target = FindObjectOfType<Player>().transform;
 
-        Vector2 directionToTarget = (target.position - transform.position);
+            Vector2 directionToTarget = (target.position - transform.position);
 
-        Quaternion targetRotation = Quaternion.LookRotation(Vector3.forward, directionToTarget);
+            Quaternion targetRotation = Quaternion.LookRotation(Vector3.forward, directionToTarget);
 
-        // 회전 설정
-        transform.rotation = targetRotation;
+            // 회전 설정
+            transform.rotation = targetRotation;
 
-        transform.Translate( Vector3.up * 2f * Time.deltaTime);
+            transform.Translate(Vector3.up * 2f * Time.deltaTime);
+        }
+       
  
 
 
@@ -56,13 +60,25 @@ public class Carrot_Bomb : MonoBehaviour
             StartCoroutine(DelTime());
            
         }
+        if (collision.tag.Equals("PlayerAttack")|| collision.tag.Equals("PlayerAttackEx"))
+        {
+            audioSource.PlayOneShot(die);
+            animator.SetBool("Die", true);
+
+            StartCoroutine(DelTime());
+
+        }
+
     }
 
     private IEnumerator DelTime()
     {
+
+        dieChk = true;
         yield return new WaitForSeconds(0.5f);
         animator.SetBool("Die", false);
         gameObject.SetActive(false);
+        dieChk = false;
     }
 
 }

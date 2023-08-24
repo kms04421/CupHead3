@@ -19,21 +19,29 @@ public class tear_Drop : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-       if(transform.position.y < -2.5f)
+        if(Boss2_idel.instance.Boss2Die)
+        {
+            animator.SetBool("Die", true);
+          
+            gameObject.transform.position = Vector3.zero;
+            Invoke("Die", 0.1f);
+        }
+        
+        if (transform.position.y < -2.5f)
         {
             animator.SetBool("Die", true);
             audioSource.PlayOneShot(die);
         }
 
-       if(transform.position.y < -3.35)
+        if (transform.position.y < -3.7f)
         {
             AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0);//애니메이션 상태 정보 받기 
 
-            if (stateInfo.IsName("Onion_tear_dropEnd") && stateInfo.normalizedTime > 1f) // 이름이 해당애니메이션이면서 재생이 100%인것
+            if (stateInfo.IsName("Onion_tear_dropEnd") && stateInfo.normalizedTime > 0.99f) // 이름이 해당애니메이션이면서 재생이 100%인것
             {
                 gameObject.SetActive(false);
             }
-            if (stateInfo.IsName("Onion_tear_pinkEnd1") && stateInfo.normalizedTime > 1f)
+            if (stateInfo.IsName("Onion_tear_pinkEnd1") && stateInfo.normalizedTime > 0.99f)
             {
                 gameObject.SetActive(false);
             }
@@ -44,13 +52,18 @@ public class tear_Drop : MonoBehaviour
         }
         else
         {
-            transform.Translate(Vector3.down * 4 * Time.deltaTime); // 오브젝트 위쪽으로 3만큼 이동    
-            animator.SetBool("Die", false);
 
-            
-          
-            
+            if (!Boss2_idel.instance.Boss2Die)
+            {
+                transform.Translate(Vector3.down * 4 * Time.deltaTime); // 오브젝트 위쪽으로 3만큼 이동    
+            }
+
+
+
+
         }
+
+
 
     }
 
@@ -58,12 +71,21 @@ public class tear_Drop : MonoBehaviour
     {
         if (gameObject.tag.Equals("PinkBossAtk"))
         {
-            animator.SetTrigger("PlayerPinkAtk");
+            if(other.tag.Equals("Parring"))
+            {
+                Invoke("Die", 0.1f);
+                animator.SetTrigger("PlayerPinkAtk");
+            }
+            
             
 
-            //play처리
-
-            //
+          
         }
+    }
+
+    private void Die()
+    {
+        animator.SetBool("Die", false);
+        gameObject.SetActive(false);
     }
 }

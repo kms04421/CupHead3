@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 6971739657832514533}
   m_Layer: 0
   m_Name: ring
-  m_TagString: Untagged
+  m_TagString: BossAtk
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

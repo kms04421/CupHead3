@@ -39,19 +39,6 @@ public class AppearBurst2 : MonoBehaviour
         }
         AppearTime += Time.deltaTime;
 
-        if (AppearTime <= 2f)
-        {
-
-            if (AppearTime >= 1.5f)
-            {
-                Vector2 currentSize = rectTransform.sizeDelta;
-
-                currentSize.y += 0.5f;
-                rectTransform.sizeDelta = currentSize;
-                transform.Translate(Vector3.up * 2 * Time.deltaTime); // 오브젝트 위쪽으로 3만큼 이동  
-            }
-
-        }
         if (animator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 0.5f) // 애니메이션 퍼센트 체크
         {
            

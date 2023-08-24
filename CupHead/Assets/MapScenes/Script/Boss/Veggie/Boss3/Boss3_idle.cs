@@ -1,8 +1,12 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using static UnityEditor.PlayerSettings;
 
 public class Boss3_idle : MonoBehaviour
 {
+    public static Boss3_idle instance;
     public GameObject Eye; //광눈
     public GameObject carrotFly; // 날아오르는 당근
     public GameObject carrotBoom;// 유도미사일
@@ -22,7 +26,11 @@ public class Boss3_idle : MonoBehaviour
     public AudioClip dieAudio;
 
     private AudioSource audioSource;
-
+    //보스 피격시 깜박거림 
+    private Image imageComponent;
+    private Material originalMaterial; // 원래 마테리얼
+    public Material customMaterial; // 적용할 커스텀 마테리얼
+    //보스 피격시 깜박거림 end
     private GameObject inputGameObj; // 생성용 오브젝트 
     private Transform target;
     private float atkTime = 0; //공격시간
@@ -31,12 +39,27 @@ public class Boss3_idle : MonoBehaviour
     private int allAtkCount = 0;
     private Animator animator;
     private int atkType = 0; // 공격 타입 
-
-    private int BossHp = 100;
+    private bool BossDie = false;
+    private int BossHp = 50;
     Vector2 targetPos;
     // Start is called before the first frame update
+
+
+    private void Awake()
+    {
+        if (instance == null)
+        {
+            instance = this;
+
+        }
+        else
+        {
+            Destroy(instance);
+        }
+    }
     void Start()
     {
+        imageComponent = GetComponent<Image>();
         audioSource = GetComponent<AudioSource>();
         setTime = 3;
         animator = GetComponent<Animator>();
@@ -69,12 +92,27 @@ public class Boss3_idle : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        VeggieBossManager.instance.BossHpChk((int)BossHp);
         atkTime += Time.deltaTime;
         if (BossHp < 0)
         {
-            audioSource.PlayOneShot(dieAudio);
+            if (!BossDie)
+            {
+                if (GameManager_1.instance.Clear == false)
+                {
+                    GameManager_1.instance.BossClear();
+                }
+             
+                BossDie = true;
+                audioSource.PlayOneShot(dieAudio);
+             
+            }
+            GameManager_1.instance.BossDieEX(transform);
             animator.SetTrigger("Die");
-
+            if (Eye.activeSelf)
+            {
+                Eye.SetActive(false);
+            }
         }
         else
         {
@@ -226,5 +264,42 @@ public class Boss3_idle : MonoBehaviour
                 break;
             }
         }
+    }
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        // 총알명
+        if (collision.tag.Equals("PlayerAttack"))
+        {
+            StartBlinkEffect();
+            BossHp -= 1;
+        }
+        if (collision.tag.Equals("PlayerAttackEx"))
+        {
+            BossHp -= 5;
+            StartBlinkEffect(); ;
+        }
+
+    }
+
+    //깜박거림 
+    public void StartBlinkEffect()
+    {
+        // 깜박임 효과 시작 코루틴 호출
+        StartCoroutine(BlinkEffectCoroutine());
+    }
+
+    private IEnumerator BlinkEffectCoroutine()
+    {
+        // 깜박임 효과를 위한 임시 색상
+        Material tempColor = customMaterial;
+
+        // 색상 변경
+        imageComponent.material = tempColor;
+
+        // 일정 시간 동안 대기
+        yield return new WaitForSeconds(0.02f);
+
+        // 원래 색상으로 복원
+        imageComponent.material = originalMaterial;
     }
 }

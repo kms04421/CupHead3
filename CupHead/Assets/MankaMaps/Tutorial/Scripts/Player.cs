@@ -475,6 +475,7 @@ public class Player : MonoBehaviour
 
             }
         }
+
         //jumpEndTime
         if (Input.GetKeyDown(KeyCode.Z) && jumpChk && jumpCount < 1 && !(stateInfo.IsName("CupHeadDown") ))
         {
@@ -489,19 +490,20 @@ public class Player : MonoBehaviour
             
             jumpEndTime += Time.deltaTime;
             movement.x = Input.GetAxis("Horizontal");
-            movement.y = Input.GetAxis("Vertical");
-            if (jumpEndTime > 0.2f)
-            {
-               
-            }
-            else
+           
+            if (jumpEndTime < 0.2f)          
             {                          
                 PR.velocity = new Vector3(movement.x * speed, 13f);
+            }
+            else
+            {
+                jumpCount++;
+                jumpEndTime = 0f;
             }
         }
         if(Input.GetKeyUp(KeyCode.Z)&& !jumpChk)
         {
-            
+            Debug.Log("?");
             jumpCount++;
             jumpEndTime = 0f;
         }
