@@ -31,20 +31,7 @@ public class AppearBurst : MonoBehaviour
     {
         
         AppearTime += Time.deltaTime;
-        if (AppearTime >= 2.8f)
-        {
-            if (AppearTime <= 3f)
-            {
-                Vector2 currentSize = rectTransform.sizeDelta;
-
-                currentSize.y += 2.5f;
-                rectTransform.sizeDelta = currentSize;
-            }
-
-
-
-
-        }
+       
         if (animator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 0.5f) // 애니메이션 퍼센트 체크
         {
             if(potatoActive == false)

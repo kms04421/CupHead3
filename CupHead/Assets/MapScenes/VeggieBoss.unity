@@ -687,7 +687,7 @@ GameObject:
   m_Component:
   - component: {fileID: 86718388}
   - component: {fileID: 86718389}
-  m_Layer: 2
+  m_Layer: 0
   m_Name: WallL
   m_TagString: Wall
   m_Icon: {fileID: 0}
@@ -1486,7 +1486,7 @@ GameObject:
   m_Component:
   - component: {fileID: 290638109}
   - component: {fileID: 290638110}
-  m_Layer: 2
+  m_Layer: 0
   m_Name: WallR
   m_TagString: Wall
   m_Icon: {fileID: 0}
@@ -3409,7 +3409,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1596747189419896700, guid: f74d8fff8f07e6f41aea1d328532e9c1, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -0.05293061
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1596747189419896700, guid: f74d8fff8f07e6f41aea1d328532e9c1, type: 3}
       propertyPath: m_LocalRotation.w
@@ -5588,7 +5588,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1633708920}
   - component: {fileID: 1633708921}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Wall
   m_TagString: floor
   m_Icon: {fileID: 0}
