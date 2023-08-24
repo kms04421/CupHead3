@@ -10,6 +10,7 @@ public class PlayerData
     public int slotNum;
     public bool isTutorialClear;
     public bool isApple;
+    public bool tutoCoin;
     public bool clearVeggie;
     public bool clearFrog;
     public int lastPosition;

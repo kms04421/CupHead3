@@ -266,15 +266,15 @@ public class Player : MonoBehaviour
             PR.velocity = Vector3.zero;
             if(movement.x <0)
             {
-                PR.velocity = new Vector2(5, 8);
+                PR.velocity = new Vector2(5, 10);
             }
             else if(movement.x >0)
             {
-                PR.velocity = new Vector2(5, 8);
+                PR.velocity = new Vector2(5, 10);
             }
             else
             {
-                PR.velocity = Vector2.up*10;
+                PR.velocity = Vector2.up*15;
             }
 
             parrySuccess = false;
@@ -527,6 +527,7 @@ public class Player : MonoBehaviour
         #region 아래를바라보는동작
         if (Input.GetKeyDown(KeyCode.DownArrow))
         {
+            PR.velocity = Vector2.zero;
             animator.SetBool("lookdown", true);
             isDown = true;
         }

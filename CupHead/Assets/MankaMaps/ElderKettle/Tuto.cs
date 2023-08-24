@@ -7,6 +7,7 @@ public class Tuto : MonoBehaviour
     public GameObject z;
     public GameObject player;
     public GameObject End;
+    public GameObject endingFx;
     // Start is called before the first frame update
     void Start()
     {
@@ -19,8 +20,9 @@ public class Tuto : MonoBehaviour
         if (z.activeSelf == true && Input.GetKeyDown(KeyCode.Z))
         {
             player.SetActive(false);
-            End.SetActive(true);
-            Invoke("LoadTutorial", 1f);
+            endingFx.SetActive(true);
+            Invoke("EndSetActive",1f);
+            Invoke("LoadTutorial", 2f);
         }
     }
 
@@ -38,7 +40,10 @@ public class Tuto : MonoBehaviour
             z.SetActive(false);
         }
     }
-
+    private void EndSetActive()
+    {
+        End.SetActive(true);
+    }
     private void LoadTutorial()
     {
         SceneManager.LoadScene("Tutorial");

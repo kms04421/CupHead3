@@ -62,11 +62,13 @@ public class KettleOption : MonoBehaviour
         { //옵션창 Esc로 띄우기
             if (pause.activeSelf == false)
             {
+                Time.timeScale = 0;
                 backgroundDark.SetActive(true);
                 pause.SetActive(true);
             }
             else if(pause.activeSelf == true)
             {
+                Time.timeScale = 1;
                 backgroundDark.SetActive(false);
                 pause.SetActive(false);
             }
@@ -125,6 +127,8 @@ public class KettleOption : MonoBehaviour
         #region 커서에따른 z를 눌렀을때
         if (opCursor == 0 && Input.GetKeyDown(KeyCode.Return))
         {
+
+            Time.timeScale = 1;
             backgroundDark.SetActive(false);
             pause.SetActive(false);
         }
@@ -134,12 +138,14 @@ public class KettleOption : MonoBehaviour
         }
         else if (opCursor == 2 && Input.GetKeyDown(KeyCode.Return))
         {
+            Time.timeScale = 1;
             DataManager.dataInstance.playerData.lastPosition = 0;
             DataManager.dataInstance.SaveData();
             SceneManager.LoadScene("Opening");           
         }
         else if (opCursor == 3 && Input.GetKeyDown(KeyCode.Return))
         {
+            Time.timeScale = 1;
             DataManager.dataInstance.playerData.lastPosition = 0;
             DataManager.dataInstance.SaveData();
             Application.Quit();

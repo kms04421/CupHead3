@@ -12,12 +12,22 @@ public class AttackObstacle : MonoBehaviour
     public GameObject effect;
     private Animator effectAni;
     private int count;
+
+    private float hitDuration = 1f;
+    private Color hitColor = new Color(200, 200, 200, 100);
+    private SpriteRenderer spriteRenderer;
+    private Color originalColor;
+
     // Start is called before the first frame update
     void Start()
     {
         roofrenderer = gameObject.GetComponent<SpriteRenderer>();
         effectAni = effect.GetComponent<Animator>();
         count = 0;
+
+        spriteRenderer = gameObject.GetComponent<SpriteRenderer>();
+        originalColor = spriteRenderer.color;
+
     }
 
     // Update is called once per frame
@@ -42,11 +52,33 @@ public class AttackObstacle : MonoBehaviour
         }
     }
 
+
+    public void ApplyHitEffect()
+    {
+        Debug.Log("함수온");
+        StartCoroutine(HitEffectCoroutine());
+    }
+
+    private IEnumerator HitEffectCoroutine()
+    {
+        Debug.Log("코루틴시작.");
+        spriteRenderer.color = hitColor;
+        Debug.LogFormat("{0},{1},{2}.{3}", spriteRenderer.color.r, spriteRenderer.color.g, spriteRenderer.color.b,spriteRenderer.color.a);
+        yield return new WaitForSeconds(hitDuration);
+        
+        spriteRenderer.color = originalColor;
+        Debug.LogFormat("{0},{1},{2},{3}", spriteRenderer.color.r, spriteRenderer.color.g, spriteRenderer.color.b,spriteRenderer.color.a);
+    }
+    // Update is called once per frame
     public void OnTriggerEnter2D(Collider2D collision)
     {
         if(collision.tag == "PlayerAttack")
         {
+            Debug.Log("맞는중");
             hp -= 2;
+            ApplyHitEffect();
         }
     }
+
+
 }
