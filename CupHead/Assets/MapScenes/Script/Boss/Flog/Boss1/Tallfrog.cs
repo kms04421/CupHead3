@@ -5,7 +5,6 @@ using UnityEngine;
 public class Tallfrog : MonoBehaviour
 {
     private Animator animator;
-    private Rigidbody2D rigidbody2D;
 
     private int allAtkCount = 0;
 
@@ -21,20 +20,23 @@ public class Tallfrog : MonoBehaviour
 
     public GameObject Tallforg2;
     public GameObject Wind;
-
+    private AudioSource audioSource;
     float[] aniList;
+    public AudioClip Fanstart; // 선풍기 사운드 시작
+    public AudioClip Fanend; // 선풍기 사운드 종료
 
     int BossHp = 100;
     // Start is called before the first frame update
     void Start()
     {
-        rigidbody2D = GetComponent<Rigidbody2D>();
+        audioSource = GetComponent<AudioSource>();
+     
         aniList = new float[] { 0.55f, 1.5f, 2.3f };
 
         fireflyList = new List<GameObject>();
         animator = GetComponent<Animator>();
         // 파이어 벌래 생성
-        for (int i = 0; i < 15; i++)
+        for (int i = 0; i < 15; i++) 
         {
 
             SaveObj = Instantiate(firefly, new Vector3(transform.position.x - 3, transform.position.y + 3, 0), Quaternion.identity);
@@ -53,6 +55,7 @@ public class Tallfrog : MonoBehaviour
         if (stateInfo.IsName("TallFrogAtk") && BossManager.instance.BossLv == 1) // 보스 사망시 에니메이션 종료
         {
             animator.SetBool("Die", true);
+            audioSource.Stop();
         }
 
 
@@ -68,11 +71,13 @@ public class Tallfrog : MonoBehaviour
                 {
                     Wind.SetActive(false);
                 }
-                animator.SetBool("Fan", false);
+              
             }
+            animator.SetBool("Fan", false);
         }
         if (stateInfo.IsName("TallFrog_Idle") && BossManager.instance.ready)
         {
+           
             gameObject.SetActive(false);
             Tallforg2.SetActive(true);
         }
@@ -84,22 +89,39 @@ public class Tallfrog : MonoBehaviour
             {
                 animator.SetBool("Fan", true);
 
+
             }
 
             AnimatorStateInfo stateInfoAtk2 = animator.GetCurrentAnimatorStateInfo(0);
             if (stateInfoAtk2.IsName("TallFrogFan") && stateInfoAtk2.normalizedTime >= 0.1f && stateInfoAtk2.normalizedTime <= 0.2f)
             {
+           
                 Wind.SetActive(true);
 
             }
+
+            if (stateInfoAtk2.IsName("TallFrogFan") && stateInfoAtk2.normalizedTime >= 0.1f && stateInfoAtk2.normalizedTime <= 0.9f)
+            {
+                if (!audioSource.isPlaying)
+                {
+                    audioSource.PlayOneShot(Fanstart);
+                }
+            }
             if (stateInfoAtk2.IsName("TallFrogFan") && stateInfoAtk2.normalizedTime >= 0.99f)
             {
+                audioSource.Stop();
+                if (!audioSource.isPlaying)
+                {
+                    audioSource.PlayOneShot(Fanend);
+                }
                 animator.SetBool("Fan", false);
+              
                 BossManager.instance.AtkChange(0); // 공격 종료시
             }
             if (stateInfo.IsName("TallFrogAtk") && BossManager.instance.BossHp <= 0) // 보스 사망시 에니메이션 종료
             {
                 animator.SetBool("Die", true);
+                audioSource.Stop();
             }
         }
       

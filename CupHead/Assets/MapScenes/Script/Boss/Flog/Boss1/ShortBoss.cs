@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class ShortBoss : MonoBehaviour
@@ -17,6 +16,10 @@ public class ShortBoss : MonoBehaviour
     private Rigidbody2D rigidbody2D;
     public GameObject Boss2;
 
+    public AudioClip punch; // 펀치 사운드
+    public AudioClip Ko2; // 위롭!
+
+    private AudioSource audioSource;
     List<GameObject> shortFrogList;// 펀치 리스트 
     float atkTime = 0f;
     int[] AtktimeList = new int[]
@@ -25,15 +28,16 @@ public class ShortBoss : MonoBehaviour
     };
     int number = 0;
     //스테이지1 end
-  
+
 
     // Start is called before the first frame update
     void Start()
     {
+        audioSource = GetComponent<AudioSource>();
         rigidbody2D = GetComponent<Rigidbody2D>();
-        shortFrogList =new List<GameObject>();
+        shortFrogList = new List<GameObject>();
         shortFrogVector = new Vector2[]
-        {       
+        {
             new Vector2(transform.position.x -3.5f,transform.position.y-2f),//하단
             new Vector2(transform.position.x -3.5f,transform.position.y-0.8f),//중간
             new Vector2(transform.position.x -3.5f,transform.position.y+1f)//상단
@@ -44,14 +48,14 @@ public class ShortBoss : MonoBehaviour
             saveObj = default;
             if (p_shortFrog == i)
             {
-                
+
                 saveObj = Instantiate(shortFrog_P, transform.position, shortFrog.transform.rotation);
             }
             else
             {
                 saveObj = Instantiate(shortFrog, transform.position, shortFrog.transform.rotation);
             }
-                 
+
             shortFrogList.Add(saveObj);
             shortFrogList[i].SetActive(false);
         }
@@ -64,7 +68,7 @@ public class ShortBoss : MonoBehaviour
     {
 
 
-        if (BossManager.instance.BossHp <= 0 )
+        if (BossManager.instance.BossHp <= 0)
         {
             gameObject.SetActive(false);
             Boss2.SetActive(true);
@@ -72,7 +76,7 @@ public class ShortBoss : MonoBehaviour
 
 
         AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0);
-        if (stateInfo.IsName("shortFrog") && stateInfo.normalizedTime >= 0.99f)
+        if (stateInfo.IsName("shortFrog") && stateInfo.normalizedTime >= 0.99f)//등장후 대기상태 로 전환
         {
             animator.SetTrigger("Idle");
         }
@@ -84,20 +88,30 @@ public class ShortBoss : MonoBehaviour
 
             animator.SetBool("Atk1", true);
             AnimatorStateInfo stateInfoAtk = animator.GetCurrentAnimatorStateInfo(0);
+            if (stateInfo.IsName("ShortFrogAtk") && stateInfo.normalizedTime <= 0.7f && stateInfo.normalizedTime >= 0.69f)
+            {
+                if (!audioSource.isPlaying)
+                {
+                    audioSource.PlayOneShot(punch);
+                }
+            }
             if (stateInfo.IsName("ShortFrogAtk") && stateInfo.normalizedTime >= 0.99f)
             {
                 animator.SetBool("Atk2", true);
                 number = Random.Range(0, 2);
-                setTime = AtktimeList[number];
+
+                setTime = AtktimeList[number];// 공격시간 랜덤 설정
             }
 
-            if (stateInfo.IsName("ShortFrogAtk2"))
+            if (stateInfo.IsName("ShortFrogAtk2")) // 펀치 공격
             {
+
                 shortFrogAtk();
             }
 
             if (animatorTime > setTime)
             {
+                audioSource.Stop();            
                 animatorTime = 0;
                 animator.SetBool("Atk3", true);
             }
@@ -107,7 +121,7 @@ public class ShortBoss : MonoBehaviour
                 animator.SetBool("Atk2", false);
                 animator.SetBool("Atk3", false);
                 setTime = 500f;
-                if (Random.Range(0, 2) == 0) 
+                if (Random.Range(0, 2) == 0)
                 {
                     shortFrogCount = 0;
                 }
@@ -125,24 +139,25 @@ public class ShortBoss : MonoBehaviour
     private void shortFrogAtk()
     {
         atkTime += Time.deltaTime;
-        if(atkTime >= 0.7f)
+        if (atkTime >= 0.7f)
         {
             atkTime = 0;
-            for(int i = 0; i < shortFrogList.Count; i++)
+            for (int i = 0; i < shortFrogList.Count; i++)
             {
                 if (!shortFrogList[i].activeSelf)
                 {
-                   
-                    if(shortFrogCount >=3 )
+
+                    if (shortFrogCount >= 3)
                     {
                         shortFrogCount = 2;
-                    }else if(shortFrogCount <= -1)
+                    }
+                    else if (shortFrogCount <= -1)
                     {
                         shortFrogCount = 0;
                     }
 
                     shortFrogList[i].transform.position = shortFrogVector[shortFrogCount];
-                   
+
                     shortFrogList[i].SetActive(true);
                     break;
 
@@ -161,7 +176,7 @@ public class ShortBoss : MonoBehaviour
 
             if (shortFrogCount >= 2 || shortFrogCount <= 0)
             {
-              if(shortUpDown == false)
+                if (shortUpDown == false)
                 {
                     shortUpDown = true;
                 }
@@ -172,7 +187,7 @@ public class ShortBoss : MonoBehaviour
             }
         }
 
-       
+
     }
     private void OnTriggerEnter2D(Collider2D collision)// 플레이어 공격 명중
     {

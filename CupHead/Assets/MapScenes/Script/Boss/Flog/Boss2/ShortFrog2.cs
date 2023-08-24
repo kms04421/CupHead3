@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using Unity.Mathematics;
 using UnityEngine;
 
 public class ShortFrog2 : MonoBehaviour
@@ -15,23 +14,31 @@ public class ShortFrog2 : MonoBehaviour
     private GameObject saveObj;
     private List<GameObject> BallList;
     int atkCount = 0;
+    public AudioClip startAudio; // 시작 사운드
+    public AudioClip loopAudio; // 반복 사운드
+    public AudioClip endAudio; // 종료 사운드
+    //볼 공격 사운드
+    public AudioClip clipAudio; // 박수 사운드
 
+
+    private AudioSource audioSource;
     public bool chkball = true;
     // Start is called before the first frame update
     void Start()
     {
+        audioSource = GetComponent<AudioSource>();
         rigidbody2D = GetComponent<Rigidbody2D>();
         BallList = new List<GameObject>();
-        for(int i = 0; i < 5; i++)
+        for (int i = 0; i < 5; i++)
         {
             saveObj = Instantiate(Ball);
             BallList.Add(saveObj);
             BallList[i].SetActive(false);
-           
+
 
         }
 
-        capsuleCollider = GetComponent<CapsuleCollider2D>();    
+        capsuleCollider = GetComponent<CapsuleCollider2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
         animator = GetComponent<Animator>();
     }
@@ -53,34 +60,59 @@ public class ShortFrog2 : MonoBehaviour
 
         }
 
-        if ( BossManager.instance.ready )       
-           
+        if (BossManager.instance.ready)
+
         {
-         
+
             animator.SetBool("BallEnd", true);
-         
+
         }
 
-
-
-        if (stateInfoAtk.IsName("ShortFrog2")&& stateInfoAtk.normalizedTime >= 0.4f && stateInfoAtk.normalizedTime <= 0.85f && gameObject.transform.position.x > -12f)
+        if (stateInfoAtk.IsName("ShortFrog2") && stateInfoAtk.normalizedTime <= 0.1f)
         {
+            if (!audioSource.isPlaying)
+            {
+                audioSource.PlayOneShot(startAudio);
+            }
+        }
+        if (stateInfoAtk.IsName("ShortFrog2") && stateInfoAtk.normalizedTime >= 0.15f && stateInfoAtk.normalizedTime <= 0.2f)
+        {
+            audioSource.Stop();
+        }
+        if (stateInfoAtk.IsName("ShortFrog2") && stateInfoAtk.normalizedTime >= 0.21f && stateInfoAtk.normalizedTime <= 0.4f)
+        {
+
+            if (!audioSource.isPlaying)
+            {
+                audioSource.PlayOneShot(loopAudio);
+            }
+        }
+
+        if (stateInfoAtk.IsName("ShortFrog2") && stateInfoAtk.normalizedTime >= 0.4f && stateInfoAtk.normalizedTime <= 0.85f && gameObject.transform.position.x > -12f)
+        {
+
+
             if (BossManager.instance.ready)
             {
                 transform.Translate(Vector3.right * 10 * Time.deltaTime);
-            
+
 
             }
             else
             {
                 transform.Translate(Vector3.left * 10 * Time.deltaTime);
             }
-           
+
 
         }
 
         if (stateInfoAtk.IsName("ShortFrog2") && stateInfoAtk.normalizedTime >= 0.85f && gameObject.transform.position.x < -12f && startChk == false)
         {
+            audioSource.Stop();
+            if (!audioSource.isPlaying)
+            {
+                audioSource.PlayOneShot(endAudio);
+            }
             transform.position = new Vector3(transform.position.x + 5, transform.position.y);
             spriteRenderer.flipX = !spriteRenderer.flipX;
 
@@ -90,25 +122,31 @@ public class ShortFrog2 : MonoBehaviour
             capsuleCollider.size = newSize; //보스 콜라이더 보스 사이즈 수정
         }
 
-        if (BossManager.instance.BossChk == 1 && BossManager.instance.BossLv == 1 )
+        if (BossManager.instance.BossChk == 1 && BossManager.instance.BossLv == 1)
         {
 
 
             if (stateInfoAtk.IsName("ShortFrog2_idle") && stateInfoAtk.normalizedTime >= 0.99f)
             {
+                audioSource.Stop();
                 animator.SetBool("BallEnd", false);
                 animator.SetBool("Ball1", true);
             }
 
             AnimatorStateInfo stateInfoBallAtk = animator.GetCurrentAnimatorStateInfo(0);
+
             if (stateInfoBallAtk.IsName("ShortFrog2_Ball") && stateInfoBallAtk.normalizedTime >= 0.99f)
             {
                 animator.SetBool("Ball1", false);
                 animator.SetBool("Ball2", true);
-               
+
             }
             if (stateInfoBallAtk.IsName("ShortFrog2_Ball") && stateInfoBallAtk.normalizedTime >= 0.8f && stateInfoBallAtk.normalizedTime <= 0.85f)
             {
+                if (!audioSource.isPlaying)
+                {
+                    audioSource.PlayOneShot(clipAudio);
+                }
                 // 공격
                 for (int i = 0; i < BallList.Count; i++)
                 {
@@ -124,7 +162,7 @@ public class ShortFrog2 : MonoBehaviour
             }
             if (stateInfoBallAtk.IsName("ShortFrog2_Ball2") && stateInfoBallAtk.normalizedTime >= 4f)
             {
-                
+
                 chkball = true;
                 if (atkCount >= 1)
                 {
@@ -142,10 +180,14 @@ public class ShortFrog2 : MonoBehaviour
                 animator.SetBool("Ball2_Atk", false);
                 atkCount++;
 
-            
+
             }
             if (stateInfoBallAtk.IsName("ShortFrog2_Ball2_Atk") && stateInfoBallAtk.normalizedTime >= 0.8f && stateInfoBallAtk.normalizedTime <= 0.85f)
             {
+                if (!audioSource.isPlaying)
+                {
+                    audioSource.PlayOneShot(clipAudio);
+                }
                 // 공격
                 for (int i = 0; i < BallList.Count; i++)
                 {
@@ -157,15 +199,21 @@ public class ShortFrog2 : MonoBehaviour
                         break;
                     }
                 }
-              
+
                 // 
             }
 
-
+            if (stateInfoBallAtk.IsName("ShortFrog2_Ball3") && stateInfoBallAtk.normalizedTime >= 0f && stateInfoBallAtk.normalizedTime <= 0.1f)
+            {
+                if (!audioSource.isPlaying)
+                {
+                    audioSource.PlayOneShot(clipAudio);
+                }
+            }
 
             if (stateInfoBallAtk.IsName("ShortFrog2_Ball3") && stateInfoBallAtk.normalizedTime >= 0.99f)
             {
-                
+
                 atkCount = 0;
                 animator.SetBool("Ball2", false);
                 animator.SetBool("Ball3", false);
@@ -177,7 +225,7 @@ public class ShortFrog2 : MonoBehaviour
                     {
                         BallList[i].transform.position = new Vector3(transform.position.x + 2, transform.position.y, 0f);
                         BallList[i].SetActive(true);
-                        
+
                         break;
                     }
                 }
