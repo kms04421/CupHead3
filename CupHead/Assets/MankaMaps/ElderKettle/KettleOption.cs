@@ -123,22 +123,22 @@ public class KettleOption : MonoBehaviour
         }
         #endregion
         #region 커서에따른 z를 눌렀을때
-        if (opCursor == 0 && Input.GetKeyDown(KeyCode.Z))
+        if (opCursor == 0 && Input.GetKeyDown(KeyCode.Return))
         {
             backgroundDark.SetActive(false);
             pause.SetActive(false);
         }
-        else if (opCursor == 1 && Input.GetKeyDown(KeyCode.Z))
+        else if (opCursor == 1 && Input.GetKeyDown(KeyCode.Return))
         {
 
         }
-        else if (opCursor == 2 && Input.GetKeyDown(KeyCode.Z))
+        else if (opCursor == 2 && Input.GetKeyDown(KeyCode.Return))
         {
             DataManager.dataInstance.playerData.lastPosition = 0;
             DataManager.dataInstance.SaveData();
             SceneManager.LoadScene("Opening");           
         }
-        else if (opCursor == 3 && Input.GetKeyDown(KeyCode.Z))
+        else if (opCursor == 3 && Input.GetKeyDown(KeyCode.Return))
         {
             DataManager.dataInstance.playerData.lastPosition = 0;
             DataManager.dataInstance.SaveData();

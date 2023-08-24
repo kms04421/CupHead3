@@ -21,11 +21,21 @@ public class ParringScript : MonoBehaviour
  
 
 
-    private void OnTriggerStay2D(Collider2D collision)
+    private void OnTriggerEnter2D(Collider2D collision)
     {
         if(collision.tag.Equals("PinkBossAtk")|| collision.tag.Equals("PinkObj"))
         {
-            Player.instance.parryAction();
+            Debug.Log(collision.transform.localScale.x +" / "+ collision.transform.localScale.y);
+            if (collision.tag.Equals("PinkObj") && collision.transform.localScale.Equals(Vector3.one))
+            {
+                Player.instance.parryAction();
+                collision.GetComponent<PinkParryObs1>().ChangeObs();
+            }
+            else
+            {
+
+                Debug.Log("½ÇÆÐ");
+            }
         }
     }
 

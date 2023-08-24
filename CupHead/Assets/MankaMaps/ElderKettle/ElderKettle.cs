@@ -19,22 +19,24 @@ public class ElderKettle: MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(z.activeSelf == true&& Input.GetKeyDown(KeyCode.Z))
+        if (z.activeSelf == true && Input.GetKeyDown(KeyCode.Z))
         {
-            //Player.instance.isTalk = true;
-            z.SetActive(false);
-            kettleNum+=1;
+            Player.instance.isTalk = true;
+            kettleNum += 1;
             SetAfterText(kettleNum);
             if (kettleNum >= 5)
             {
-                //Player.instance.isTalk = false;
+                Player.instance.isTalk = false;
                 SetFalseAfter();
                 kettleNum = 0;
-                z.SetActive(true);
             }
         }
     }
 
+    private void FixedUpdate()
+    {
+       
+    }
     public void SetFalseAfter()
     {
         for (int i = 0; i < 4; i++)

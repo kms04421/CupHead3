@@ -16,10 +16,10 @@ public class Exit : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
         if (z.activeSelf == true&& Input.GetKeyDown(KeyCode.Z))
         {
             end.SetActive(true);
+            DataManager.dataInstance.playerData.lastPosition = 2;
             Invoke("LoadWorldMap", 1f);
         }
     }

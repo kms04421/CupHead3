@@ -161,15 +161,12 @@ public class GameManager_1 : MonoBehaviour
                     break;
                 }
 
-
             }
         }
         else
         {
             num = 0;
         }
-
-
         if (Clear)
         {
             KO.SetActive(true);
@@ -220,6 +217,7 @@ public class GameManager_1 : MonoBehaviour
 
 
                     case 3: // ∏ ¿∏∑Œ
+                        Time.timeScale = 1f;
                         SceneManager.LoadScene("CupHead");
                         break;
                 }
