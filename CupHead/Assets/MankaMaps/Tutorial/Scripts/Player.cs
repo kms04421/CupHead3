@@ -16,7 +16,7 @@ public class Player : MonoBehaviour
     public bool parrySuccess = false;
 
     private float DashTime = 1f;
-
+    public int parryCount = 0; // 其府 冉荐
 
     public GameObject eXShot;
     private List<GameObject> exShotList;
@@ -1147,6 +1147,7 @@ public class Player : MonoBehaviour
     }
     public void parryAction()
     {
+        parryCount ++;
         Debug.Log("菩府己傍");
         parrySuccess = true;
         parryChk = false;

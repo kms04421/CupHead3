@@ -32,6 +32,11 @@ public class GameManager_1 : MonoBehaviour
     public Image targetImage; // 이미지를 표시할 Image 컴포넌트
 
 
+    //클리어 텍스트
+    public TMP_Text[] ClearText;
+    //클리어 시 보여줄 점수판
+    public GameObject ClearBoard;
+
     public GameObject KO; // 클리어시 문구
 
     public bool Clear = false;
@@ -62,7 +67,9 @@ public class GameManager_1 : MonoBehaviour
     public GameObject ClaerWindow;
     public SpriteRenderer spriteRenderer;
     private bool blackChk = false;
-
+    private float startTime; // 시작시간 
+    private float endTime; // 종료시간 
+    private bool ClearTextSetChk = false; 
     private Color originalColor;
     public string hexColor = "413F3F"; // 메뉴색 건들지 말것
     private Color color;
@@ -83,7 +90,7 @@ public class GameManager_1 : MonoBehaviour
 
     void Start()
     {
-
+        startTime = Time.time;
         spriteRenderer = ClaerWindow.GetComponent<SpriteRenderer>();
         originalColor = spriteRenderer.color;
         menuList[selectNum].color = Color.red; //글자색 빨간색
@@ -135,7 +142,7 @@ public class GameManager_1 : MonoBehaviour
           
         }
 
-
+        
 
         if(Player.instance.isDead) // 플레이어 죽을시 데스카드 활성화
         {
@@ -183,8 +190,13 @@ public class GameManager_1 : MonoBehaviour
             if (blackChk)
             {
                 // 알파 값 변경
-                float newAlpha = Mathf.Lerp(spriteRenderer.color.a, 1f, 5 * Time.deltaTime);
+                float newAlpha = Mathf.Lerp(spriteRenderer.color.a, 1f, 5 * Time.deltaTime); // 화면 어두워지는 처리
                 spriteRenderer.color = new Color(originalColor.r, originalColor.g, originalColor.b, newAlpha);
+                if(!ClearTextSetChk)
+                {
+                    Invoke("ClearTextSet", 1.3f);//게임 승리시 나오는 점수판 
+                }
+               
             }
            
             KO.SetActive(true);
@@ -489,5 +501,13 @@ public class GameManager_1 : MonoBehaviour
     {
         Clear = true;
     }
+    public void ClearTextSet()
+    {
+        ClaerWindow.SetActive(false);
+        ClearBoard.SetActive(true);
+        ClearText[0].text = "Time............  " + (Time.time - startTime) ;
+        ClearText[1].text = "HP................  " + life;
+        ClearText[2].text = "Parry............  " + Player.instance.parryCount;
 
+    }
 }
