@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 public class TallForg3 : MonoBehaviour
 {
@@ -34,7 +35,7 @@ public class TallForg3 : MonoBehaviour
     public AudioClip morphed_spin;
     public AudioClip morphed_dial_spin_loop;
     //보스 피격시 깜박거림 
-    private Image imageComponent;
+    private SpriteRenderer imageComponent;
     private Material originalMaterial; // 원래 마테리얼
     public Material customMaterial; // 적용할 커스텀 마테리얼
     //보스 피격시 깜박거림 end
@@ -76,6 +77,8 @@ public class TallForg3 : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        imageComponent = GetComponent<SpriteRenderer>();
+        originalMaterial = imageComponent.material;
         audioSource = GetComponent<AudioSource>();
         Slot1AtkList = new List<GameObject>();
         Slot2AtkList = new List<GameObject>();
@@ -134,11 +137,9 @@ public class TallForg3 : MonoBehaviour
     {
         if (BossManager.instance.BoosDie)
         {
-            if (!bossDieExChk)
-            {
-                bossDieExChk = true;
+            bossDieExChk = true;
                 GameManager_1.instance.BossDieEX(transform);
-            }
+           
 
 
 
@@ -519,12 +520,34 @@ public class TallForg3 : MonoBehaviour
             if (collision.tag.Equals("PlayerAttack"))
             {
                 BossManager.instance.BossHpMinus(0);
+                StartBlinkEffect();
             }
             if (collision.tag.Equals("PlayerAttackEx"))//ex공격 적중시
             {
                 BossManager.instance.BossHpMinus(1);
+                StartBlinkEffect();
             }
         }
     }
+    //깜박거림 
+    public void StartBlinkEffect()
+    {
+        // 깜박임 효과 시작 코루틴 호출
+        StartCoroutine(BlinkEffectCoroutine());
+    }
 
+    private IEnumerator BlinkEffectCoroutine()
+    {
+        // 깜박임 효과를 위한 임시 색상
+        Material tempColor = customMaterial;
+
+        // 색상 변경
+        imageComponent.material = tempColor;
+
+        // 일정 시간 동안 대기
+        yield return new WaitForSeconds(0.02f);
+
+        // 원래 색상으로 복원
+        imageComponent.material = originalMaterial;
+    }
 }

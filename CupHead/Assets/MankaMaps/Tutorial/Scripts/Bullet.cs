@@ -10,82 +10,85 @@ public class Bullet : MonoBehaviour
     private float dirBullet;
     private Transform playerPost;
     private Animator animator;
-   
+    private AudioSource audioSource;
+
+    public AudioClip death;
     // Start is called before the first frame update
-/*    private void Awake()
-    {
-        bulletRB = GetComponent<Rigidbody2D>();
-        dirBullet = Player.instance.bulletDirection;
-      *//*  if (Player.instance.bulletMode == 0)
-        {//일반달리기 와 일반쏘기
-            if (dirBullet > 0)
-            {
-                bulletRB.velocity = transform.right * speed;
+    /*    private void Awake()
+        {
+            bulletRB = GetComponent<Rigidbody2D>();
+            dirBullet = Player.instance.bulletDirection;
+          *//*  if (Player.instance.bulletMode == 0)
+            {//일반달리기 와 일반쏘기
+                if (dirBullet > 0)
+                {
+                    bulletRB.velocity = transform.right * speed;
+                }
+                else if (dirBullet < 0)
+                {
+                    bulletRB.velocity = transform.right * -1 * speed;
+                    transform.eulerAngles = new Vector3(0, 180, 0);
+                }
             }
-            else if (dirBullet < 0)
-            {
-                bulletRB.velocity = transform.right * -1 * speed;
-                transform.eulerAngles = new Vector3(0, 180, 0);
+            else if (Player.instance.bulletMode == 2)
+            {//Up쏘기
+                bulletRB.velocity = transform.up * speed;
+                transform.eulerAngles = new Vector3(0, 0, 90);
             }
-        }
-        else if (Player.instance.bulletMode == 2)
-        {//Up쏘기
-            bulletRB.velocity = transform.up * speed;
-            transform.eulerAngles = new Vector3(0, 0, 90);
-        }
-        else if (Player.instance.bulletMode == 3)
-        {//대각선위로쏘기
-            if (dirBullet > 0)
-            {
-                transform.eulerAngles = new Vector3(0, 0, 45);
-                Vector2 diagonalDirection = new Vector2(1, 1);
-                bulletRB.velocity = diagonalDirection * speed;
+            else if (Player.instance.bulletMode == 3)
+            {//대각선위로쏘기
+                if (dirBullet > 0)
+                {
+                    transform.eulerAngles = new Vector3(0, 0, 45);
+                    Vector2 diagonalDirection = new Vector2(1, 1);
+                    bulletRB.velocity = diagonalDirection * speed;
 
+                }
+                else if (dirBullet < 0)
+                {
+                    transform.eulerAngles = new Vector3(0, 180, 45);
+                    Vector2 diagonalDirection = new Vector2(-1, 1);
+                    bulletRB.velocity = diagonalDirection * speed;
+                }
             }
-            else if (dirBullet < 0)
-            {
-                transform.eulerAngles = new Vector3(0, 180, 45);
-                Vector2 diagonalDirection = new Vector2(-1, 1);
-                bulletRB.velocity = diagonalDirection * speed;
+            else if (Player.instance.bulletMode == 4)
+            {//대각선아래쏘기
+                if (dirBullet > 0)
+                {
+                    transform.eulerAngles = new Vector3(0, 0, -45);
+                    Vector2 diagonalDirection = new Vector2(1, -1);
+                    bulletRB.velocity = diagonalDirection * speed;
+                }
+                else if (dirBullet < 0)
+                {
+                    transform.eulerAngles = new Vector3(0, 180, -45);
+                    Vector2 diagonalDirection = new Vector2(-1, -1);
+                    bulletRB.velocity = diagonalDirection * speed;
+                }
             }
-        }
-        else if (Player.instance.bulletMode == 4)
-        {//대각선아래쏘기
-            if (dirBullet > 0)
-            {
-                transform.eulerAngles = new Vector3(0, 0, -45);
-                Vector2 diagonalDirection = new Vector2(1, -1);
-                bulletRB.velocity = diagonalDirection * speed;
+            else if (Player.instance.bulletMode == 1)
+            {//아래쏘기
+                if (dirBullet > 0)
+                {
+                    bulletRB.velocity = transform.right * speed;
+                }
+                else if (dirBullet < 0)
+                {
+                    bulletRB.velocity = transform.right * -1 * speed;
+                    transform.eulerAngles = new Vector3(0, 180, 0);
+                }
             }
-            else if (dirBullet < 0)
-            {
-                transform.eulerAngles = new Vector3(0, 180, -45);
-                Vector2 diagonalDirection = new Vector2(-1, -1);
-                bulletRB.velocity = diagonalDirection * speed;
-            }
-        }
-        else if (Player.instance.bulletMode == 1)
-        {//아래쏘기
-            if (dirBullet > 0)
-            {
-                bulletRB.velocity = transform.right * speed;
-            }
-            else if (dirBullet < 0)
-            {
-                bulletRB.velocity = transform.right * -1 * speed;
-                transform.eulerAngles = new Vector3(0, 180, 0);
-            }
-        }
-        else if (Player.instance.bulletMode == 5)
-        {//c누르고 아래쏘기
+            else if (Player.instance.bulletMode == 5)
+            {//c누르고 아래쏘기
 
-            bulletRB.velocity = transform.up * -1 * speed;
-            transform.eulerAngles = new Vector3(0, 0, -90);
-        }*//*
-    }*/
+                bulletRB.velocity = transform.up * -1 * speed;
+                transform.eulerAngles = new Vector3(0, 0, -90);
+            }*//*
+        }*/
     void Start()
     {
         animator = GetComponent<Animator>();
+        audioSource = GetComponent<AudioSource>();
     }
 
     // Update is called once per frame
@@ -138,6 +141,7 @@ public class Bullet : MonoBehaviour
     {
         if (collision.tag.Equals("Boss"))
         {
+            audioSource.PlayOneShot(death);
             GameManager_1.instance.ChargeFillAdd();
             animator.SetBool("Die", true);
             
@@ -145,6 +149,7 @@ public class Bullet : MonoBehaviour
 
         if (collision.tag.Equals("Obstacles"))
         {
+            audioSource.PlayOneShot(death);
             animator.SetBool("Die", true);
 
         }

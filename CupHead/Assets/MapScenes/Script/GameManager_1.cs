@@ -196,6 +196,9 @@ public class GameManager_1 : MonoBehaviour
                 {
                     ClearTextSetChk = true;
                     Invoke("ClearTextSet", 1.5f);//게임 승리시 나오는 점수판 
+
+
+                    Invoke("returnMap", 3f);//게임 승리시 나오는 점수판 
                 }
                
             }
@@ -510,5 +513,26 @@ public class GameManager_1 : MonoBehaviour
         ClearText[1].text = "HP................  " + life;
         ClearText[2].text = "Parry............  " + Player.instance.parryCount;
 
+    }
+public void returnMap()
+    {
+
+        Scene currentScene = SceneManager.GetActiveScene();
+        string sceneName = currentScene.name;
+        if(sceneName.Equals("Tallfrog"))
+        {
+            DataManager.dataInstance.playerData.clearFrog = true;
+        }
+        else if(sceneName.Equals("VeggieBoss"))
+        {
+            DataManager.dataInstance.playerData.clearVeggie = true;
+        }
+
+        //
+       
+        SceneManager.LoadScene("CupHead");
+        //
+        //클리어시 데이터 매니저에 저장
+      
     }
 }

@@ -27,7 +27,7 @@ public class Tallfrog : MonoBehaviour
 
     private Material originalMaterial; // 원래 마테리얼
     public Material customMaterial; // 적용할 커스텀 마테리얼
-    private Image imageComponent;
+    private SpriteRenderer imageComponent;
 
 
 
@@ -36,9 +36,9 @@ public class Tallfrog : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        imageComponent = GetComponent<Image>();
+        imageComponent = GetComponent<SpriteRenderer>();
         audioSource = GetComponent<AudioSource>();
-
+        originalMaterial = imageComponent.material;
         aniList = new float[] { 0.55f, 1.5f, 2.3f };
 
         fireflyList = new List<GameObject>();
@@ -311,12 +311,14 @@ public class Tallfrog : MonoBehaviour
         if (collision.tag.Equals("PlayerAttack"))
         {
             BossManager.instance.BossHpMinus(0);
-
+            StartBlinkEffect();
         }
 
         if (collision.tag.Equals("PlayerAttackEx"))//ex공격 적중시
         {
             BossManager.instance.BossHpMinus(1);
+          
+            StartBlinkEffect();
         }
     }
     //깜박거림 

@@ -1,6 +1,7 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using UnityEngine.UI;
 public class ShortFrog2 : MonoBehaviour
 {
     private Animator animator;
@@ -10,7 +11,11 @@ public class ShortFrog2 : MonoBehaviour
     private float animatorTime = 0f;
     private Rigidbody2D rigidbody2D;
     public GameObject Ball;
-
+    //보스 피격시 깜박거림 
+    
+    private Material originalMaterial; // 원래 마테리얼
+    public Material customMaterial; // 적용할 커스텀 마테리얼
+    //보스 피격시 깜박거림 end
     private GameObject saveObj;
     private List<GameObject> BallList;
     int atkCount = 0;
@@ -28,6 +33,7 @@ public class ShortFrog2 : MonoBehaviour
     {
         audioSource = GetComponent<AudioSource>();
         rigidbody2D = GetComponent<Rigidbody2D>();
+
         BallList = new List<GameObject>();
         for (int i = 0; i < 5; i++)
         {
@@ -40,6 +46,7 @@ public class ShortFrog2 : MonoBehaviour
 
         capsuleCollider = GetComponent<CapsuleCollider2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
+        originalMaterial = spriteRenderer.material;
         animator = GetComponent<Animator>();
     }
 
@@ -245,12 +252,35 @@ public class ShortFrog2 : MonoBehaviour
         if (collision.tag.Equals("PlayerAttack"))
         {
             BossManager.instance.BossHpMinus(0);
-
+            StartBlinkEffect();
         }
 
         if (collision.tag.Equals("PlayerAttackEx"))//ex공격 적중시
         {
             BossManager.instance.BossHpMinus(1);
+            StartBlinkEffect();
         }
+    }
+
+    //깜박거림 
+    public void StartBlinkEffect()
+    {
+        // 깜박임 효과 시작 코루틴 호출
+        StartCoroutine(BlinkEffectCoroutine());
+    }
+
+    private IEnumerator BlinkEffectCoroutine()
+    {
+        // 깜박임 효과를 위한 임시 색상
+        Material tempColor = customMaterial;
+
+        // 색상 변경
+        spriteRenderer.material = tempColor;
+
+        // 일정 시간 동안 대기
+        yield return new WaitForSeconds(0.02f);
+
+        // 원래 색상으로 복원
+        spriteRenderer.material = originalMaterial;
     }
 }

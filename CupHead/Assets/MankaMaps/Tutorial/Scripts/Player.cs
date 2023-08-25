@@ -31,6 +31,17 @@ public class Player : MonoBehaviour
     private float effectTimer = 0f;
     private float yOffset = 0.1f;
 
+    //플레이어 소리
+    private AudioSource audioSource;
+
+    public AudioClip dsahAudioClip;
+    public AudioClip deathAudioClip;
+    public AudioClip ex_shotAudioClip;
+    public AudioClip damage_crackAudioClip;
+    public AudioClip jumpAudioClip;
+    public AudioClip walkAudioClip;
+    
+
     //ex샷 
     public GameObject eXShot;
     private List<GameObject> exShotList;
@@ -160,6 +171,7 @@ public class Player : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        audioSource = GetComponent<AudioSource>();
         exShotList = new List<GameObject>();
         sparkList = new List<GameObject>(); 
         originalPosition = cameraTransform.transform.position; // 원래 카메라 포지션 
@@ -208,6 +220,10 @@ public class Player : MonoBehaviour
         }
         if (isDead)
         {
+            if (!audioSource.isPlaying)
+            {
+                audioSource.PlayOneShot(deathAudioClip);
+            }
             PR.velocity = Vector3.zero;
             transform.Translate(Vector3.up*3*Time.deltaTime);
             collider2D.isTrigger = true;
@@ -572,7 +588,9 @@ public class Player : MonoBehaviour
         {
             animator.SetTrigger("jump");
             animator.SetBool("isGround", false);
-        
+            
+                audioSource.PlayOneShot(jumpAudioClip);
+            
             jumpChk = false;
 
             if((isDownJump == true) && isDown == true)
@@ -703,6 +721,9 @@ public class Player : MonoBehaviour
         {
             if (DashTime >= 0.7f)
             {
+                
+                    audioSource.PlayOneShot(dsahAudioClip);
+                
                 //튜토리얼 대쉬
                 string currentSceneName = SceneManager.GetActiveScene().name;
                 if (currentSceneName == "Tutorial")

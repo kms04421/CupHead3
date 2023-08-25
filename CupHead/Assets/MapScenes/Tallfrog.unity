@@ -1516,6 +1516,7 @@ MonoBehaviour:
   morphed_attack: {fileID: 8300000, guid: 567cce2f0eaab744d95930e1b64ee74b, type: 3}
   morphed_spin: {fileID: 0}
   morphed_dial_spin_loop: {fileID: 8300000, guid: 5f60d05963fd24d4ca8693247b30fb28, type: 3}
+  customMaterial: {fileID: 2100000, guid: 997a43b767814dd0a7642ec9b78cba41, type: 3}
   SlotList: {fileID: 337424218}
   Slot1: {fileID: 1195437000}
   Slot2: {fileID: 1457303919}
@@ -2225,6 +2226,7 @@ MonoBehaviour:
   Wind: {fileID: 490249238}
   Fanstart: {fileID: 8300000, guid: 61972c6d648df8441a90f423c3d26ce4, type: 3}
   Fanend: {fileID: 8300000, guid: a98a5ce86195d874a881e6dddc013b63, type: 3}
+  customMaterial: {fileID: 2100000, guid: 997a43b767814dd0a7642ec9b78cba41, type: 3}
   FireFlySpAudio: {fileID: 8300000, guid: d366e09c3948b9e4896fde4aa7ce327d, type: 3}
 --- !u!70 &1265830902
 CapsuleCollider2D:
@@ -2540,6 +2542,7 @@ MonoBehaviour:
   Boss2: {fileID: 2008895524}
   punch: {fileID: 8300000, guid: 0352d4c1bbabc4c4498fe8bdb7b505c6, type: 3}
   Ko2: {fileID: 0}
+  customMaterial: {fileID: 2100000, guid: 997a43b767814dd0a7642ec9b78cba41, type: 3}
 --- !u!70 &1294264744
 CapsuleCollider2D:
   m_ObjectHideFlags: 0
@@ -2720,6 +2723,107 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1370359858 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1596747189419896702, guid: f74d8fff8f07e6f41aea1d328532e9c1, type: 3}
+  m_PrefabInstance: {fileID: 7836260985433139605}
+  m_PrefabAsset: {fileID: 0}
+--- !u!82 &1370359865
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1370359858}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_PlayOnAwake: 1
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!114 &1407261203 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 5326459789856598475, guid: 639e1203570697b46a7713462d57d106, type: 3}
@@ -3469,6 +3573,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Ball: {fileID: 3751580484985407412, guid: 62dc7c05ac967984b972e0c5ec03e5d9, type: 3}
+  customMaterial: {fileID: 2100000, guid: 997a43b767814dd0a7642ec9b78cba41, type: 3}
   startAudio: {fileID: 8300000, guid: fdbc87a6a709474449b8d893f5254946, type: 3}
   loopAudio: {fileID: 8300000, guid: 07aa810c5af0f5b4a95ecc4a13506e9c, type: 3}
   endAudio: {fileID: 8300000, guid: c85054bf9f0051846bccfe8d9f5ebc77, type: 3}
@@ -4070,6 +4175,18 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1596747189118534844, guid: f74d8fff8f07e6f41aea1d328532e9c1, type: 3}
+      propertyPath: dsahAudioClip
+      value: 
+      objectReference: {fileID: 8300000, guid: 344cf45df61732940a7fa9a68b4ff23f, type: 3}
+    - target: {fileID: 1596747189118534844, guid: f74d8fff8f07e6f41aea1d328532e9c1, type: 3}
+      propertyPath: jumpAudioClip
+      value: 
+      objectReference: {fileID: 8300000, guid: da15586aee25d7e49a63548c0c0b5fc7, type: 3}
+    - target: {fileID: 1596747189118534844, guid: f74d8fff8f07e6f41aea1d328532e9c1, type: 3}
+      propertyPath: deathAudioClip
+      value: 
+      objectReference: {fileID: 8300000, guid: f9c0c6ee7b43c85448622c087857b254, type: 3}
     - target: {fileID: 1596747189118534844, guid: f74d8fff8f07e6f41aea1d328532e9c1, type: 3}
       propertyPath: cameraTransform
       value: 

@@ -29,7 +29,11 @@ public class ParringScript : MonoBehaviour
             if (collision.tag.Equals("PinkObj") && collision.transform.localScale.Equals(Vector3.one))
             {
                 Player.instance.parryAction();
-                collision.GetComponent<PinkParryObs1>().ChangeObs();
+                if (collision.GetComponent<PinkParryObs1>() != null)
+                {
+                    collision.GetComponent<PinkParryObs1>();
+                }
+             
             }
             else
             {

@@ -109,7 +109,7 @@ public class Boss3_idle : MonoBehaviour
              
                 BossDie = true;
                 audioSource.PlayOneShot(dieAudio);
-             
+                
             }
             GameManager_1.instance.BossDieEX(transform);
             animator.SetTrigger("Die");

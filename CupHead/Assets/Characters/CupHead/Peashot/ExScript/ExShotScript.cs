@@ -7,8 +7,11 @@ public class ExShotScript : MonoBehaviour
     private CircleCollider2D circleCollider;
     private Transform playerPost;
     private Animator animator;
+    public AudioClip dieAudio;
+    private AudioSource dieAudioSource;
     void Start()
     {
+        dieAudioSource = GetComponent<AudioSource>();
         animator = GetComponent<Animator>();
         circleCollider = GetComponent<CircleCollider2D>();
     }
@@ -41,9 +44,16 @@ public class ExShotScript : MonoBehaviour
     {
         if(collision.tag.Equals("Boss"))
         {
+            if (!dieAudioSource.isPlaying)
+            {
+                dieAudioSource.PlayOneShot(dieAudio);
+            }
+           
             animator.SetBool("Die",true);
         }
     }
+
+   
 
    
 }
