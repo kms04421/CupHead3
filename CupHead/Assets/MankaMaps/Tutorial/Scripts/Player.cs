@@ -2,11 +2,12 @@
 using Cinemachine;
 using System.Collections;
 using System.Collections.Generic;
-
+using UnityEngine.SceneManagement;
 using UnityEngine;
 
 public class Player : MonoBehaviour
 {
+    
     public static Player instance;
     public AudioClip JumpClip;
     public AudioClip DeathClip;
@@ -17,7 +18,18 @@ public class Player : MonoBehaviour
 
     private float DashTime = 1f;
 
+    //대쉬효과 오브젝트
+    public GameObject dashFog;
+    //점프효과 오브젝트
+    public GameObject jumpFog;
+    //ex샷 효과 오브젝트
+    public GameObject exShotFog;
+    //걷기 효과 오브젝트
+    public GameObject walkFog;
+    private float effectTimer = 0f;
+    private float yOffset = 0.1f;
 
+    //ex샷 
     public GameObject eXShot;
     private List<GameObject> exShotList;
 
@@ -152,7 +164,6 @@ public class Player : MonoBehaviour
         collider2D = GetComponent<CapsuleCollider2D>();
         shot1PrefabList = new List<GameObject>();
 
-
         for (int i = 0; i < 6; i++)
         {
             saveObj = Instantiate(eXShot);
@@ -209,48 +220,115 @@ public class Player : MonoBehaviour
             
         }
         Invincibility();
+        #region 걷는 안개처리
+        if ((PR.velocity.x > 0|| PR.velocity.x <0) && PR.velocity.y ==0)
+        {
+            Debug.Log("안개가 왜?");
+            effectTimer += Time.deltaTime;
 
+            if (effectTimer >= 0.3f)
+            {
+                Vector2 effectPosition = transform.position + new Vector3(0, yOffset,0);
+                Instantiate(walkFog, effectPosition, Quaternion.identity);
+                effectTimer = 0f;
+            }
+        }
+        else
+        {
+            effectTimer = 0f;
+        }
+        #endregion
 
+        #region ex샷
         if (Input.GetKeyDown(KeyCode.V)) //ex샷 
         {
-            if(!ExshotChk)
+            string currentSceneName = SceneManager.GetActiveScene().name;
+
+            if (currentSceneName == "Tallfrog" || currentSceneName == "VeggieBoss")
             {
-                ExshotChk = true;
-                Invoke("ExshotChange", 0.7f);
-                if (GameManager_1.instance.num >= 1)
+                if (!ExshotChk)
                 {
-                    for (int i = 0; i < exShotList.Count; i++)
+                    ExshotChk = true;
+                    Invoke("ExshotChange", 0.7f);
+                    if (GameManager_1.instance.num >= 1)
                     {
-                        if (!exShotList[i].activeSelf)
+                        for (int i = 0; i < exShotList.Count; i++)
                         {
-                            animator.SetBool("Exshot", true);
-                            exShotList[i].SetActive(true);
-                            float jumpPlu = 0f;
-                            if (jumpChk == false) //위에 볼때 체크
+                            if (!exShotList[i].activeSelf)
                             {
-                                jumpPlu = 1f;
-                            }
-                            if (LRChk) // 왼쪽 오른쪽 체크 
-                            {
-                                exShotList[i].transform.position = new Vector3(transform.position.x - 0.7f, transform.position.y + 1.3f - jumpPlu, 0);
-                                exShotList[i].transform.eulerAngles = new Vector3(0, 0, 180);
-                            }
-                            else
-                            {
+                                animator.SetBool("Exshot", true);
+                                exShotList[i].SetActive(true);
+                                float jumpPlu = 0f;
+                                if (jumpChk == false) //위에 볼때 체크
+                                {
+                                    jumpPlu = 1f;
+                                }
+                                if (LRChk) // 왼쪽 오른쪽 체크 
+                                {
+                                    exShotList[i].transform.position = new Vector3(transform.position.x - 0.7f, transform.position.y + 1.3f - jumpPlu, 0);
+                                    exShotList[i].transform.eulerAngles = new Vector3(0, 0, 180);
+                                }
+                                else
+                                {
 
-                                exShotList[i].transform.position = new Vector3(transform.position.x + 0.7f, transform.position.y + 1.3f - jumpPlu, 0);
+                                    exShotList[i].transform.position = new Vector3(transform.position.x + 0.7f, transform.position.y + 1.3f - jumpPlu, 0);
 
-                                exShotList[i].transform.eulerAngles = new Vector3(0, 0, 0);
+                                    exShotList[i].transform.eulerAngles = new Vector3(0, 0, 0);
+                                }
                             }
-
                         }
+                        GameManager_1.instance.ChargeFillMin();
                     }
-                    GameManager_1.instance.ChargeFillMin();
                 }
             }
-           
-            
+            else if (currentSceneName == "Tutorial")
+            {
+                Debug.LogFormat("들어오니?");
+                if (!ExshotChk)
+                {
+                    Debug.LogFormat("들어오니?2");
+                    ExshotChk = true;
+                    Invoke("ExshotChange", 0.7f);
+                    if (card.instance.num >= 1)
+                    {
+                        Debug.LogFormat("들어오니?3");
+                        for (int i = 0; i < exShotList.Count; i++)
+                        {
+                            if (!exShotList[i].activeSelf)
+                            {
+                                animator.SetBool("Exshot", true);
+                                exShotList[i].SetActive(true);
+                                float jumpPlu = 0f;
+                                if (jumpChk == false) //위에 볼때 체크
+                                {
+                                    jumpPlu = 1f;
+                                }
+                                if (LRChk) // 왼쪽 오른쪽 체크 
+                                {
+                                    Vector2 exShotPosition = new Vector2(gameObject.transform.position.x+2f, gameObject.transform.position.y+1f);
+                                    exShotFog.transform.position = exShotPosition;
+                                    exShotFog.SetActive(true);
+                                    exShotList[i].transform.position = new Vector3(transform.position.x - 0.7f, transform.position.y + 1.3f - jumpPlu, 0);
+                                    exShotList[i].transform.eulerAngles = new Vector3(0, 0, 180);
+                                }
+                                else
+                                {
+                                    Vector2 exShotPosition = new Vector2(gameObject.transform.position.x-2f, gameObject.transform.position.y+1f);
+                                    exShotFog.transform.position = exShotPosition;
+                                    exShotFog.SetActive(true);
+                                    exShotList[i].transform.position = new Vector3(transform.position.x + 0.7f, transform.position.y + 1.3f - jumpPlu, 0);
+                                    exShotList[i].transform.eulerAngles = new Vector3(0, 0, 0);
+                                }
+                            }
+                        }
+                        card.instance.ChargeFillMin();
+                    }
+                }
+            }
+
+
         }
+        #endregion
 
         AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0);
         // 특수 공격 종료시 처리로직
@@ -296,6 +374,7 @@ public class Player : MonoBehaviour
 
         if (!jumpChk) // 점프 했을경우  콜라이더 사이즈 줄어듬 
         {
+            jumpFog.SetActive(false);
             PR.gravityScale = 4;
             collider2D.size = new Vector2(0.6f, 0.5f);
             collider2D.offset = new Vector2(-0.04870152f, 0.6f);
@@ -471,7 +550,7 @@ public class Player : MonoBehaviour
                         }
                     }
                 }
-
+                
 
             }
         }
@@ -483,11 +562,26 @@ public class Player : MonoBehaviour
             animator.SetBool("isGround", false);
         
             jumpChk = false;
+
+            if((isDownJump == true) && isDown == true)
+            {
+                jumpChk=true;
+                collider.enabled = false;
+                Invoke("EnableCollider", 1.0f);
+                PR.velocity = Vector2.zero;
+                PR.velocity = new Vector2(PR.velocity.x, -jumpForce);
+                animator.SetTrigger("jump");
+                animator.SetBool("isGround", false);
+            }
         }
+
+
+
+
         #region 점프동작
-        if (Input.GetKey(KeyCode.Z) && !jumpChk && jumpCount < 1 && !(stateInfo.IsName("CupHeadDown") ))
+        if (Input.GetKey(KeyCode.Z) && !jumpChk && jumpCount < 1)
         {
-            
+            Debug.Log("점프?");
             jumpEndTime += Time.deltaTime;
             movement.x = Input.GetAxis("Horizontal");
            
@@ -529,15 +623,17 @@ public class Player : MonoBehaviour
         #region 아래를바라보는동작
         if (Input.GetKeyDown(KeyCode.DownArrow))
         {
+            Debug.Log("아래잘보고있니?");
             PR.velocity = Vector2.zero;
             animator.SetBool("lookdown", true);
             isDown = true;
         }
-        if (Input.GetKeyUp(KeyCode.DownArrow))
+        else if (Input.GetKeyUp(KeyCode.DownArrow))
         {
             //Debug.LogFormat("들어오니?");
             animator.SetBool("lookdown", false);
             isDown = false;
+            isDownJump = false;
         }
         #endregion
         #region 공격하는 동작
@@ -595,23 +691,36 @@ public class Player : MonoBehaviour
         {
             if (DashTime >= 0.7f)
             {
+                //튜토리얼 대쉬
+                string currentSceneName = SceneManager.GetActiveScene().name;
+                if (currentSceneName == "Tutorial")
+                {
+                    Debug.Log("들어오니? 대쉬?");
+                    if (LRChk)
+                    {
+                        Debug.Log("들어오니? 대쉬?왼쪽");
+                        Vector2 effectPosition = new Vector2 (transform.position.x,transform.position.y+1f);
+                        Instantiate(dashFog, effectPosition, Quaternion.identity);
+                        
+                        
+
+                    }
+                    else
+                    {
+                        Debug.Log("들어오니? 대쉬?오른 쪽");
+                        Vector2 effectPosition = new Vector2(transform.position.x, transform.position.y + 1f);
+                        Instantiate(dashFog, effectPosition, Quaternion.identity);
+                    }
+                }
+
+                //튜토리얼 대쉬
                 animator.SetBool("dash", true);
                 isDash = true;
                 Debug.LogFormat("isDash?{0}", isDash);
             }
         }
         #endregion
-        #region 아래점프
-        if ((stateInfo.IsName("CupHeadDown") || stateInfo.IsName("CupHeadDownIdle")) && (Input.GetKeyDown(KeyCode.Z)) && (isDownJump == true))
-        {
-            jumpChk = false;
-            collider.enabled = false;
-            Invoke("EnableCollider", 1.0f);
-            PR.velocity = new Vector2(PR.velocity.x, -jumpForce);
-            animator.SetTrigger("jump");
-            animator.SetBool("isGround", false);
-        }
-        #endregion
+     
     }
 
     private void FixedUpdate()
@@ -707,22 +816,33 @@ public class Player : MonoBehaviour
     #region 막힘체크, 아랫점프 체크
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.contacts[0].normal.y < 0.5f)
+
+        if (collision.collider.tag.Equals("JumpObstacles"))//
         {
-            isBlocked = true;
+            Debug.Log("다운점프온 됐음?");
+            collider = collision.collider.GetComponent<EdgeCollider2D>();
+            isDownJump = true;
+        }
+        else
+        {
+            isDownJump = false;
         }
         if (collision.collider.tag.Equals("floor") || collision.collider.tag.Equals("Obstacles") || collision.collider.tag.Equals("JumpObstacles"))
         {
             parryChk = false;
             jumpCount = 0;
             jumpChk = true;
+
+            string currentSceneName = SceneManager.GetActiveScene().name;
             animator.SetBool("isGround", true);
+            if(currentSceneName == "Tutorial")
+            {
+                Vector2 fogPosition = new Vector2(gameObject.transform.position.x, gameObject.transform.position.y+0.5f);
+                jumpFog.transform.position = fogPosition;
+                jumpFog.SetActive(true);
+            }
         }
-        if (collision.collider.tag.Equals("JumpObstacles"))
-        {
-            collider = collision.collider.GetComponent<EdgeCollider2D>();
-            isDownJump = true;
-        }
+  
     }
     private void OnCollisionStay2D(Collision2D collision)
     {
@@ -745,11 +865,11 @@ public class Player : MonoBehaviour
     }
     private void OnCollisionExit2D(Collision2D collision)
     {
-        isBlocked = false;
-        if (collision.collider.tag.Equals("JumpObstacles"))
+        //isBlocked = false;
+       /* if (collision.collider.tag.Equals("JumpObstacles"))
         {
             isDownJump = false;
-        }
+        }*/
     }
     #endregion
     #region 대쉬

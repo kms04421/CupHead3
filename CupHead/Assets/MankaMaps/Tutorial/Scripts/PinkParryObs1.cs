@@ -22,6 +22,7 @@ public class PinkParryObs1 : MonoBehaviour
     {
         if (transform.localScale.Equals(Vector3.one))
         {
+            card.instance.ChargeFillAdd();
             gameObject.GetComponent<Animator>().Play("ParrySpark");
             transform.localScale = Vector2.one * .99f;
             pinkParry2.transform.localScale = Vector3.one * .99f;

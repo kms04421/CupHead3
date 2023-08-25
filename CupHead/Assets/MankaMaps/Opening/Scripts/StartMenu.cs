@@ -95,14 +95,19 @@ public class StartMenu : MonoBehaviour
     public bool isStory;
     private bool isWaitingForKey = false;
 
+    //
+   /* public GameObject select;
+    public GameObject [] Canvas;*/
+
     private int storyNum=0;
     //end
     public GameObject end;
     public GameObject start;
+   
     // Start is called before the first frame update
     void Start()
     {
-        
+      
         //슬롯별로 저장된 데이터가 존재하는지 판단
         for (int i = 0; i < 3; i++)
         {
@@ -274,6 +279,7 @@ public class StartMenu : MonoBehaviour
             { //기존데이터가 있을때
                 if (choiceNum1 == 0 && Input.GetKeyDown(KeyCode.Z))
                 {//컵헤드가 활성화 된 상태일때 입장
+                    MenuMusic.musicInstance.PlayClip(1);
                     EnterGameAnimator(Slot1CupHeadChoice);
                     Slot(0);
                 }
@@ -285,6 +291,7 @@ public class StartMenu : MonoBehaviour
             { //기존데이터가 없을떄
                 if (choiceNum1 == 0 && Input.GetKeyDown(KeyCode.Z))
                 {//컵헤드가 활성화 된 상태일때 입장
+                    MenuMusic.musicInstance.PlayClip(1);
                     Slot(0);
                     //Invoke("EnterGame", 1.0f);
                 }
@@ -299,6 +306,7 @@ public class StartMenu : MonoBehaviour
             { //기존데이터가 있을때
                 if (choiceNum2 == 0 && Input.GetKeyDown(KeyCode.Z))
                 {//컵헤드가 활성화 된 상태일때 입장
+                    MenuMusic.musicInstance.PlayClip(1);
                     EnterGameAnimator(Slot2CupHeadChoice);
                     Slot(1);
                 }
@@ -310,6 +318,7 @@ public class StartMenu : MonoBehaviour
             { //기존데이터가 없을떄
                 if (choiceNum2 == 0 && Input.GetKeyDown(KeyCode.Z))
                 {//컵헤드가 활성화 된 상태일때 입장
+                    MenuMusic.musicInstance.PlayClip(1);
                     Slot(1);
                 }
                 if (choiceNum2 == 1 && Input.GetKeyDown(KeyCode.Z))
@@ -323,6 +332,7 @@ public class StartMenu : MonoBehaviour
             { //기존데이터가 있을때
                 if (choiceNum3 == 0 && Input.GetKeyDown(KeyCode.Z))
                 {//컵헤드가 활성화 된 상태일때 입장
+                    MenuMusic.musicInstance.PlayClip(1);
                     EnterGameAnimator(Slot3CupHeadChoice);
                     Slot(2);
                 }
@@ -334,6 +344,7 @@ public class StartMenu : MonoBehaviour
             { //기존데이터가 없을때
                 if (choiceNum3 == 0 && Input.GetKeyDown(KeyCode.Z))
                 {//컵헤드가 활성화 된 상태일때 입장
+                    MenuMusic.musicInstance.PlayClip(1);
                     Slot(2);
                 }
                 if (choiceNum3 == 1 && Input.GetKeyDown(KeyCode.Z))
@@ -344,7 +355,8 @@ public class StartMenu : MonoBehaviour
         #endregion
         #region 커서이동 // 키보드 입력 up과 down을 받을때마다 cursorNum의 값에 변화를줌
         if (Input.GetKeyDown(KeyCode.DownArrow))
-        {  //
+        {  
+            MenuMusic.musicInstance.PlayClip(0);
             if (isEnter1 == false && isEnter2 == false && isEnter3 == false)
             {
                 cursorNum++;
@@ -357,6 +369,7 @@ public class StartMenu : MonoBehaviour
         }
         if (Input.GetKeyDown(KeyCode.UpArrow))
         {
+            MenuMusic.musicInstance.PlayClip(0);
             if (isEnter1 == false && isEnter2 == false && isEnter3 == false)
             {
                 cursorNum--;
@@ -457,7 +470,7 @@ public class StartMenu : MonoBehaviour
             slotExist[1].SetActive(false);
             slotExist2[1].SetActive(false);
             slotExist[2].SetActive(false);
-            slotExist[2].SetActive(false);
+            slotExist2[2].SetActive(false);
             dark.SetActive(true);
             isSlotChoice = true;                                     //슬롯선택화면인지 체크하는 변수 true
             isMenu = false;                                         //메뉴선택화면인지 체크하는 변수 false
@@ -475,8 +488,13 @@ public class StartMenu : MonoBehaviour
         #region 슬롯나가기
         if (cursorNum == 0 && isEnter1 == true && Input.GetKeyDown(KeyCode.Escape))
         {
+            MenuMusic.musicInstance.PlayClip(0);
             slotExist[0].SetActive(true);
             slotExist2[0].SetActive(true);
+            /*slotExist[1].SetActive(true);
+            slotExist2[1].SetActive(true);
+            slotExist[2].SetActive(true);
+            slotExist2[2].SetActive(true);*/
             dark.SetActive(false);
             isSlotChoice = false;                                   //슬롯선택화면인지를 체크하는변수 false
             isEnter1 = false;                                       //슬롯1에 들어갔는지 체크하는 변수 false
@@ -534,14 +552,17 @@ public class StartMenu : MonoBehaviour
         if (cursorNum == 0 && isEnter1 == true && Input.GetKeyDown(KeyCode.LeftArrow))
         { // 캐릭터 선택 슬롯 창에서 키보드 입력값에 따라서 choiceNum 의 값을 바꿈 
             choiceNum1--;
+            MenuMusic.musicInstance.PlayClip(0);
             if (choiceNum1 == -1)
             {
+                
                 choiceNum1 = 1;
             }
         }
         if (cursorNum == 0 && isEnter1 == true && Input.GetKeyDown(KeyCode.RightArrow))
         {
             choiceNum1++;
+            MenuMusic.musicInstance.PlayClip(0);
             if (choiceNum1 == 2)
             {
                 choiceNum1 = 0;
@@ -550,6 +571,7 @@ public class StartMenu : MonoBehaviour
         if (cursorNum == 1 && isEnter2 == true && Input.GetKeyDown(KeyCode.LeftArrow))
         {
             choiceNum2--;
+            MenuMusic.musicInstance.PlayClip(0);
             if (choiceNum2 == -1)
             {
                 choiceNum2 = 1;
@@ -558,6 +580,7 @@ public class StartMenu : MonoBehaviour
         if (cursorNum == 1 && isEnter2 == true && Input.GetKeyDown(KeyCode.RightArrow))
         {
             choiceNum2++;
+            MenuMusic.musicInstance.PlayClip(0);
             if (choiceNum2 == 2)
             {
                 choiceNum2 = 0;
@@ -566,6 +589,7 @@ public class StartMenu : MonoBehaviour
         if (cursorNum == 2 && isEnter3 == true && Input.GetKeyDown(KeyCode.LeftArrow))
         {
             choiceNum3--;
+            MenuMusic.musicInstance.PlayClip(0);
             if (choiceNum3 == -1)
             {
                 choiceNum3 = 1;
@@ -574,6 +598,7 @@ public class StartMenu : MonoBehaviour
         if (cursorNum == 2 && isEnter3 == true && Input.GetKeyDown(KeyCode.RightArrow))
         {
             choiceNum3++;
+            MenuMusic.musicInstance.PlayClip(0);
             if (choiceNum3 == 2)
             {
                 choiceNum3 = 0;
@@ -651,9 +676,16 @@ public class StartMenu : MonoBehaviour
         if (isEnter1 == false && isEnter2 == false && isEnter3 == false && isSlotChoice == false
             && isMenu == true && Input.GetKeyDown(KeyCode.Escape))
         {
+            MenuMusic.musicInstance.PlayClip(0);
             Create1.SetActive(false);
             Create2.SetActive(false);
             Create3.SetActive(false);
+            slotExist[0].SetActive(false);
+            slotExist2[0].SetActive(false);
+            slotExist[1].SetActive(false);
+            slotExist2[1].SetActive(false);
+            slotExist[2].SetActive(false);
+            slotExist2[2].SetActive(false);
             gameObject.SetActive(false);
 
         }
