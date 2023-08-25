@@ -23,6 +23,7 @@ public class Select : MonoBehaviour
         #region 커서이동
         if (Input.GetKeyDown(KeyCode.DownArrow))
         {
+            MenuMusic.musicInstance.PlayClip(0);
             cursorNum++;
 
             if (cursorNum ==4)
@@ -32,7 +33,7 @@ public class Select : MonoBehaviour
         }
         if(Input.GetKeyDown(KeyCode.UpArrow))
         {
-
+            MenuMusic.musicInstance.PlayClip(0);
             cursorNum--;
 
             if (cursorNum == -1)

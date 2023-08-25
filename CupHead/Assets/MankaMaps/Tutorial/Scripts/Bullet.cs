@@ -142,5 +142,11 @@ public class Bullet : MonoBehaviour
             animator.SetBool("Die", true);
             
         }
+
+        if (collision.tag.Equals("Obstacles"))
+        {
+            animator.SetBool("Die", true);
+
+        }
     }
 }
