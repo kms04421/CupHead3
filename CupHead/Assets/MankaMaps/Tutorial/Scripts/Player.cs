@@ -17,7 +17,7 @@ public class Player : MonoBehaviour
     public bool parrySuccess = false;
 
     private float DashTime = 1f;
-
+    
     //대쉬효과 오브젝트
     public GameObject dashFog;
     //점프효과 오브젝트
