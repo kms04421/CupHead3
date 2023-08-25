@@ -75,11 +75,15 @@ public class Moving : MonoBehaviour
     public GameObject[] coins;
     public GameObject coinText;
 
+    private AudioSource audioSource;
+    public AudioClip clip1;
+    public AudioClip clip2;
     private float lerpTime = 1f;  // 보간에 걸리는 시간. 이 값을 조절하면 변환 속도를 제어할 수 있습니다.
     private Vector3 targetScaleZ1;
     // Start is called before the first frame update
     void Start()
     {
+        audioSource = GetComponent<AudioSource>();
         //인스턴스 생성
         cupHead = this;
         objectName = "i";
@@ -87,8 +91,7 @@ public class Moving : MonoBehaviour
         headMoving = GetComponent<Rigidbody2D>();
         //애니메이터받기
         ani = GetComponent<Animator>();
-        //애플코인구현용 임시아래코드
-        DataManager.dataInstance.playerData.isApple = false;
+
         //코인 초기화코드
         coinCount = DataManager.dataInstance.playerData.coin;
         //코인이펙트 초기화
@@ -112,11 +115,8 @@ public class Moving : MonoBehaviour
         {
             cupHead.transform.position = new Vector2(-56, -33);
         }
-        //VeggieClear = DataManager.dataInstance.playerData.clearVeggie;
-        //FrogClear = DataManager.dataInstance.playerData.clearFrog;
-        //임시용
-        VeggieClear = true;
-        FrogClear = true;
+        VeggieClear = DataManager.dataInstance.playerData.clearVeggie;
+        FrogClear = DataManager.dataInstance.playerData.clearFrog;
     }
 
     // Update is called once per frame
@@ -127,26 +127,33 @@ public class Moving : MonoBehaviour
         {
             if (objectName == "Home")
             {
+                audioSource.clip = clip1;
+                audioSource.Play();
                 End.SetActive(true);
                 Invoke("HomeLoad", 1f);
             }
             else if (objectName == "Tomb_Boss")
             {
-
+                audioSource.clip = clip1;
+                audioSource.Play();
             }
             else if (objectName == "Veggie")
             {
+                audioSource.clip = clip1;
+                audioSource.Play();
                 End.SetActive(true);
                 Invoke("VeggieLoad", 1f);
             }
             else if (objectName == "Frogs_Boss")
             {
+                audioSource.clip = clip1;
+                audioSource.Play();
                 End.SetActive(true);
                 Invoke("FrogLoad", 1f);
             }
             else if (objectName == "Shop")
             {
-
+                audioSource.Play();
             }
         }
         #endregion
@@ -155,18 +162,22 @@ public class Moving : MonoBehaviour
         if (isMet == true)
         {
             targetScaleZ1 = new Vector3(1f, 1f, 1);
+
         }
         else
         {
+            
             targetScaleZ1 = new Vector3(0.01f, 0.01f, 1);
         }
         if (isMet == true)
         {
+
             //lerpTime = 1f;  // isMet이 true일 때마다 time 값을 초기화
             lerpTime = Mathf.Clamp01(lerpTime + Time.deltaTime / lerpTime);
         }
         else
         {
+
             lerpTime = Mathf.Clamp01(lerpTime - Time.deltaTime / lerpTime);
         }
 
@@ -235,12 +246,14 @@ public class Moving : MonoBehaviour
         {
             if (Input.GetKeyDown(KeyCode.Z))
             {
+                MusicMap.musicMap.PlayClip(0);
                 isZ = true;
                 HomeText.SetActive(true);
                 backgroundDark.SetActive(true);
             }
             if (Input.GetKeyDown(KeyCode.Escape))
             {
+
                 isZ = false;
                 HomeText.SetActive(false);
                 backgroundDark.SetActive(false);
@@ -250,6 +263,7 @@ public class Moving : MonoBehaviour
         { //무덤보스 
             if (Input.GetKeyDown(KeyCode.Z))
             {
+                MusicMap.musicMap.PlayClip(0);
                 isZ = true;
                 ForestText.SetActive(true);
                 backGroundBoss.SetActive(true);
@@ -266,6 +280,7 @@ public class Moving : MonoBehaviour
         { //야채보스
             if (Input.GetKeyDown(KeyCode.Z))
             {
+                MusicMap.musicMap.PlayClip(0);
                 isZ = true;
                 VeggiText.SetActive(true);
                 backGroundBoss.SetActive(true);
@@ -283,6 +298,7 @@ public class Moving : MonoBehaviour
         {//개구리보스
             if (Input.GetKeyDown(KeyCode.Z))
             {
+                MusicMap.musicMap.PlayClip(0);
                 isZ = true;
                 FrogText.SetActive(true);
                 backGroundBoss.SetActive(true);
@@ -299,6 +315,7 @@ public class Moving : MonoBehaviour
         { //상점
             if (Input.GetKeyDown(KeyCode.Z))
             {
+                MusicMap.musicMap.PlayClip(0);
                 isZ = true;
                 ShopText.SetActive(true);
                 backgroundDark.SetActive(true);
@@ -340,6 +357,8 @@ public class Moving : MonoBehaviour
                     coins[0].SetActive(true);
                     coins[1].SetActive(true);
                     coins[2].SetActive(true);
+                    coinCount += 3;
+                    DataManager.dataInstance.playerData.coin += 3;
                     StartCoroutine(ActiveRandomCoinFxs());
                     /*코루틴 수정전
                     vCam.LookAt = player;
@@ -458,6 +477,8 @@ public class Moving : MonoBehaviour
     {
         if (collision.gameObject.tag == "Obstacles" || collision.gameObject.tag == "NPC")
         {
+            audioSource.clip = clip2;
+            audioSource.Play();
             isMet = true;
             objectName = collision.gameObject.name;
         }
@@ -467,6 +488,8 @@ public class Moving : MonoBehaviour
 
         if (collision.collider.tag == "Obstacles" || collision.collider.tag == "NPC")
         {
+            audioSource.clip = clip2;
+            audioSource.Play();
             isMet = false;
         }
     }

@@ -8,10 +8,12 @@ public class Tuto : MonoBehaviour
     public GameObject player;
     public GameObject End;
     public GameObject endingFx;
+
+    private AudioSource audio;
     // Start is called before the first frame update
     void Start()
     {
-        
+        audio = GetComponent<AudioSource>();
     }
 
     // Update is called once per frame
@@ -19,6 +21,7 @@ public class Tuto : MonoBehaviour
     {
         if (z.activeSelf == true && Input.GetKeyDown(KeyCode.Z))
         {
+            audio.Play();
             player.SetActive(false);
             endingFx.SetActive(true);
             Invoke("EndSetActive",1f);

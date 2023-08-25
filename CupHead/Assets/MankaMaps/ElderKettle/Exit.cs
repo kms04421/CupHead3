@@ -9,10 +9,12 @@ public class Exit : MonoBehaviour
     public GameObject end;
     public GameObject cupHead;
     public GameObject endFx;
+
+    private AudioSource audio;
     // Start is called before the first frame update
     void Start()
     {
-        
+        audio = GetComponent<AudioSource>();
     }
 
     // Update is called once per frame
@@ -20,6 +22,7 @@ public class Exit : MonoBehaviour
     {
         if (z.activeSelf == true&& Input.GetKeyDown(KeyCode.Z))
         {
+            audio.Play();
             cupHead.SetActive(false);
             endFx.SetActive(true);
             Invoke("EndSetActive", 1f);

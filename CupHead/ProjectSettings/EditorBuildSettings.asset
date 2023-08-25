@@ -5,22 +5,22 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 0
+  - enabled: 1
     path: Assets/MankaMaps/Opening/Opening.unity
     guid: 32b8265343b57394c9ac857bbe019fbf
-  - enabled: 0
+  - enabled: 1
     path: Assets/MapScenes/CupHead.unity
     guid: 2cda990e2423bbf4892e6590ba056729
-  - enabled: 0
+  - enabled: 1
     path: Assets/MankaMaps/ElderKettle/ElderKettle.unity
     guid: 5fe195c6926186447a5c444e6307efe8
   - enabled: 1
     path: Assets/MapScenes/VeggieBoss.unity
     guid: 372102d02346f29458e0537d2145479b
-  - enabled: 0
+  - enabled: 1
     path: Assets/MapScenes/Tallfrog.unity
     guid: 08e1464eedcbd4a4ba8d78980b1feba6
-  - enabled: 0
+  - enabled: 1
     path: Assets/MankaMaps/Tutorial/Tutorial.unity
     guid: 151c6f93978cc0b4e9da8784272c25ea
   m_configObjects: {}

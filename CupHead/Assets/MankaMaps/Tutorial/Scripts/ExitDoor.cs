@@ -9,10 +9,13 @@ public class ExitDoor : MonoBehaviour
     public GameObject End;
     public GameObject EndingFx;
     private SpriteRenderer render;
+
+    private AudioSource audio1;
     // Start is called before the first frame update
     void Start()
     {
         render = cupHead.GetComponent<SpriteRenderer>();
+        audio1 = GetComponent<AudioSource>();
     }
 
     // Update is called once per frame
@@ -20,8 +23,8 @@ public class ExitDoor : MonoBehaviour
     {
         if(z.activeSelf == true && Input.GetKeyDown(KeyCode.Z))
         {
-            //todo ÇÃ·¹ÀÌ¾î¿òÁ÷ÀÓ ºÀ¼âÇÏ´Âº¯¼ö ¼³Á¤
-            
+            //todo ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´Âºï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+            GetComponent<AudioSource>().Play();
             render.enabled = false;
             EndingFx.SetActive(true);
             Invoke("EndActive", 1f);
