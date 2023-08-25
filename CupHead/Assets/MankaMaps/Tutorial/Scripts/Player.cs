@@ -14,9 +14,11 @@ public class Player : MonoBehaviour
 
     public GameObject ParryObj;
 
-    public bool parrySuccess = false;
+    public int parrySuccess = 0;
 
     private float DashTime = 1f;
+
+    public bool parryCount = false;
 
     //대쉬효과 오브젝트
     public GameObject dashFog;
@@ -198,6 +200,8 @@ public class Player : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+
+       
         if (isTalk == true)
         {
             return;
@@ -1267,6 +1271,7 @@ public class Player : MonoBehaviour
     }
     public void parryAction()
     {
+        parryCount ++ ;
         Debug.Log("패리성공");
         parrySuccess = true;
         parryChk = false;
