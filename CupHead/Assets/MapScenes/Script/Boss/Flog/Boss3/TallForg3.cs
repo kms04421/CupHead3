@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 
 using UnityEngine;
-
+using UnityEngine.UI;
 public class TallForg3 : MonoBehaviour
 {
     public static TallForg3 Instance;
@@ -33,7 +33,11 @@ public class TallForg3 : MonoBehaviour
     public AudioClip morphed_attack;
     public AudioClip morphed_spin;
     public AudioClip morphed_dial_spin_loop;
-
+    //보스 피격시 깜박거림 
+    private Image imageComponent;
+    private Material originalMaterial; // 원래 마테리얼
+    public Material customMaterial; // 적용할 커스텀 마테리얼
+    //보스 피격시 깜박거림 end
     public GameObject SlotList;
     public GameObject Slot1;
     public GameObject Slot2;

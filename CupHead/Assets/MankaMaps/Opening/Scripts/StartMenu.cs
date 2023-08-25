@@ -450,7 +450,7 @@ public class StartMenu : MonoBehaviour
             slotExist[1].SetActive(false);
             slotExist2[1].SetActive(false);
             slotExist[2].SetActive(false);
-            slotExist[2].SetActive(false);  
+            slotExist2[2].SetActive(false);  
             dark.SetActive(true);
             isSlotChoice = true;                                    //슬롯선택화면인지 체크하는 변수 true
             isMenu = false;                                         //메뉴선택화면인지 체크하는 변수 false
