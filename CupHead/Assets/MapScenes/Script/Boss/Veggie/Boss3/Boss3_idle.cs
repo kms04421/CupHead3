@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using static UnityEditor.PlayerSettings;
+
 
 public class Boss3_idle : MonoBehaviour
 {
@@ -94,6 +94,10 @@ public class Boss3_idle : MonoBehaviour
     {
         VeggieBossManager.instance.BossHpChk((int)BossHp);
         atkTime += Time.deltaTime;
+
+
+       
+
         if (BossHp < 0)
         {
             if (!BossDie)

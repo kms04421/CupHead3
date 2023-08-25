@@ -7,7 +7,7 @@ public class Tallfrog : MonoBehaviour
     private Animator animator;
 
     private int allAtkCount = 0;
-
+    private int LastFireFlySpNum = 0;
     private float animatorTime = 0f;
     private float setTime = 1.77f;
     int fireflyX = -8;
@@ -25,18 +25,19 @@ public class Tallfrog : MonoBehaviour
     public AudioClip Fanstart; // 선풍기 사운드 시작
     public AudioClip Fanend; // 선풍기 사운드 종료
 
+    public AudioClip FireFlySpAudio; // 위롭!
     int BossHp = 100;
     // Start is called before the first frame update
     void Start()
     {
         audioSource = GetComponent<AudioSource>();
-     
+
         aniList = new float[] { 0.55f, 1.5f, 2.3f };
 
         fireflyList = new List<GameObject>();
         animator = GetComponent<Animator>();
         // 파이어 벌래 생성
-        for (int i = 0; i < 15; i++) 
+        for (int i = 0; i < 20; i++)
         {
 
             SaveObj = Instantiate(firefly, new Vector3(transform.position.x - 3, transform.position.y + 3, 0), Quaternion.identity);
@@ -67,23 +68,23 @@ public class Tallfrog : MonoBehaviour
         {
             if (stateInfo.IsName("TallFrogFan"))
             {
-                if(Wind.activeSelf)
+                if (Wind.activeSelf)
                 {
                     Wind.SetActive(false);
                 }
-              
+
             }
             animator.SetBool("Fan", false);
         }
         if (stateInfo.IsName("TallFrog_Idle") && BossManager.instance.ready)
         {
-           
+
             gameObject.SetActive(false);
             Tallforg2.SetActive(true);
         }
-      
 
-            if (BossManager.instance.BossChk == 1 && BossManager.instance.BossLv == 1 ) // 2페이지 
+
+        if (BossManager.instance.BossChk == 1 && BossManager.instance.BossLv == 1) // 2페이지 
         {
             if (stateInfo.IsName("TallFrog_Idle") && stateInfo.normalizedTime >= 0.99f)
             {
@@ -95,7 +96,7 @@ public class Tallfrog : MonoBehaviour
             AnimatorStateInfo stateInfoAtk2 = animator.GetCurrentAnimatorStateInfo(0);
             if (stateInfoAtk2.IsName("TallFrogFan") && stateInfoAtk2.normalizedTime >= 0.1f && stateInfoAtk2.normalizedTime <= 0.2f)
             {
-           
+
                 Wind.SetActive(true);
 
             }
@@ -115,7 +116,7 @@ public class Tallfrog : MonoBehaviour
                     audioSource.PlayOneShot(Fanend);
                 }
                 animator.SetBool("Fan", false);
-              
+
                 BossManager.instance.AtkChange(0); // 공격 종료시
             }
             if (stateInfo.IsName("TallFrogAtk") && BossManager.instance.BossHp <= 0) // 보스 사망시 에니메이션 종료
@@ -124,7 +125,7 @@ public class Tallfrog : MonoBehaviour
                 audioSource.Stop();
             }
         }
-      
+
 
         if (BossManager.instance.BossChk == 1 && BossManager.instance.BossLv == 0) // 1페이지 
         {
@@ -145,17 +146,17 @@ public class Tallfrog : MonoBehaviour
 
                     if (stateInfoAtk.IsName("TallFrogAtk") && stateInfoAtk.normalizedTime >= aniList[allAtkCount])// 에니메이션 반복 중 불벌래 공격 조건
                     {
-                        
+
                         fireflyMove = true;
                         animatorTime = 0f;
                         Tallfrog_fireflyAtk();// 불벌래
 
 
                     }
-                  
 
 
-                    if (stateInfoAtk.IsName("TallFrogAtk") && stateInfoAtk.normalizedTime >= 0.999f + allAtkCount) 
+
+                    if (stateInfoAtk.IsName("TallFrogAtk") && stateInfoAtk.normalizedTime >= 0.999f + allAtkCount)
                     {
                         animator.SetBool("End2", false);
                         animatorTime = 0f;
@@ -169,7 +170,7 @@ public class Tallfrog : MonoBehaviour
                             animator.SetBool("End", true);
 
                         }
-                      
+
                     }
 
 
@@ -212,32 +213,46 @@ public class Tallfrog : MonoBehaviour
                 fireflyList[i].transform.position = new Vector3(transform.position.x - 3, transform.position.y + 3, 0);
             }
         }
+
+
+
         StartCoroutine(fireflySp());
+
 
     }
 
     private IEnumerator fireflySp()// 불 벌래 생성
     {
-        for (int i = 0; i < fireflyList.Count; i++)
+
+        if(LastFireFlySpNum >= fireflyList.Count)
+        {
+            Debug.Log("이상해");
+            LastFireFlySpNum = 0;
+        }
+
+        for (int i = LastFireFlySpNum; i < fireflyList.Count; i++)
         {
             if (!fireflyList[i].activeSelf)
             {
                 fireflyList[i].transform.position = new Vector3(transform.position.x - 1f, transform.position.y + 2.5f, 0);
                 fireflyList[i].SetActive(true);
                 StartCoroutine(fireflysMove(i));
+                audioSource.PlayOneShot(FireFlySpAudio);
+                LastFireFlySpNum = i;
                 break;
             }
         }
         yield return new WaitForSeconds(0.3f);
 
-        for (int i = 0; i < fireflyList.Count; i++)
+        for (int i = LastFireFlySpNum; i < fireflyList.Count; i++)
         {
             if (!fireflyList[i].activeSelf)
             {
                 StartCoroutine(fireflysMove(i));
                 fireflyList[i].transform.position = new Vector3(transform.position.x - 1f, transform.position.y + 2.5f, 0);
                 fireflyList[i].SetActive(true);
-
+                audioSource.PlayOneShot(FireFlySpAudio);
+                LastFireFlySpNum = i;
                 break;
             }
         }
@@ -255,7 +270,7 @@ public class Tallfrog : MonoBehaviour
             fireflyY = 3;
         }
 
-
+        
         Vector3 targetPosition = new Vector3(fireflyX + 2, fireflyY, 0f); // 원하는 좌표 설정
         float moveTime = 3f; // 이동 시간
         float elapsedTime = 0f;
@@ -263,13 +278,21 @@ public class Tallfrog : MonoBehaviour
 
         while (elapsedTime < moveTime)
         {
-       
-            fireflyList[i].transform.position = Vector3.Lerp(startingPosition, targetPosition, elapsedTime / moveTime);
+            if (fireflyList[i].activeSelf)
+            {
+                fireflyList[i].transform.position = Vector3.Lerp(startingPosition, targetPosition, elapsedTime / moveTime);
+
+
+            }
+            else
+            {
+                fireflyList[i].transform.position = new Vector3(transform.position.x - 1f, transform.position.y + 2.5f, 0);
+                fireflyList[i].SetActive(false);
+            }
             elapsedTime += Time.deltaTime;
             yield return null;
         }
-
-
+        
 
 
         yield return new WaitForSeconds(1f);

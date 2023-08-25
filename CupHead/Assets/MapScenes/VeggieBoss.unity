@@ -7463,6 +7463,50 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 3682610811557803043, guid: 639e1203570697b46a7713462d57d106, type: 3}
+      propertyPath: m_Color.a
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3682610812259541624, guid: 639e1203570697b46a7713462d57d106, type: 3}
+      propertyPath: m_sharedMaterial
+      value: 
+      objectReference: {fileID: 7009101792731623446, guid: d60b2e3edbcb311449cb6afd6ba24d5a, type: 2}
+    - target: {fileID: 3682610812259541624, guid: 639e1203570697b46a7713462d57d106, type: 3}
+      propertyPath: m_hasFontAssetChanged
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3682610812259541625, guid: 639e1203570697b46a7713462d57d106, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 500
+      objectReference: {fileID: 0}
+    - target: {fileID: 3682610812259541625, guid: 639e1203570697b46a7713462d57d106, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 283.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 3682610812287484965, guid: 639e1203570697b46a7713462d57d106, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3682610812552311770, guid: 639e1203570697b46a7713462d57d106, type: 3}
+      propertyPath: m_sharedMaterial
+      value: 
+      objectReference: {fileID: 7009101792731623446, guid: d60b2e3edbcb311449cb6afd6ba24d5a, type: 2}
+    - target: {fileID: 3682610812552311770, guid: 639e1203570697b46a7713462d57d106, type: 3}
+      propertyPath: m_hasFontAssetChanged
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3682610813209130232, guid: 639e1203570697b46a7713462d57d106, type: 3}
+      propertyPath: m_sharedMaterial
+      value: 
+      objectReference: {fileID: 7009101792731623446, guid: d60b2e3edbcb311449cb6afd6ba24d5a, type: 2}
+    - target: {fileID: 3682610813209130232, guid: 639e1203570697b46a7713462d57d106, type: 3}
+      propertyPath: m_hasFontAssetChanged
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3955131756387027127, guid: 639e1203570697b46a7713462d57d106, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5326459789244288593, guid: 639e1203570697b46a7713462d57d106, type: 3}
       propertyPath: m_RootOrder
       value: 8

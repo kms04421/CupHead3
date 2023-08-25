@@ -26,6 +26,14 @@ public class TallForg3 : MonoBehaviour
     float[] stopSlotNumList;
 
 
+    private AudioSource audioSource;
+
+    public AudioClip armParry;
+    public AudioClip armdown;
+    public AudioClip morphed_attack;
+    public AudioClip morphed_spin;
+    public AudioClip morphed_dial_spin_loop;
+
     public GameObject SlotList;
     public GameObject Slot1;
     public GameObject Slot2;
@@ -41,7 +49,7 @@ public class TallForg3 : MonoBehaviour
     int slotNum2 = 0;
     int slotNum3 = 0;
     private float slotTime = 0f;
-    private bool slotRimeChk= false;
+    private bool slotRimeChk = false;
     private bool armEndChk = false;
     private bool slotChk = true;
     private float SetTime = 1.5f;
@@ -64,8 +72,9 @@ public class TallForg3 : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        audioSource = GetComponent<AudioSource>();
         Slot1AtkList = new List<GameObject>();
-        Slot2AtkList = new List<GameObject> ();
+        Slot2AtkList = new List<GameObject>();
         Slot3AtkList = new List<GameObject>();
         for (int i = 0; i < 8; i++) // 호랑이 생성 
         {
@@ -119,17 +128,17 @@ public class TallForg3 : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(BossManager.instance.BoosDie)
+        if (BossManager.instance.BoosDie)
         {
-            if(!bossDieExChk)
+            if (!bossDieExChk)
             {
                 bossDieExChk = true;
                 GameManager_1.instance.BossDieEX(transform);
             }
-              
-         
-          
-           
+
+
+
+
             animator.SetTrigger("Die");
             return;
         }
@@ -138,18 +147,18 @@ public class TallForg3 : MonoBehaviour
 
         if (goSlot == true)// 슬롯 내려가는 효과 , 공격 전환 
         {
-       
-            if(armEndChk == false)
+
+            if (armEndChk == false)
             {
                 animatorTime = 0;
                 animator.SetBool("ArmEnd", true);
-                armEndChk =true;
+                armEndChk = true;
                 slotRimeChk = false;
             }
-            
+         
             animatorTime += Time.deltaTime;
             if (animatorTime > 3f && slotChk && Slot1.transform.position.y > 1.5f) // 룰렛 멈출 숫자 적용및 시간차 멈춤
-            {               
+            {
                 animatorTime = 0;
 
                 if (slotNum1 == 0)
@@ -174,7 +183,8 @@ public class TallForg3 : MonoBehaviour
             }
             if (animatorTime > 1f && slotChk && Slot3.transform.position.y > 1.5f && slotNum2 != 0)
             {
-               
+            
+              
                 animatorTime = 0;
                 if (slotNum3 == 0)
                 {
@@ -184,33 +194,48 @@ public class TallForg3 : MonoBehaviour
             }// 룰렛 멈출 숫자 적용및 시간차 멈춤끝
 
 
-            if (Slot1.transform.position.y < stopSlotNumList[slotNum1]) { slotChk = true;  }// 룰렛 돌기
+            if (Slot1.transform.position.y < stopSlotNumList[slotNum1]) { slotChk = true; }// 룰렛 돌기
             else
-            {        
+            {
                 Slot1.transform.Translate(Vector3.down * 8 * Time.deltaTime);
             }
-            if (Slot2.transform.position.y < stopSlotNumList[slotNum2]) { slotChk = true;}
+            if (Slot2.transform.position.y < stopSlotNumList[slotNum2]) { slotChk = true; }
             else
             {
                 Slot2.transform.Translate(Vector3.down * 8 * Time.deltaTime);
             }
             if (Slot3.transform.position.y < stopSlotNumList[slotNum3])
             {
-             
+
                 slotRimeChk = true;
             }
             else
             {
+                if (!audioSource.isPlaying)
+                {
+                    audioSource.PlayOneShot(morphed_dial_spin_loop);
+                }
                 Slot3.transform.Translate(Vector3.down * 8 * Time.deltaTime);
             }// 룰렛 돌기 끝
 
+
+            if (stateInfo.IsName("Tallfrog_slotman_armEnd") && stateInfo.normalizedTime <= 0.1f) //핑크공격 성공 팔올리기 
+            {
+                if (!audioSource.isPlaying)
+                {
+                    audioSource.PlayOneShot(armParry);
+                }
+
+            }
+
             if (stateInfo.IsName("Tallfrog_slotman_armEnd") && stateInfo.normalizedTime >= 0.99f) //핑크공격 성공 팔올리기 
             {
+               
                 animator.SetBool("Arm1", false);
                 animator.SetBool("Arm2", false);
                 animator.SetBool("ArmEnd", false);
                 pinkobj.SetActive(false);
-             
+
 
             }
 
@@ -226,11 +251,11 @@ public class TallForg3 : MonoBehaviour
                 animator.SetBool("Atk1", true);
                 slotRimeChk = false;
 
-                if(slotNum3 == 3)
+                if (slotNum3 == 3)
                 {
                     SetTime = 0.5f;
                 }
-                else 
+                else
                 {
                     SetTime = 0.7f;
                 }
@@ -241,7 +266,7 @@ public class TallForg3 : MonoBehaviour
             {
                 if (stateInfo.IsName("TallForgSlotAtk1") && stateInfo.normalizedTime >= 0.9f) //등장
                 {
-                   
+
                     animator.SetBool("Atk2", true);
                 }
 
@@ -249,7 +274,7 @@ public class TallForg3 : MonoBehaviour
                 {
 
                     animatorTime = 0;
-                
+
                     //slotNum1 에따라 공격 변경
                     if (stateInfo.IsName("TallForgSlotAtkLoop") && stateInfo.normalizedTime >= 0.2f) //공격위치로 생성
                     {
@@ -277,10 +302,10 @@ public class TallForg3 : MonoBehaviour
 
                         if (slotNum1 == 1)//호랑이
                         {
-                                                  
+
                             for (int i = 0; i < Slot2AtkList.Count; i++)
                             {
-                               
+
                                 if (!Slot2AtkList[i].activeSelf)
                                 {
                                     Slot2AtkList[i].transform.position = new Vector3(transform.position.x - 1.9f, transform.position.y - 2, 0);
@@ -310,11 +335,11 @@ public class TallForg3 : MonoBehaviour
 
                     }//공격위치로 생성 끝
 
-                   
 
-                    if (stateInfo.IsName("TallForgSlotAtkLoop") && stateInfo.normalizedTime >= 20f ) //등장
+
+                    if (stateInfo.IsName("TallForgSlotAtkLoop") && stateInfo.normalizedTime >= 20f) //등장
                     {
-                        
+
                         animator.SetBool("End", true);
                         animator.SetBool("Atk1", false);
                         animator.SetBool("Atk2", false);
@@ -324,13 +349,13 @@ public class TallForg3 : MonoBehaviour
                         Slot2.transform.Translate(Vector3.down * 8 * Time.deltaTime);
                         Slot3.transform.Translate(Vector3.down * 8 * Time.deltaTime);
                     }
-                   
+
                 }
             }
 
             if (stateInfo.IsName("TallForgSlotAtkEnd") && stateInfo.normalizedTime >= 0.9f) //등장
             {
-              
+
                 goSlot = false; // 슬롯패턴 off
                 slotAtkStart = false;// 슬롯 도는 시간 다시 주기위해 off
 
@@ -348,7 +373,7 @@ public class TallForg3 : MonoBehaviour
         }
         else
         {
-           
+
 
             if (stateInfo.IsName("TallForg3Start") && stateInfo.normalizedTime >= 0.99f) //등장
             {
@@ -367,10 +392,10 @@ public class TallForg3 : MonoBehaviour
                 SlotList.SetActive(true);
                 animator.SetTrigger("Idle");
             }
-           
+
             if (stateInfo.IsName("TallForg3idle") && stateInfo.normalizedTime >= 0.5f) //대기상태
             {
-               
+
                 coinAtkStart = true;
 
             }
@@ -390,6 +415,7 @@ public class TallForg3 : MonoBehaviour
 
             if (coinAtkStart)
             {
+                
                 animatorTime += Time.deltaTime;
                 if (animatorTime > 2f)
                 {
@@ -417,6 +443,10 @@ public class TallForg3 : MonoBehaviour
         {
             if (!coinList[i].activeSelf)
             {
+                if (!audioSource.isPlaying)
+                {
+                    audioSource.PlayOneShot(morphed_attack);
+                }
                 coinList[i].transform.position = new Vector3(coinSpObj.transform.position.x + 2.8f, coinSpObj.transform.position.y + 0.7f, 0);
                 coinList[i].SetActive(true);
                 Vector3 direction = (target.position - coinList[i].transform.position).normalized;
@@ -447,19 +477,19 @@ public class TallForg3 : MonoBehaviour
 
 
     Vector3 targetPosition;// 이동 위치 저장용
-    private IEnumerator fireflysMove(GameObject bossSlotAtkType , bool Up ) 
+    private IEnumerator fireflysMove(GameObject bossSlotAtkType, bool Up)
     {
-        
+
         if (Up)
         {
-            targetPosition = new Vector3(bossSlotAtkType.transform.position.x -3, bossSlotAtkType.transform.position.y-0.5f, 0f); // 원하는 좌표 설정 (Up)
-            
+            targetPosition = new Vector3(bossSlotAtkType.transform.position.x - 3, bossSlotAtkType.transform.position.y - 0.5f, 0f); // 원하는 좌표 설정 (Up)
+
         }
         else
         {
-            targetPosition = new Vector3(bossSlotAtkType.transform.position.x -3, bossSlotAtkType.transform.position.y-2 , 0f); // 원하는 좌표 설정(down)
-           
-        } 
+            targetPosition = new Vector3(bossSlotAtkType.transform.position.x - 3, bossSlotAtkType.transform.position.y - 2, 0f); // 원하는 좌표 설정(down)
+
+        }
         float moveTime = 1f; // 이동 시간
         float elapsedTime = 0f;
         Vector3 startingPosition = bossSlotAtkType.transform.position;
@@ -482,7 +512,7 @@ public class TallForg3 : MonoBehaviour
     {
         if (goSlot)
         {
-            if(collision.tag.Equals("PlayerAttack"))
+            if (collision.tag.Equals("PlayerAttack"))
             {
                 BossManager.instance.BossHpMinus(0);
             }

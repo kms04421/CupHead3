@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.Rendering.PostProcessing;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-using static UnityEditor.PlayerSettings;
+
 
 public class GameManager_1 : MonoBehaviour
 {
@@ -194,7 +194,8 @@ public class GameManager_1 : MonoBehaviour
                 spriteRenderer.color = new Color(originalColor.r, originalColor.g, originalColor.b, newAlpha);
                 if(!ClearTextSetChk)
                 {
-                    Invoke("ClearTextSet", 1.3f);//게임 승리시 나오는 점수판 
+                    ClearTextSetChk = true;
+                    Invoke("ClearTextSet", 1.5f);//게임 승리시 나오는 점수판 
                 }
                
             }
@@ -505,7 +506,7 @@ public class GameManager_1 : MonoBehaviour
     {
         ClaerWindow.SetActive(false);
         ClearBoard.SetActive(true);
-        ClearText[0].text = "Time............  " + (Time.time - startTime) ;
+        ClearText[0].text = "Time............  "  + (Time.time - startTime).ToString("F2");
         ClearText[1].text = "HP................  " + life;
         ClearText[2].text = "Parry............  " + Player.instance.parryCount;
 

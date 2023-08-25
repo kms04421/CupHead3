@@ -797,6 +797,18 @@ PrefabInstance:
       propertyPath: m_Volume
       value: 0.476
       objectReference: {fileID: 0}
+    - target: {fileID: 3682610812259541625, guid: 639e1203570697b46a7713462d57d106, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 500
+      objectReference: {fileID: 0}
+    - target: {fileID: 3682610812259541625, guid: 639e1203570697b46a7713462d57d106, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 284
+      objectReference: {fileID: 0}
+    - target: {fileID: 3955131756387027127, guid: 639e1203570697b46a7713462d57d106, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5326459789244288593, guid: 639e1203570697b46a7713462d57d106, type: 3}
       propertyPath: m_RootOrder
       value: 10
@@ -1385,6 +1397,7 @@ GameObject:
   - component: {fileID: 894254926}
   - component: {fileID: 894254929}
   - component: {fileID: 894254930}
+  - component: {fileID: 894254931}
   m_Layer: 0
   m_Name: tallfrog3
   m_TagString: Boss
@@ -1498,6 +1511,11 @@ MonoBehaviour:
   pinkobj: {fileID: 308971432}
   coinSpObj: {fileID: 388329448}
   coin: {fileID: 2023358950015750413, guid: 943ab8363c6b73f4fa84fd74b2f424d6, type: 3}
+  armParry: {fileID: 8300000, guid: 571f6d608c217f246a8fdb13ca013c90, type: 3}
+  armdown: {fileID: 8300000, guid: 21ae7bfe99f7b4c479580a0dc1b46218, type: 3}
+  morphed_attack: {fileID: 8300000, guid: 567cce2f0eaab744d95930e1b64ee74b, type: 3}
+  morphed_spin: {fileID: 0}
+  morphed_dial_spin_loop: {fileID: 8300000, guid: 5f60d05963fd24d4ca8693247b30fb28, type: 3}
   SlotList: {fileID: 337424218}
   Slot1: {fileID: 1195437000}
   Slot2: {fileID: 1457303919}
@@ -1532,6 +1550,102 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 4.019312, y: 4.22}
   m_EdgeRadius: 0
+--- !u!82 &894254931
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 894254925}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_PlayOnAwake: 1
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!1 &919415913
 GameObject:
   m_ObjectHideFlags: 0
@@ -2111,6 +2225,7 @@ MonoBehaviour:
   Wind: {fileID: 490249238}
   Fanstart: {fileID: 8300000, guid: 61972c6d648df8441a90f423c3d26ce4, type: 3}
   Fanend: {fileID: 8300000, guid: a98a5ce86195d874a881e6dddc013b63, type: 3}
+  FireFlySpAudio: {fileID: 8300000, guid: d366e09c3948b9e4896fde4aa7ce327d, type: 3}
 --- !u!70 &1265830902
 CapsuleCollider2D:
   m_ObjectHideFlags: 0

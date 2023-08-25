@@ -6,7 +6,10 @@ using UnityEngine;
 public class Tallfrog_FireFly : MonoBehaviour
 {
     float moveTime = 0;
-
+    public AudioClip dieAudio; // °Ù·¹µð
+  
+    private float audioTime = 0f;
+    private AudioSource audioSource;
     Vector3 tragetVector3;
     float LRChhk = 0f;
     float UpDownChk = 0f;
@@ -25,6 +28,7 @@ public class Tallfrog_FireFly : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        audioSource = GetComponent<AudioSource>();
         capsuleCollider2D = GetComponent<CapsuleCollider2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
         animator = GetComponent<Animator>();
@@ -147,12 +151,22 @@ public class Tallfrog_FireFly : MonoBehaviour
     {
         if (collision.tag.Equals("Player"))
         {
+            audioSource.PlayOneShot(dieAudio);
             animator.SetBool("Die", true);
            StartCoroutine(ObjAnimator());
             
         }
         if (collision.tag.Equals("PlayerAttack"))
         {
+            audioSource.PlayOneShot(dieAudio);
+            animator.SetBool("Die", true);
+            StartCoroutine(ObjAnimator());
+
+        }
+        if (collision.tag.Equals("PlayerAttackEx"))
+        {
+
+            audioSource.PlayOneShot(dieAudio);
             animator.SetBool("Die", true);
             StartCoroutine(ObjAnimator());
 
@@ -160,6 +174,7 @@ public class Tallfrog_FireFly : MonoBehaviour
     }
     private IEnumerator ObjAnimator()
     {
+
         yield return new WaitForSeconds(0.25f);
 
         
