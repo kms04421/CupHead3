@@ -31,7 +31,7 @@ public class ParringScript : MonoBehaviour
                 Player.instance.parryAction();
                 if (collision.GetComponent<PinkParryObs1>() != null)
                 {
-                    collision.GetComponent<PinkParryObs1>();
+                    collision.GetComponent<PinkParryObs1>().ChangeObs();
                 }
              
             }
