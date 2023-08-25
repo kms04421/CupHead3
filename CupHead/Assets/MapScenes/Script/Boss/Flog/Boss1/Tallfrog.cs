@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using UnityEngine.UI;
 public class Tallfrog : MonoBehaviour
 {
     private Animator animator;
@@ -25,11 +25,18 @@ public class Tallfrog : MonoBehaviour
     public AudioClip Fanstart; // 선풍기 사운드 시작
     public AudioClip Fanend; // 선풍기 사운드 종료
 
+    private Material originalMaterial; // 원래 마테리얼
+    public Material customMaterial; // 적용할 커스텀 마테리얼
+    private Image imageComponent;
+
+
+
     public AudioClip FireFlySpAudio; // 위롭!
     int BossHp = 100;
     // Start is called before the first frame update
     void Start()
     {
+        imageComponent = GetComponent<Image>();
         audioSource = GetComponent<AudioSource>();
 
         aniList = new float[] { 0.55f, 1.5f, 2.3f };
@@ -312,5 +319,25 @@ public class Tallfrog : MonoBehaviour
             BossManager.instance.BossHpMinus(1);
         }
     }
+    //깜박거림 
+    public void StartBlinkEffect()
+    {
+        // 깜박임 효과 시작 코루틴 호출
+        StartCoroutine(BlinkEffectCoroutine());
+    }
 
+    private IEnumerator BlinkEffectCoroutine()
+    {
+        // 깜박임 효과를 위한 임시 색상
+        Material tempColor = customMaterial;
+
+        // 색상 변경
+        imageComponent.material = tempColor;
+
+        // 일정 시간 동안 대기
+        yield return new WaitForSeconds(0.02f);
+
+        // 원래 색상으로 복원
+        imageComponent.material = originalMaterial;
+    }
 }

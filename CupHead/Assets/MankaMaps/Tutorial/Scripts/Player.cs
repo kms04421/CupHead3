@@ -14,11 +14,11 @@ public class Player : MonoBehaviour
 
     public GameObject ParryObj;
 
-    public int parrySuccess = 0;
+    public bool parrySuccess = false;
 
     private float DashTime = 1f;
 
-    public bool parryCount = false;
+    public int parryCount = 0;
 
     //대쉬효과 오브젝트
     public GameObject dashFog;
@@ -111,7 +111,7 @@ public class Player : MonoBehaviour
 
     public bool isTalk = false;
 
-
+  
     //레이 길이
     public float rayDistance = 3f; // 레이 길이
 
@@ -232,8 +232,12 @@ public class Player : MonoBehaviour
 
             if (effectTimer >= 0.3f)
             {
-                Vector2 effectPosition = transform.position + new Vector3(0, yOffset,0);
-                Instantiate(walkFog, effectPosition, Quaternion.identity);
+                string currentSceneName = SceneManager.GetActiveScene().name;
+                if (currentSceneName == "Tutorial")
+                {
+                    Vector2 effectPosition = transform.position + new Vector3(0, yOffset, 0);
+                    Instantiate(walkFog, effectPosition, Quaternion.identity);
+                }
                 effectTimer = 0f;
             }
         }
@@ -378,7 +382,11 @@ public class Player : MonoBehaviour
 
         if (!jumpChk) // 점프 했을경우  콜라이더 사이즈 줄어듬 
         {
-            jumpFog.SetActive(false);
+            string currentSceneName = SceneManager.GetActiveScene().name;
+            if (currentSceneName.Equals("Tutorial"))
+            {
+                jumpFog.SetActive(false);
+            }
             PR.gravityScale = 4;
             collider2D.size = new Vector2(0.6f, 0.5f);
             collider2D.offset = new Vector2(-0.04870152f, 0.6f);
@@ -735,7 +743,11 @@ public class Player : MonoBehaviour
         }
         if (isDead)
         {
-            virtualCamera.enabled = false;
+            string currentSceneName = SceneManager.GetActiveScene().name;
+            if (currentSceneName.Equals("Tutorial"))
+            {
+                virtualCamera.enabled = false;
+            }
             PR.velocity = Vector2.zero;
             PR.gravityScale = 0f;
             transform.Translate(Vector3.up * speed * Time.deltaTime);
@@ -1271,7 +1283,7 @@ public class Player : MonoBehaviour
     }
     public void parryAction()
     {
-        parryCount ++ ;
+        parryCount ++;
         Debug.Log("패리성공");
         parrySuccess = true;
         parryChk = false;
