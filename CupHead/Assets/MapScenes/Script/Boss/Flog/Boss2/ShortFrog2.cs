@@ -95,7 +95,7 @@ public class ShortFrog2 : MonoBehaviour
             }
         }
 
-        if (stateInfoAtk.IsName("ShortFrog2") && stateInfoAtk.normalizedTime >= 0.4f && stateInfoAtk.normalizedTime <= 0.85f && gameObject.transform.position.x > -12f)
+        if (stateInfoAtk.IsName("ShortFrog2") && stateInfoAtk.normalizedTime >= 0.4f && stateInfoAtk.normalizedTime <= 0.85f && gameObject.transform.position.x > -12f) // 0.4에서 실행이유는 보스가 몸을 링으로 변경할때까지 걸리는 애니메이션이 0.4f이기때문
         {
 
 

@@ -199,7 +199,7 @@ public class TallForg3 : MonoBehaviour
             }// 룰렛 멈출 숫자 적용및 시간차 멈춤끝
 
 
-            if (Slot1.transform.position.y < stopSlotNumList[slotNum1]) { slotChk = true; }// 룰렛 돌기
+            if (Slot1.transform.position.y < stopSlotNumList[slotNum1]) { slotChk = true; }// 해당위치에서 멈춤 
             else
             {
                 Slot1.transform.Translate(Vector3.down * 8 * Time.deltaTime);
@@ -212,7 +212,7 @@ public class TallForg3 : MonoBehaviour
             if (Slot3.transform.position.y < stopSlotNumList[slotNum3])
             {
 
-                slotRimeChk = true;
+                slotRimeChk = true; // 멈출경우 slotNum3에따라 공격패턴 수행 
             }
             else
             {
@@ -297,7 +297,7 @@ public class TallForg3 : MonoBehaviour
                                 {
                                     Slot1AtkList[i].transform.position = new Vector3(transform.position.x - 1.9f, transform.position.y - 2, 0);
                                     Slot1AtkList[i].SetActive(true);
-                                    StartCoroutine(fireflysMove(Slot1AtkList[i], true));// 이동 로직 위 아래 구분
+                                    StartCoroutine(slotAtkMove(Slot1AtkList[i], true));// 이동 로직 위 아래 구분
 
                                     break;
                                 }
@@ -315,7 +315,7 @@ public class TallForg3 : MonoBehaviour
                                 {
                                     Slot2AtkList[i].transform.position = new Vector3(transform.position.x - 1.9f, transform.position.y - 2, 0);
                                     Slot2AtkList[i].SetActive(true);
-                                    StartCoroutine(fireflysMove(Slot2AtkList[i], false));// 이동 로직 위 아래 구분
+                                    StartCoroutine(slotAtkMove(Slot2AtkList[i], false));// 이동 로직 위 아래 구분
                                     break;
                                 }
                             }
@@ -329,7 +329,7 @@ public class TallForg3 : MonoBehaviour
                                 {
                                     Slot3AtkList[i].transform.position = new Vector3(transform.position.x - 1.9f, transform.position.y - 2, 0);
                                     Slot3AtkList[i].SetActive(true);
-                                    StartCoroutine(fireflysMove(Slot3AtkList[i], false));// 이동 로직 위 아래 구분
+                                    StartCoroutine(slotAtkMove(Slot3AtkList[i], false));// 이동 로직 위 아래 구분
                                     break;
                                 }
 
@@ -482,7 +482,7 @@ public class TallForg3 : MonoBehaviour
 
 
     Vector3 targetPosition;// 이동 위치 저장용
-    private IEnumerator fireflysMove(GameObject bossSlotAtkType, bool Up)
+    private IEnumerator slotAtkMove(GameObject bossSlotAtkType, bool Up)
     {
 
         if (Up)
@@ -502,7 +502,7 @@ public class TallForg3 : MonoBehaviour
         while (elapsedTime < moveTime)
         {
 
-            bossSlotAtkType.transform.position = Vector3.Lerp(startingPosition, targetPosition, elapsedTime / moveTime);
+            bossSlotAtkType.transform.position = Vector3.Lerp(startingPosition, targetPosition, elapsedTime / moveTime); //지정위치까지 이동 
             elapsedTime += Time.deltaTime;
             yield return null;
         }

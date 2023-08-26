@@ -37,10 +37,12 @@ public class BossManager : MonoBehaviour
     void Update()
     {
 
+
       
         if (BossHp <= 0) // 보스 hp체크 
         {
            
+
             if (BossLv == 0 )
             {
                
@@ -50,13 +52,14 @@ public class BossManager : MonoBehaviour
                 animatorTime = 0;
                 BossChk = 3;
                 BossLv++;
-
+              
             }
             else if (BossLv == 1)
             {
-              
+                
+
                 ready = true;
-            
+             
                 atkChk = 0;
                 animatorTime = 0;
                 BossChk = 3;
@@ -84,7 +87,7 @@ public class BossManager : MonoBehaviour
 
             if (BossChk == 4)
             {
-                Debug.Log("4 : 4");
+          
                 animatorTime += Time.deltaTime;
                 if (animatorTime >= 2)
                 {
@@ -162,14 +165,24 @@ public class BossManager : MonoBehaviour
 
     public void BossHpMinus(int i) // hp-
     {
+       
+
         if (i == 0)
         {
-            BossHp -= 1;
+            if(BossHp > 0)
+            {
+                BossHp -= 1;
+            }
+          
         }
         else if(i == 1)
         {
-            BossHp -= 15;
-        }
 
+            if (BossHp > 0)
+            {
+                BossHp -= 5;
+            }
+        }
+      
     }
 }

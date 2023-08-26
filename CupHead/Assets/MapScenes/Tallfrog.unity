@@ -2309,8 +2309,8 @@ CapsuleCollider2D:
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0.65237236, y: 0}
-  m_Size: {x: 2.4196048, y: 5.74}
+  m_Offset: {x: 0.97631955, y: 0}
+  m_Size: {x: 1.7717103, y: 5.74}
   m_Direction: 0
 --- !u!82 &1265830903
 AudioSource:
@@ -2624,8 +2624,8 @@ CapsuleCollider2D:
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0.09855472, y: -0.51207423}
-  m_Size: {x: 1.9044173, y: 3.435853}
+  m_Offset: {x: -0.07075899, y: -0.51207423}
+  m_Size: {x: 2.2430444, y: 3.435853}
   m_Direction: 0
 --- !u!82 &1294264745
 AudioSource:
@@ -3070,7 +3070,7 @@ MonoBehaviour:
   atkCount: 0
   BossChk: 0
   BoosDie: 0
-  BossHp: 70
+  BossHp: 50
   BossLv: 0
   ready: 0
 --- !u!82 &1598756641

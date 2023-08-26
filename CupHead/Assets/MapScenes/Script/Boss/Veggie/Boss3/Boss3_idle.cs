@@ -156,7 +156,7 @@ public class Boss3_idle : MonoBehaviour
                             target = FindObjectOfType<Player>().transform; // 타겟 포지션
                             targetPos = new Vector2(target.position.x, target.position.y); // 타겟 위치 저장
 
-                            charge.SetActive(true);
+                            charge.SetActive(true); // 차지 오브젝틑 활성화 
                             setTime = 0.5f;
                             atkTime = 0;
                             atkCount++;
@@ -166,7 +166,7 @@ public class Boss3_idle : MonoBehaviour
                         {
                             charge.SetActive(false);
                             atkCount++;
-                            RingAtk();
+                            RingAtk(); // 링공격 로직
                             setTime = 0.1f;
                             atkTime = 0;
                         }
@@ -253,17 +253,17 @@ public class Boss3_idle : MonoBehaviour
             if (!ringList[i].activeSelf)
             {
 
-                Vector2 ringVector = new Vector2(transform.position.x, transform.position.y + 1.7f);
+                Vector2 ringVector = new Vector2(transform.position.x, transform.position.y + 1.7f); // 링발사위치 저장
 
                 ringList[i].transform.position = ringVector; //Ring 위치 설정
 
-                Vector2 directionToTarget = targetPos - ringVector;
+                Vector2 directionToTarget = targetPos - ringVector; // 대상 위치 방향 계산
 
 
-                float angle = Mathf.Atan2(directionToTarget.y, directionToTarget.x) * Mathf.Rad2Deg;
-                Quaternion targetRotation = Quaternion.Euler(new Vector3(0, 0, angle));
+                float angle = Mathf.Atan2(directionToTarget.y, directionToTarget.x) * Mathf.Rad2Deg; // 대상을 향해 오브젝트 회전각도 계산
+                Quaternion targetRotation = Quaternion.Euler(new Vector3(0, 0, angle)); //  오브젝틑 회전값 으로 변경
 
-                ringList[i].transform.rotation = targetRotation;
+                ringList[i].transform.rotation = targetRotation;//  오브젝틑 회전
                 ringList[i].SetActive(true);
                 break;
             }

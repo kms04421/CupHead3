@@ -34,8 +34,9 @@ public class ExShotScript : MonoBehaviour
         }
 
 
-        if(stateInfo.IsName("ExShotDie")&& stateInfo.normalizedTime > 0.999f)
+        if(stateInfo.IsName("ExShotDie")&& stateInfo.normalizedTime > 1f)
         {
+            circleCollider.enabled = true;
             gameObject.SetActive(false);
         }
     }
@@ -48,7 +49,7 @@ public class ExShotScript : MonoBehaviour
             {
                 dieAudioSource.PlayOneShot(dieAudio);
             }
-           
+            circleCollider.enabled = false;
             animator.SetBool("Die",true);
         }
     }

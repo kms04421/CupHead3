@@ -31,14 +31,14 @@ public class Carrot_Bomb : MonoBehaviour
     {
         if(!dieChk)
         {
-            target = FindObjectOfType<Player>().transform;
+            target = FindObjectOfType<Player>().transform;// 플레이어 의 Transform정보를 가져옴
 
-            Vector2 directionToTarget = (target.position - transform.position);
+            Vector2 directionToTarget = (target.position - transform.position); //대사의 위치를 정보를 찾기위해서 사용
 
-            Quaternion targetRotation = Quaternion.LookRotation(Vector3.forward, directionToTarget);
+            Quaternion targetRotation = Quaternion.LookRotation(Vector3.forward, directionToTarget); //오브젝트의 전진방향에서 대상을 바라볼수있는 각도 계산 
 
             // 회전 설정
-            transform.rotation = targetRotation;
+            transform.rotation = targetRotation;// 각도 회전 
 
             transform.Translate(Vector3.up * 2f * Time.deltaTime);
         }

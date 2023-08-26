@@ -71,7 +71,7 @@ public class Tallfrog : MonoBehaviour
         {
             animator.SetTrigger("Idle");
         }
-        if (BossManager.instance.ready)
+        if (BossManager.instance.ready )
         {
             if (stateInfo.IsName("TallFrogFan"))
             {
@@ -287,14 +287,14 @@ public class Tallfrog : MonoBehaviour
         {
             if (fireflyList[i].activeSelf)
             {
-                fireflyList[i].transform.position = Vector3.Lerp(startingPosition, targetPosition, elapsedTime / moveTime);
+                fireflyList[i].transform.position = Vector3.Lerp(startingPosition, targetPosition, elapsedTime / moveTime); // 지정위치까지 Coroutine중 시간동안 이동 
 
 
             }
             else
             {
-                fireflyList[i].transform.position = new Vector3(transform.position.x - 1f, transform.position.y + 2.5f, 0);
-                fireflyList[i].SetActive(false);
+                fireflyList[i].transform.position = new Vector3(transform.position.x - 1f, transform.position.y + 2.5f, 0); //엑티브 비활성화시 현재 오브젝트 시작위치로 이동
+
             }
             elapsedTime += Time.deltaTime;
             yield return null;

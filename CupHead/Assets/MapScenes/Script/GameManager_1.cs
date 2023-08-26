@@ -133,6 +133,8 @@ public class GameManager_1 : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+
+        
         if (BossManager.instance != null)
         {
             if (BossManager.instance.BoosDie)
@@ -385,13 +387,13 @@ public class GameManager_1 : MonoBehaviour
         }
     }
 
-    public void TimeChk()
+    public void TimeChk() // 시간종료후 오브젝트 비활성화용
     {
-        if (gameStart.activeSelf)
+        if (gameStart.activeSelf)// 시작 텍스트오브젝트
         {
             gameStart.SetActive(false);
         }
-        if (KO.activeSelf)
+        if (KO.activeSelf) // ko 텍스트오브젝트
         {
             KO.SetActive(false);
         }
@@ -405,15 +407,16 @@ public class GameManager_1 : MonoBehaviour
     {
 
 
-        if (!explosionList[0].activeSelf)
+        if (!explosionList[0].activeSelf) // 폭죽 에티브가 비활성화 상태일때
         {
             int Randx = Random.Range(-5, 5);
             int Randy = Random.Range(-1, 3);
             
                 explosionList[0].SetActive(true);
           
-            explosionList[0].transform.position = new Vector3(Pos.position.x + Randx, (Pos.position.y + Randy), 0);
-        }
+            explosionList[0].transform.position = new Vector3(Pos.position.x + Randx, (Pos.position.y + Randy), 0); // 폭죽 포지션 값 해당 오브젝트 근처에서 랜덤 으로 터짐
+                                                                                                                    //  폭죽은 애니메이션 종료 시 자동으로 꺼짐
+         }
 
     }
 
@@ -427,7 +430,7 @@ public class GameManager_1 : MonoBehaviour
         string path = "";
 
 
-        if (sceneName.Equals("Tallfrog"))
+        if (sceneName.Equals("Tallfrog"))// 개구리 보스시 개구리 보스 레벨 에따라 이미지 가져옴
         {
             int LV = 1;
             if (BossManager.instance != null)
@@ -436,7 +439,7 @@ public class GameManager_1 : MonoBehaviour
             }
             path += "Frog/T" + LV;
         }
-        if (sceneName.Equals("VeggieBoss"))
+        if (sceneName.Equals("VeggieBoss")) // 농장보스시 농장보스 레벨 에따라 이미지 가져옴
         {
             int LV = 1;
             if (VeggieBossManager.instance != null)
@@ -451,22 +454,23 @@ public class GameManager_1 : MonoBehaviour
     }
 
     //진행도 계산
-    public float runPos()
+    public float runPos() 
     {
         Scene currentScene = SceneManager.GetActiveScene();
         string sceneName = currentScene.name;
         float Hp = 0;
         int LV = 1;
-        if (sceneName.Equals("Tallfrog"))
+        if (sceneName.Equals("Tallfrog")) // 개구리 보스 
         {
 
-            if (BossManager.instance != null)
+            if (BossManager.instance != null) 
             {
                 LV = BossManager.instance.BossLv;
                 Hp = BossManager.instance.BossHp / 10;
 
             }
-
+            Hp = Hp * 0.3f;
+            Debug.Log(Hp);
             if (LV == 2)
             {
                 LV = 4;
@@ -476,7 +480,7 @@ public class GameManager_1 : MonoBehaviour
                 LV = 2;
             }
         }
-        if (sceneName.Equals("VeggieBoss"))
+        if (sceneName.Equals("VeggieBoss")) // 농장 보스
         {
             if (VeggieBossManager.instance != null)
             {
@@ -495,17 +499,17 @@ public class GameManager_1 : MonoBehaviour
             }
 
         }
-            float sum = Hp + LV;
+            float sum = Hp + LV; // 보스 레벨 + hp를 계산하영 run x값 수정
        
         return sum;
 
     }
 
-    public void BossClear()
+    public void BossClear() // 마지막 보스 사망시 클리어로 bool 전환
     {
         Clear = true;
     }
-    public void ClearTextSet()
+    public void ClearTextSet() //클리어 텍스트 
     {
         ClaerWindow.SetActive(false);
         ClearBoard.SetActive(true);
@@ -514,7 +518,7 @@ public class GameManager_1 : MonoBehaviour
         ClearText[2].text = "Parry............  " + Player.instance.parryCount;
 
     }
-public void returnMap()
+public void returnMap() // 저장및 세션 이동
     {
 
         Scene currentScene = SceneManager.GetActiveScene();

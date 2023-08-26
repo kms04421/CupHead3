@@ -178,7 +178,7 @@ public class Player : MonoBehaviour
         collider2D = GetComponent<CapsuleCollider2D>();
         shot1PrefabList = new List<GameObject>();
 
-        for (int i = 0; i < 6; i++)
+        for (int i = 0; i < 1; i++)
         {
             saveObj = Instantiate(eXShot);
             exShotList.Add(saveObj);
@@ -942,16 +942,14 @@ public class Player : MonoBehaviour
             hitPoint2D = hitInfo2D.point; // 충돌 지점
             Transform hitObject2D = hitInfo2D.transform; // 충돌한 객체
 
-            Debug.Log("Hit point: " + hitPoint2D.x);
-          
-            Debug.Log("Hit object: " + hitObject2D.name);
-            endPos = new Vector2(current.x + dashDirection.x * 4f, startY);
+        
+            endPos = new Vector2(current.x + dashDirection.x * 4f, startY); // 이동할 위치
 
-            if (LRChk)
+            if (LRChk)//좌우 체크
             {
-                if (endPos.x < hitPoint2D.x)
+                if (endPos.x < hitPoint2D.x) // 앞에 오브젝트보다 오브젝트가 앞에있을경우  
                 {
-                    endPos.x = hitPoint2D.x;
+                    endPos.x = hitPoint2D.x;//오브젝트 까지만 이동하도록 이동할거리 수정
                 }
             }
             else 
@@ -962,12 +960,12 @@ public class Player : MonoBehaviour
                 }
             }
               
-            Debug.Log(" endPos.x : " + endPos.x);
+            
         }
         else
         {
            
-            endPos = new Vector2(current.x + dashDirection.x * 4f, startY);
+            endPos = new Vector2(current.x + dashDirection.x * 4f, startY);//앞에 오브젝트가 없을겨우 그냥이동
         }
 
 
@@ -979,11 +977,11 @@ public class Player : MonoBehaviour
         float startTime = Time.time;
         float journeyLength = Vector2.Distance(current, endPos);
 
-        while (Time.time < startTime + journeyLength / 20)
+        while (Time.time < startTime + journeyLength / 20) // 해당 시간만큼 이동하도록
         {
-            float distanceCovered = (Time.time - startTime) * 20;
-            float fractionOfJourney = distanceCovered / journeyLength;
-            transform.position = Vector2.Lerp(current, endPos, fractionOfJourney);
+            float distanceCovered = (Time.time - startTime) * 20; // 시간동안 이동할 시간계산
+            float fractionOfJourney = distanceCovered / journeyLength; // 시간동안 이동 
+            transform.position = Vector2.Lerp(current, endPos, fractionOfJourney); //해당위치까지 이동 
             yield return null;
         }
 

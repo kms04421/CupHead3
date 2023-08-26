@@ -143,7 +143,7 @@ public class ShortBoss : MonoBehaviour
         }
     }
 
-    private void shortFrogAtk()
+    private void shortFrogAtk() // 펀치 공격 로직 
     {
         atkTime += Time.deltaTime;
         if (atkTime >= 0.7f)
@@ -154,16 +154,16 @@ public class ShortBoss : MonoBehaviour
                 if (!shortFrogList[i].activeSelf)
                 {
 
-                    if (shortFrogCount >= 3)
+                    if (shortFrogCount >= 3) // 펀치 위치값 이 3초과시  2 로 변경 
                     {
                         shortFrogCount = 2;
                     }
-                    else if (shortFrogCount <= -1)
+                    else if (shortFrogCount <= -1) // -1보다 작아지면 0으로 변경
                     {
                         shortFrogCount = 0;
                     }
 
-                    shortFrogList[i].transform.position = shortFrogVector[shortFrogCount];
+                    shortFrogList[i].transform.position = shortFrogVector[shortFrogCount]; // 펀치 위치 리스트 값을 호출 
 
                     shortFrogList[i].SetActive(true);
                     break;
@@ -171,7 +171,7 @@ public class ShortBoss : MonoBehaviour
                 }
             }
 
-            if (shortUpDown == false)
+            if (shortUpDown == false) // 펀치 순서대로 부르기 위한 로직 
             {
                 shortFrogCount++;
             }
@@ -181,7 +181,7 @@ public class ShortBoss : MonoBehaviour
             }
 
 
-            if (shortFrogCount >= 2 || shortFrogCount <= 0)
+            if (shortFrogCount >= 2 || shortFrogCount <= 0) // 최대값 최값일때 값 이 + 할지 -할지  변경하는 로직
             {
                 if (shortUpDown == false)
                 {

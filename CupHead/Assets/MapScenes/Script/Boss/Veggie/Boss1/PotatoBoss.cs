@@ -99,16 +99,16 @@ public class PotatoBoss : MonoBehaviour
             if (BossDieMove)
             {
                 GameManager_1.instance.BossDieEX(transform);
-                originalValue = transform.position.y;
+                originalValue = transform.position.y; // 현재 오브제트 y값 저장
 
-                transform.Translate(Vector3.down * 6 * Time.deltaTime);
+                transform.Translate(Vector3.down * 6 * Time.deltaTime); // 보스 사망시 아래로 내려가도록
 
-                float normalizedValue = NormalizeValue(originalValue, minRange, maxRange);
-                imageComponent.fillAmount = 1 - normalizedValue;
+                float normalizedValue = NormalizeValue(originalValue, minRange, maxRange); //내려가면서 오브젝트 위치를 계산하여 Normalize화 시켜 0~1까지로 표시
+                imageComponent.fillAmount = 1 - normalizedValue; // 오브젝트 fillAmount 값 변경
 
-           
 
-                if (imageComponent.fillAmount <= 0)
+
+                if (imageComponent.fillAmount <= 0) // fillAmount 가 0이면 다음 보스 셋
                 {
 
                     Transform parentTransform = transform.parent;
@@ -123,31 +123,31 @@ public class PotatoBoss : MonoBehaviour
         }
 
         AttackTime += Time.deltaTime;
-        if (BossSecondsTime <= AttackTime)
+        if (BossSecondsTime <= AttackTime) // 공격텀
         {
 
             animator.SetBool("Attack", true); // 공격 애니메이션 실행
             AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0);
 
-            animator.speed = AllAtkCountList[AllAtkCount];
+            animator.speed = AllAtkCountList[AllAtkCount];// 보스 공격속도
             if (stateInfo.IsName("Boss_Attack") && stateInfo.normalizedTime >= AtkCountList[AtkCount] && stateInfo.normalizedTime <= 1f) // 정규화된 시간이 1 이상이면 애니메이션이 종료
             {
                
-                AttackBurst();
+                AttackBurst(); // 보스공격
                 AtkCount++;
             }
 
 
-            if (stateInfo.IsName("Boss_Attack") && stateInfo.normalizedTime >= 1f)
+            if (stateInfo.IsName("Boss_Attack") && stateInfo.normalizedTime >= 1f) // 애니메이션 종료후
             {
                 animator.SetBool("Attack", false);// 공격 애니메이션 끝
                 animator.speed = 0.8f;
-                AtkCount = 0;
-                BossSecondsTime = Random.Range(2f, 4f);
-                AttackTime = 0f;
+                AtkCount = 0; // 진흙과 지렁이 공격구분방법
+                BossSecondsTime = Random.Range(2f, 4f); // 보스 공격 간격 랜덤설정
+                AttackTime = 0f; 
                 AllAtkCount++;
             }
-            if (AllAtkCount == 3)
+            if (AllAtkCount == 3) //지렁이 발사후 진흙으로 변경
             {
 
                 AllAtkCount = 0;
